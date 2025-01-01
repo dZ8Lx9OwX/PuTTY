@@ -83,9 +83,7 @@ add_dependencies(pageant generated_licence_h)
 target_link_libraries(pageant
   guimisc eventloop agent network crypto utils
   ${platform_libraries})
-set_target_properties(pageant PROPERTIES
-  WIN32_EXECUTABLE ON
-  LINK_FLAGS "${LFLAG_MANIFEST_NO}")
+set_target_properties(pageant PROPERTIES WIN32_EXECUTABLE ON)
 installed_program(pageant)
 
 add_sources_from_current_dir(plink no-jump-list.c nohelp.c plink.rc)
@@ -111,9 +109,7 @@ target_link_libraries(putty
   guiterminal guimisc eventloop sshclient otherbackends settings network crypto
   utils
   ${platform_libraries})
-set_target_properties(putty PROPERTIES
-  WIN32_EXECUTABLE ON
-  LINK_FLAGS "${LFLAG_MANIFEST_NO}")
+set_target_properties(putty PROPERTIES WIN32_EXECUTABLE ON)
 installed_program(putty)
 
 add_executable(puttytel
@@ -124,6 +120,7 @@ add_executable(puttytel
   ${CMAKE_SOURCE_DIR}/stubs/no-ca-config.c
   ${CMAKE_SOURCE_DIR}/stubs/no-console.c
   ${CMAKE_SOURCE_DIR}/stubs/no-rand.c
+  ${CMAKE_SOURCE_DIR}/stubs/no-dit.c
   ${CMAKE_SOURCE_DIR}/proxy/nocproxy.c
   ${CMAKE_SOURCE_DIR}/proxy/nosshproxy.c
   puttytel.rc)
@@ -132,9 +129,7 @@ add_dependencies(puttytel generated_licence_h)
 target_link_libraries(puttytel
   guiterminal guimisc eventloop otherbackends settings network utils
   ${platform_libraries})
-set_target_properties(puttytel PROPERTIES
-  WIN32_EXECUTABLE ON
-  LINK_FLAGS "${LFLAG_MANIFEST_NO}")
+set_target_properties(puttytel PROPERTIES WIN32_EXECUTABLE ON)
 installed_program(puttytel)
 
 add_executable(puttygen
@@ -152,9 +147,7 @@ add_dependencies(puttygen generated_licence_h)
 target_link_libraries(puttygen
   keygen guimisc crypto utils
   ${platform_libraries})
-set_target_properties(puttygen PROPERTIES
-  WIN32_EXECUTABLE ON
-  LINK_FLAGS "${LFLAG_MANIFEST_NO}")
+set_target_properties(puttygen PROPERTIES WIN32_EXECUTABLE ON)
 installed_program(puttygen)
 
 if(HAVE_CONPTY)
@@ -167,6 +160,7 @@ if(HAVE_CONPTY)
     ${CMAKE_SOURCE_DIR}/stubs/no-ca-config.c
     ${CMAKE_SOURCE_DIR}/stubs/no-console.c
     ${CMAKE_SOURCE_DIR}/stubs/no-rand.c
+    ${CMAKE_SOURCE_DIR}/stubs/no-dit.c
     ${CMAKE_SOURCE_DIR}/proxy/nosshproxy.c
     pterm.rc)
   be_list(pterm pterm)
@@ -174,9 +168,7 @@ if(HAVE_CONPTY)
   target_link_libraries(pterm
     guiterminal guimisc eventloop settings network utils
     ${platform_libraries})
-  set_target_properties(pterm PROPERTIES
-    WIN32_EXECUTABLE ON
-    LINK_FLAGS "${LFLAG_MANIFEST_NO}")
+  set_target_properties(pterm PROPERTIES WIN32_EXECUTABLE ON)
   installed_program(pterm)
 else()
   message("ConPTY not available; cannot build Windows pterm")

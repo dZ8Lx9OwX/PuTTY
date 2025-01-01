@@ -578,6 +578,8 @@ static void kexlist_handler(dlgcontrol *ctrl, dlgparam *dlg,
             { "RSA-based key exchange",             KEX_RSA },
             { "ECDH key exchange",                  KEX_ECDH },
             { "NTRU Prime/Curve25519 hybrid kex", KEX_NTRU_HYBRID },
+            { "ML-KEM/Curve25519 hybrid kex",     KEX_MLKEM_25519_HYBRID },
+            { "ML-KEM/NIST ECDH hybrid kex",      KEX_MLKEM_NIST_HYBRID },
             { "-- 以下为警告选项 --",              KEX_WARN }
         };
 
@@ -1985,7 +1987,7 @@ void setup_config_box(struct controlbox *b, bool midsession,
                           sshrawlogname, 'r', I(LGTYP_SSHRAW));
     }
     ctrl_filesel(s, "日志文件：", 'f',
-                 NULL, true, "选择日志文件",
+                 FILTER_ALL_FILES, true, "选择日志文件",
                  HELPCTX(logging_filename),
                  conf_filesel_handler, I(CONF_logfilename));
     ctrl_text(s, "(名称可包含&Y,&M,&D日期,&T时间,&H主机名,&P端"
@@ -2747,7 +2749,7 @@ void setup_config_box(struct controlbox *b, bool midsession,
             c = ctrl_draglist(s, "算法策略选择", 's',
                               HELPCTX(ssh_kexlist),
                               kexlist_handler, P(NULL));
-            c->listbox.height = KEX_MAX;
+            c->listbox.height = 10;
 #ifndef NO_GSSAPI
             ctrl_checkbox(s, "尝试GSSAPI密钥交换",
                           'k', HELPCTX(ssh_gssapi),
@@ -2930,7 +2932,7 @@ void setup_config_box(struct controlbox *b, bool midsession,
                          conf_filesel_handler, I(CONF_keyfile));
             ctrl_filesel(s, "要与私钥一起使用的证书"
                          "(自选)：", 'e',
-                         NULL, false, "选择证书文件",
+                         FILTER_ALL_FILES, false, "选择证书文件",
                          HELPCTX(ssh_auth_cert),
                          conf_filesel_handler, I(CONF_detached_cert));
 

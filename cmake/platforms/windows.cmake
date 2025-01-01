@@ -101,14 +101,12 @@ endif()
 
 if(WINELIB)
   enable_language(RC)
-  set(LFLAG_MANIFEST_NO "")
 elseif(CMAKE_C_COMPILER_ID MATCHES "MSVC" OR
        CMAKE_C_COMPILER_FRONTEND_VARIANT MATCHES "MSVC")
   set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} /nologo /C1252")
-  set(LFLAG_MANIFEST_NO "/manifest:no")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /manifest:no")
 else()
   set(CMAKE_RC_FLAGS "${CMAKE_RC_FLAGS} -c1252")
-  set(LFLAG_MANIFEST_NO "")
 endif()
 
 if(STRICT)
