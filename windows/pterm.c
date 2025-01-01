@@ -23,7 +23,7 @@ void gui_term_process_cmdline(Conf *conf, char *cmdline)
         const char *argstr = cmdline_arg_to_str(arg);
         int retd = cmdline_process_param(arg, nextarg, 1, conf);
         if (retd == -2) {
-            cmdline_error("option \"%s\" requires an argument", argstr);
+            cmdline_error("选项 \"%s\" 需要一个参数", argstr);
         } else if (retd == 2) {
             arglistpos++;              /* skip next argument */
         } else if (retd == 1) {
@@ -37,12 +37,12 @@ void gui_term_process_cmdline(Conf *conf, char *cmdline)
                 sfree(cmd);
                 return;
             } else {
-                cmdline_error("option \"%s\" requires an argument", argstr);
+                cmdline_error("选项 \"%s\" 需要一个参数", argstr);
             }
         } else if (argstr[0] == '-') {
-            cmdline_error("unrecognised option \"%s\"", argstr);
+            cmdline_error("无法识别的选项 \"%s\"", argstr);
         } else {
-            cmdline_error("unexpected non-option argument \"%s\"", argstr);
+            cmdline_error("意外的非选项参数 \"%s\"", argstr);
         }
     }
 

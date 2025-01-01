@@ -246,7 +246,7 @@ static bool ssh1_connection_filter_queue(struct ssh1_connection_state *s)
 
             if (!c || c->halfopen != expect_halfopen) {
                 ssh_remote_error(
-                    s->ppl.ssh, "Received %s for %s channel %u",
+                    s->ppl.ssh, "收到 %s 来自 %s 通道 %u",
                     ssh1_pkt_type(pktin->type),
                     !c ? "nonexistent" : c->halfopen ? "half-open" : "open",
                     localid);
@@ -319,8 +319,8 @@ static bool ssh1_connection_filter_queue(struct ssh1_connection_state *s)
                     if (!(c->closes & CLOSES_SENT_CLOSE)) {
                         ssh_remote_error(
                             s->ppl.ssh,
-                            "Received CHANNEL_CLOSE_CONFIRMATION for channel"
-                            " %u for which we never sent CHANNEL_CLOSE\n",
+                            "从通道收到CHANNEL_CLOSE_CONFIRMATION"
+                            " %u 我们从未发送过 CHANNEL_CLOSE\n",
                             c->localid);
                         return true;
                     }
@@ -408,8 +408,8 @@ static void ssh1_connection_process_queue(PacketProtocolLayer *ppl)
          */
 
         if ((pktin = ssh1_connection_pop(s)) != NULL) {
-            ssh_proto_error(s->ppl.ssh, "Unexpected packet received, "
-                            "type %d (%s)", pktin->type,
+            ssh_proto_error(s->ppl.ssh, "收到意外的数据包，"
+                            "类型 %d (%s)", pktin->type,
                             ssh1_pkt_type(pktin->type));
             return;
         }
@@ -541,7 +541,7 @@ bool ssh1_check_termination(struct ssh1_connection_state *s)
             s->ppl.bpp, SSH1_CMSG_EXIT_CONFIRMATION);
         pq_push(s->ppl.out_pq, pktout);
 
-        ssh_user_close(s->ppl.ssh, "Session finished");
+        ssh_user_close(s->ppl.ssh, "会话结束");
         return true;
     }
 
@@ -587,7 +587,7 @@ static void ssh1channel_initiate_close(SshChannel *sc, const char *err)
     struct ssh1_channel *c = container_of(sc, struct ssh1_channel, sc);
     char *reason;
 
-    reason = err ? dupprintf("due to local error: %s", err) : NULL;
+    reason = err ? dupprintf("由于本地错误： %s", err) : NULL;
     ssh1_channel_close_local(c, reason);
     sfree(reason);
     c->pending_eof = false;   /* this will confuse a zombie channel */
@@ -654,7 +654,7 @@ static SshChannel *ssh1_lportfwd_open(
     c->halfopen = true;
     c->chan = chan;
 
-    ppl_logevent("Opening connection to %s:%d for %s",
+    ppl_logevent("打开连接到 %s:%d 给 %s",
                  hostname, port, description);
 
     pktout = ssh_bpp_new_pktout(s->ppl.bpp, SSH1_MSG_PORT_OPEN);

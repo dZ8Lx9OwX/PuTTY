@@ -170,11 +170,11 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
     crMaybeWaitUntilV((pktin = ssh1_login_pop(s)) != NULL);
 
     if (pktin->type != SSH1_SMSG_PUBLIC_KEY) {
-        ssh_proto_error(s->ppl.ssh, "Public key packet not received");
+        ssh_proto_error(s->ppl.ssh, "未收到公钥数据包");
         return;
     }
 
-    ppl_logevent("Received public keys");
+    ppl_logevent("收到公钥");
 
     {
         ptrlen pl = get_data(pktin, 8);
@@ -191,7 +191,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
      */
     if (!get_err(pktin)) {
         char *fingerprint = rsa_ssh1_fingerprint(&s->hostkey);
-        ppl_logevent("Host key fingerprint is:");
+        ppl_logevent("主机密钥指纹为：");
         ppl_logevent("      %s", fingerprint);
         sfree(fingerprint);
     }
@@ -201,7 +201,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
     s->supported_auths_mask = get_uint32(pktin);
 
     if (get_err(pktin)) {
-        ssh_proto_error(s->ppl.ssh, "Bad SSH-1 public key packet");
+        ssh_proto_error(s->ppl.ssh, "错误的 SSH-1 公钥数据包");
         return;
     }
 
@@ -222,7 +222,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
      */
     if (s->hostkey.bits > s->hostkey.bytes * 8 ||
         s->servkey.bits > s->servkey.bytes * 8) {
-        ssh_proto_error(s->ppl.ssh, "SSH-1 public keys were badly formatted");
+        ssh_proto_error(s->ppl.ssh, "SSH-1 公钥格式错误");
         return;
     }
 
@@ -258,7 +258,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
     crMaybeWaitUntilV(s->spr.kind != SPRK_INCOMPLETE);
 
     if (spr_is_abort(s->spr)) {
-        ssh_spr_close(s->ppl.ssh, s->spr, "host key verification");
+        ssh_spr_close(s->ppl.ssh, s->spr, "主机密钥验证");
         return;
     }
 
@@ -276,13 +276,13 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
 
         if (!rsa_ssh1_encrypt(s->rsabuf, 32, smaller) ||
             !rsa_ssh1_encrypt(s->rsabuf, smaller->bytes, larger)) {
-            ssh_proto_error(s->ppl.ssh, "SSH-1 public key encryptions failed "
-                            "due to bad formatting");
+            ssh_proto_error(s->ppl.ssh, "由于格式错误，"
+                            "SSH-1 公钥加密失败");
             return;
         }
     }
 
-    ppl_logevent("Encrypted session key");
+    ppl_logevent("加密会话密钥");
 
     {
         bool cipher_chosen = false, warn = false;
@@ -296,7 +296,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                 warn = true;
             } else if (next_cipher == CIPHER_AES) {
                 /* XXX Probably don't need to mention this. */
-                ppl_logevent("AES not supported in SSH-1, skipping");
+                ppl_logevent("SSH-1 不支持 AES,跳过");
             } else {
                 switch (next_cipher) {
                   case CIPHER_3DES:     s->cipher_type = SSH1_CIPHER_3DES;
@@ -312,11 +312,11 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
         }
         if (!cipher_chosen) {
             if ((s->supported_ciphers_mask & (1 << SSH1_CIPHER_3DES)) == 0) {
-                ssh_proto_error(s->ppl.ssh, "Server violates SSH-1 protocol "
-                                "by not supporting 3DES encryption");
+                ssh_proto_error(s->ppl.ssh, "服务器不支持 3DES 加密，"
+                                "违法了 SSH-1 协议");
             } else {
                 /* shouldn't happen */
-                ssh_sw_abort(s->ppl.ssh, "No supported ciphers found");
+                ssh_sw_abort(s->ppl.ssh, "未找到支持的密码");
             }
             return;
         }
@@ -328,7 +328,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                 ssh1_login_dialog_callback, s, WCR_BELOW_THRESHOLD);
             crMaybeWaitUntilV(s->spr.kind != SPRK_INCOMPLETE);
             if (spr_is_abort(s->spr)) {
-                ssh_spr_close(s->ppl.ssh, s->spr, "cipher warning");
+                ssh_spr_close(s->ppl.ssh, s->spr, "密码警告");
                 return;
             }
         }
@@ -336,13 +336,13 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
 
     switch (s->cipher_type) {
       case SSH1_CIPHER_3DES:
-        ppl_logevent("Using 3DES encryption");
+        ppl_logevent("使用 3DES 加密");
         break;
       case SSH1_CIPHER_DES:
-        ppl_logevent("Using single-DES encryption");
+        ppl_logevent("使用single-DES 加密");
         break;
       case SSH1_CIPHER_BLOWFISH:
-        ppl_logevent("Using Blowfish encryption");
+        ppl_logevent("使用 Blowfish 加密");
         break;
     }
 
@@ -354,7 +354,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
     put_uint32(pkt, s->local_protoflags);
     pq_push(s->ppl.out_pq, pkt);
 
-    ppl_logevent("Trying to enable encryption...");
+    ppl_logevent("正在尝试启用加密...");
 
     sfree(s->rsabuf);
     s->rsabuf = NULL;
@@ -378,11 +378,11 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
     crMaybeWaitUntilV((pktin = ssh1_login_pop(s)) != NULL);
 
     if (pktin->type != SSH1_SMSG_SUCCESS) {
-        ssh_proto_error(s->ppl.ssh, "Encryption not successfully enabled");
+        ssh_proto_error(s->ppl.ssh, "未成功已用加密功能");
         return;
     }
 
-    ppl_logevent("Successfully started encryption");
+    ppl_logevent("成功开始加密");
 
     if ((s->username = get_remote_username(s->conf)) == NULL) {
         s->cur_prompt = ssh_ppl_new_prompts(&s->ppl);
@@ -401,7 +401,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
             /*
              * Failed to get a username. Terminate.
              */
-            ssh_spr_close(s->ppl.ssh, s->spr, "username prompt");
+            ssh_spr_close(s->ppl.ssh, s->spr, "用户名提示");
             return;
         }
         s->username = prompt_get_result(s->cur_prompt->prompts[0]);
@@ -413,7 +413,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
     put_stringz(pkt, s->username);
     pq_push(s->ppl.out_pq, pkt);
 
-    ppl_logevent("Sent username \"%s\"", s->username);
+    ppl_logevent("发送用户名 \"%s\"", s->username);
     if (seat_verbose(s->ppl.seat) || seat_interactive(s->ppl.seat))
         ppl_printf("Sent username \"%s\"\r\n", s->username);
 
@@ -433,7 +433,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
     s->keyfile = conf_get_filename(s->conf, CONF_keyfile);
     if (!filename_is_null(s->keyfile)) {
         int keytype;
-        ppl_logevent("Reading key file \"%s\"", filename_to_str(s->keyfile));
+        ppl_logevent("读取密钥文件 \"%s\"", filename_to_str(s->keyfile));
         keytype = key_type(s->keyfile);
         if (keytype == SSH_KEYTYPE_SSH1 ||
             keytype == SSH_KEYTYPE_SSH1_PUBLIC) {
@@ -444,10 +444,10 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                                &s->publickey_comment, &error)) {
                 s->privatekey_available = (keytype == SSH_KEYTYPE_SSH1);
                 if (!s->privatekey_available)
-                    ppl_logevent("Key file contains public key only");
+                    ppl_logevent("密钥文件仅包含公钥");
                 s->privatekey_encrypted = rsa1_encrypted_f(s->keyfile, NULL);
             } else {
-                ppl_logevent("Unable to load key (%s)", error);
+                ppl_logevent("无法加载密钥 (%s)", error);
                 ppl_printf("Unable to load key file \"%s\" (%s)\r\n",
                            filename_to_str(s->keyfile), error);
 
@@ -455,7 +455,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                 s->publickey_blob = NULL;
             }
         } else {
-            ppl_logevent("Unable to use this key file (%s)",
+            ppl_logevent("无法使用此密钥文件 (%s)",
                          key_type_to_str(keytype));
             ppl_printf("Unable to use key file \"%s\" (%s)\r\n",
                        filename_to_str(s->keyfile),
@@ -477,7 +477,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
              */
             s->authed = false;
             s->tried_agent = true;
-            ppl_logevent("Pageant is running. Requesting keys.");
+            ppl_logevent("Pageant正在运行中,尝试请求密钥");
 
             /* Request the keys held by the agent. */
             {
@@ -501,7 +501,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                     get_rsa_ssh1_pub(s->asrc, NULL, RSA_SSH1_EXPONENT_FIRST);
                     get_string(s->asrc); /* comment */
                     if (get_err(s->asrc)) {
-                        ppl_logevent("Pageant's response was truncated");
+                        ppl_logevent("Pageant的回复被截断");
                         goto parsed_agent_query;
                     }
                 }
@@ -528,7 +528,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                         blobstart, blobend - blobstart);
                 }
 
-                ppl_logevent("Pageant has %"SIZEu" SSH-1 keys", nkeys);
+                ppl_logevent("Pageant有 %"SIZEu" 个SSH-1密钥", nkeys);
 
                 if (s->publickey_blob) {
                     /*
@@ -546,12 +546,12 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                     }
 
                     if (i < nkeys) {
-                        ppl_logevent("Pageant key #%"SIZEu" matches "
-                                     "configured key file", i);
+                        ppl_logevent("Pageant密钥 #%"SIZEu" 符合"
+                                     "配置的密钥文件", i);
                         s->agent_key_index = i;
                         s->agent_key_limit = i+1;
                     } else {
-                        ppl_logevent("Configured key file not in Pageant");
+                        ppl_logevent("配置的密钥文件不在Pageant");
                         s->agent_key_index = 0;
                         s->agent_key_limit = 0;
                     }
@@ -563,13 +563,13 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                     s->agent_key_limit = nkeys;
                 }
             } else {
-                ppl_logevent("Failed to get reply from Pageant");
+                ppl_logevent("未能得到Pageant的回复");
             }
           parsed_agent_query:;
 
             for (; s->agent_key_index < s->agent_key_limit;
                  s->agent_key_index++) {
-                ppl_logevent("Trying Pageant key #%"SIZEu, s->agent_key_index);
+                ppl_logevent("尝试Pageant中的密钥 #%"SIZEu, s->agent_key_index);
                 pkt = ssh_bpp_new_pktout(s->ppl.bpp, SSH1_CMSG_AUTH_RSA);
                 put_mp_ssh1(pkt,
                             s->agent_keys[s->agent_key_index].key.modulus);
@@ -577,17 +577,17 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                 crMaybeWaitUntilV((pktin = ssh1_login_pop(s))
                                   != NULL);
                 if (pktin->type != SSH1_SMSG_AUTH_RSA_CHALLENGE) {
-                    ppl_logevent("Key refused");
+                    ppl_logevent("钥匙被拒绝");
                     continue;
                 }
-                ppl_logevent("Received RSA challenge");
+                ppl_logevent("收到 RSA 质询");
 
                 {
                     mp_int *challenge = get_mp_ssh1(pktin);
                     if (get_err(pktin)) {
                         mp_free(challenge);
-                        ssh_proto_error(s->ppl.ssh, "Server's RSA challenge "
-                                        "was badly formatted");
+                        ssh_proto_error(s->ppl.ssh, "服务器的 RSA 质询"
+                                        "格式错误");
                         return;
                     }
 
@@ -614,7 +614,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                     if (ret) {
                         if (s->agent_response.len >= 5+16 &&
                             ret[4] == SSH1_AGENT_RSA_RESPONSE) {
-                            ppl_logevent("Sending Pageant's response");
+                            ppl_logevent("发送Pageant的回应");
                             pkt = ssh_bpp_new_pktout(
                                 s->ppl.bpp, SSH1_CMSG_AUTH_RSA_RESPONSE);
                             put_data(pkt, ret + 5, 16);
@@ -624,8 +624,8 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                                 (pktin = ssh1_login_pop(s))
                                 != NULL);
                             if (pktin->type == SSH1_SMSG_SUCCESS) {
-                                ppl_logevent("Pageant's response "
-                                             "accepted");
+                                ppl_logevent("Pageant回应被"
+                                             "接受");
                                 if (seat_verbose(s->ppl.seat)) {
                                     ptrlen comment = ptrlen_from_strbuf(
                                         s->agent_keys[s->agent_key_index].
@@ -637,15 +637,15 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                                 }
                                 s->authed = true;
                             } else
-                                ppl_logevent("Pageant's response not "
-                                             "accepted");
+                                ppl_logevent("Pageant回应不被"
+                                             "接受");
                         } else {
-                            ppl_logevent("Pageant failed to answer "
-                                         "challenge");
+                            ppl_logevent("Pageant未能回答"
+                                         "质询");
                             sfree((char *)ret);
                         }
                     } else {
-                        ppl_logevent("No reply received from Pageant");
+                        ppl_logevent("没有收到Pageant的回复");
                     }
                 }
                 if (s->authed)
@@ -663,7 +663,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
             bool got_passphrase; /* need not be kept over crReturn */
             if (seat_verbose(s->ppl.seat))
                 ppl_printf("Trying public key authentication.\r\n");
-            ppl_logevent("Trying public key \"%s\"",
+            ppl_logevent("尝试公钥 \"%s\"",
                          filename_to_str(s->keyfile));
             s->tried_publickey = true;
             got_passphrase = false;
@@ -684,7 +684,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                     s->cur_prompt->from_server = false;
                     s->cur_prompt->name = dupstr("SSH key passphrase");
                     add_prompt(s->cur_prompt,
-                               dupprintf("Passphrase for key \"%s\": ",
+                               dupprintf("密钥的密码 \"%s\": ",
                                          s->publickey_comment), false);
                     s->spr = seat_get_userpass_input(
                         ppl_get_iseat(&s->ppl), s->cur_prompt);
@@ -695,7 +695,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                     }
                     if (spr_is_abort(s->spr)) {
                         /* Failed to get a passphrase. Terminate. */
-                        ssh_spr_close(s->ppl.ssh, s->spr, "passphrase prompt");
+                        ssh_spr_close(s->ppl.ssh, s->spr, "密码提示");
                         return;
                     }
                     passphrase = prompt_get_result(s->cur_prompt->prompts[0]);
@@ -743,9 +743,9 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                     continue;          /* go and try something else */
                 }
                 if (pktin->type != SSH1_SMSG_AUTH_RSA_CHALLENGE) {
-                    ssh_proto_error(s->ppl.ssh, "Received unexpected packet"
-                                    " in response to offer of public key, "
-                                    "type %d (%s)", pktin->type,
+                    ssh_proto_error(s->ppl.ssh, "响应公钥时，"
+                                    "收到意外的数据包，"
+                                    "类型：%d (%s)", pktin->type,
                                     ssh1_pkt_type(pktin->type));
                     return;
                 }
@@ -758,8 +758,8 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                     challenge = get_mp_ssh1(pktin);
                     if (get_err(pktin)) {
                         mp_free(challenge);
-                        ssh_proto_error(s->ppl.ssh, "Server's RSA challenge "
-                                        "was badly formatted");
+                        ssh_proto_error(s->ppl.ssh, "服务器的 RSA 质询"
+                                        "格式错误");
                         return;
                     }
                     response = rsa_ssh1_decrypt(challenge, &s->key);
@@ -794,9 +794,9 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                                    " our public key.\r\n");
                     continue;          /* go and try something else */
                 } else if (pktin->type != SSH1_SMSG_SUCCESS) {
-                    ssh_proto_error(s->ppl.ssh, "Received unexpected packet"
-                                    " in response to RSA authentication, "
-                                    "type %d (%s)", pktin->type,
+                    ssh_proto_error(s->ppl.ssh, "响应 RSA 身份验证时，"
+                                    "收到意外的数据包，"
+                                    "类型：%d (%s)", pktin->type,
                                     ssh1_pkt_type(pktin->type));
                     return;
                 }
@@ -816,12 +816,12 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
             !s->tis_auth_refused) {
             ssh1_login_setup_tis_scc(s);
             s->pwpkt_type = SSH1_CMSG_AUTH_TIS_RESPONSE;
-            ppl_logevent("Requested TIS authentication");
+            ppl_logevent("请求的 TIS 身份验证");
             pkt = ssh_bpp_new_pktout(s->ppl.bpp, SSH1_CMSG_AUTH_TIS);
             pq_push(s->ppl.out_pq, pkt);
             crMaybeWaitUntilV((pktin = ssh1_login_pop(s)) != NULL);
             if (pktin->type == SSH1_SMSG_FAILURE) {
-                ppl_logevent("TIS authentication declined");
+                ppl_logevent("TIS 身份验证被拒绝");
                 if (seat_interactive(s->ppl.seat))
                     ppl_printf("TIS authentication refused.\r\n");
                 s->tis_auth_refused = true;
@@ -829,11 +829,11 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
             } else if (pktin->type == SSH1_SMSG_AUTH_TIS_CHALLENGE) {
                 ptrlen challenge = get_string(pktin);
                 if (get_err(pktin)) {
-                    ssh_proto_error(s->ppl.ssh, "TIS challenge packet was "
-                                    "badly formed");
+                    ssh_proto_error(s->ppl.ssh, "TIS 质询数据包"
+                                    "格式错误");
                     return;
                 }
-                ppl_logevent("Received TIS challenge");
+                ppl_logevent("收到 TIS 质询");
                 s->cur_prompt->to_server = true;
                 s->cur_prompt->from_server = true;
                 s->cur_prompt->name = dupstr("SSH TIS authentication");
@@ -860,9 +860,9 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                 add_prompt(s->cur_prompt, dupstr(
                                "TIS authentication response: "), false);
             } else {
-                ssh_proto_error(s->ppl.ssh, "Received unexpected packet"
-                                " in response to TIS authentication, "
-                                "type %d (%s)", pktin->type,
+                ssh_proto_error(s->ppl.ssh, "响应 TIS 身份验证时，"
+                                "收到意外的数据包，"
+                                "类型：%d (%s)", pktin->type,
                                 ssh1_pkt_type(pktin->type));
                 return;
             }
@@ -871,23 +871,23 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                    !s->ccard_auth_refused) {
             ssh1_login_setup_tis_scc(s);
             s->pwpkt_type = SSH1_CMSG_AUTH_CCARD_RESPONSE;
-            ppl_logevent("Requested CryptoCard authentication");
+            ppl_logevent("请求 CryptoCard 身份验证");
             pkt = ssh_bpp_new_pktout(s->ppl.bpp, SSH1_CMSG_AUTH_CCARD);
             pq_push(s->ppl.out_pq, pkt);
             crMaybeWaitUntilV((pktin = ssh1_login_pop(s)) != NULL);
             if (pktin->type == SSH1_SMSG_FAILURE) {
-                ppl_logevent("CryptoCard authentication declined");
+                ppl_logevent("CryptoCard 身份验证被拒绝");
                 ppl_printf("CryptoCard authentication refused.\r\n");
                 s->ccard_auth_refused = true;
                 continue;
             } else if (pktin->type == SSH1_SMSG_AUTH_CCARD_CHALLENGE) {
                 ptrlen challenge = get_string(pktin);
                 if (get_err(pktin)) {
-                    ssh_proto_error(s->ppl.ssh, "CryptoCard challenge packet "
-                                    "was badly formed");
+                    ssh_proto_error(s->ppl.ssh, "CryptoCard 质询数据包"
+                                    "格式错误");
                     return;
                 }
-                ppl_logevent("Received CryptoCard challenge");
+                ppl_logevent("收到 CryptoCard 质询");
                 s->cur_prompt->to_server = true;
                 s->cur_prompt->from_server = true;
                 s->cur_prompt->name = dupstr("SSH CryptoCard authentication");
@@ -914,23 +914,23 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                 add_prompt(s->cur_prompt, dupstr(
                                "CryptoCard authentication response: "), false);
             } else {
-                ssh_proto_error(s->ppl.ssh, "Received unexpected packet"
-                                " in response to TIS authentication, "
-                                "type %d (%s)", pktin->type,
+                ssh_proto_error(s->ppl.ssh, "响应 TIS 验证时，"
+                                "收到错误的数据包，"
+                                "格式：%d (%s)", pktin->type,
                                 ssh1_pkt_type(pktin->type));
                 return;
             }
         }
         if (s->pwpkt_type == SSH1_CMSG_AUTH_PASSWORD) {
             if ((s->supported_auths_mask & (1 << SSH1_AUTH_PASSWORD)) == 0) {
-                ssh_sw_abort(s->ppl.ssh, "No supported authentication methods "
-                             "available");
+                ssh_sw_abort(s->ppl.ssh, "没有可用的受支持的身份认证"
+                             "方法");
                 return;
             }
             s->cur_prompt->to_server = true;
             s->cur_prompt->from_server = false;
             s->cur_prompt->name = dupstr("SSH password");
-            add_prompt(s->cur_prompt, dupprintf("%s@%s's password: ",
+            add_prompt(s->cur_prompt, dupprintf("%s@%s's 密码： ",
                                                 s->username, s->savedhost),
                        false);
         }
@@ -953,7 +953,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
              * because one was supplied on the command line
              * which has already failed to work). Terminate.
              */
-            ssh_spr_close(s->ppl.ssh, s->spr, "password prompt");
+            ssh_spr_close(s->ppl.ssh, s->spr, "密码提示");
             return;
         }
 
@@ -1030,7 +1030,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                         pq_push(s->ppl.out_pq, pkt);
                     }
                 }
-                ppl_logevent("Sending password with camouflage packets");
+                ppl_logevent("使用伪装包发送密码");
             }
             else if (!(s->ppl.remote_bugs & BUG_NEEDS_SSH1_PLAIN_PASSWORD)) {
                 /*
@@ -1040,7 +1040,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                  */
                 strbuf *padded_pw = strbuf_new_nm();
 
-                ppl_logevent("Sending length-padded password");
+                ppl_logevent("发送加长密码");
                 pkt = ssh_bpp_new_pktout(s->ppl.bpp, s->pwpkt_type);
                 put_asciz(padded_pw, prompt_get_result_ref(
                               s->cur_prompt->prompts[0]));
@@ -1053,7 +1053,7 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
                  * The server is believed unable to cope with
                  * any of our password camouflage methods.
                  */
-                ppl_logevent("Sending unpadded password");
+                ppl_logevent("发送未填充的密码");
                 pkt = ssh_bpp_new_pktout(s->ppl.bpp, s->pwpkt_type);
                 put_stringz(pkt, prompt_get_result_ref(
                                 s->cur_prompt->prompts[0]));
@@ -1065,17 +1065,17 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
             pq_push(s->ppl.out_pq, pkt);
         }
         s->is_trivial_auth = false;
-        ppl_logevent("Sent password");
+        ppl_logevent("发送密码");
         free_prompts(s->cur_prompt);
         s->cur_prompt = NULL;
         crMaybeWaitUntilV((pktin = ssh1_login_pop(s)) != NULL);
         if (pktin->type == SSH1_SMSG_FAILURE) {
             if (seat_verbose(s->ppl.seat))
                 ppl_printf("Access denied\r\n");
-            ppl_logevent("Authentication refused");
+            ppl_logevent("身份验证被拒绝");
         } else if (pktin->type != SSH1_SMSG_SUCCESS) {
-            ssh_proto_error(s->ppl.ssh, "Received unexpected packet"
-                            " in response to password authentication, type %d "
+            ssh_proto_error(s->ppl.ssh, "响应密码验证时，"
+                            "收到意外的数据包，类型：%d "
                             "(%s)", pktin->type, ssh1_pkt_type(pktin->type));
             return;
         }
@@ -1083,15 +1083,15 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
 
     if (conf_get_bool(s->conf, CONF_ssh_no_trivial_userauth) &&
         s->is_trivial_auth) {
-        ssh_proto_error(s->ppl.ssh, "Authentication was trivial! "
-                        "Abandoning session as specified in configuration.");
+        ssh_proto_error(s->ppl.ssh, "身份验证过于简单！！"
+                        "放弃配置中指定的会话。");
         return;
     }
 
-    ppl_logevent("Authentication successful");
+    ppl_logevent("认证成功");
 
     if (conf_get_bool(s->conf, CONF_compression)) {
-        ppl_logevent("Requesting compression");
+        ppl_logevent("请求压缩");
         pkt = ssh_bpp_new_pktout(s->ppl.bpp, SSH1_CMSG_REQUEST_COMPRESSION);
         put_uint32(pkt, 6);         /* gzip compression level */
         pq_push(s->ppl.out_pq, pkt);
@@ -1106,11 +1106,11 @@ static void ssh1_login_process_queue(PacketProtocolLayer *ppl)
              * cross in transit.)
              */
         } else if (pktin->type == SSH1_SMSG_FAILURE) {
-            ppl_logevent("Server refused to enable compression");
+            ppl_logevent("服务器拒绝启用压缩");
             ppl_printf("Server refused to compress\r\n");
         } else {
-            ssh_proto_error(s->ppl.ssh, "Received unexpected packet"
-                            " in response to compression request, type %d "
+            ssh_proto_error(s->ppl.ssh, "响应压缩请求时，"
+                            "收到意外的数据包，格式：%d "
                             "(%s)", pktin->type, ssh1_pkt_type(pktin->type));
             return;
         }

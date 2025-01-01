@@ -39,8 +39,8 @@
 const int ngsslibs = 3;
 const char *const gsslibnames[3] = {
     "MIT Kerberos GSSAPI"MIT_KERB_SUFFIX".DLL",
-    "Microsoft SSPI SECUR32.DLL",
-    "User-specified GSSAPI DLL",
+    "微软SSPI     SECUR32.DLL",
+    "用户指定     GSSAPI DLL",
 };
 const struct keyvalwhere gsslibkeywords[] = {
     { "gssapi32", 0, -1, -1 },
@@ -543,38 +543,38 @@ static Ssh_gss_stat ssh_sspi_display_status(struct ssh_gss_library *lib,
 
     /* decode the error code */
     switch (winctx->maj_stat) {
-      case SEC_E_OK: msg="SSPI status OK"; break;
-      case SEC_E_INVALID_HANDLE: msg="The handle passed to the function"
-            " is invalid.";
+      case SEC_E_OK: msg="SSPI状态正常"; break;
+      case SEC_E_INVALID_HANDLE: msg="传递给函数的句柄"
+            "无效。";
         break;
-      case SEC_E_TARGET_UNKNOWN: msg="The target was not recognized."; break;
-      case SEC_E_LOGON_DENIED: msg="The logon failed."; break;
-      case SEC_E_INTERNAL_ERROR: msg="The Local Security Authority cannot"
-            " be contacted.";
+      case SEC_E_TARGET_UNKNOWN: msg="目标未被识别。"; break;
+      case SEC_E_LOGON_DENIED: msg="登陆失败。"; break;
+      case SEC_E_INTERNAL_ERROR: msg="无法通信本地安全"
+            "模块。";
         break;
-      case SEC_E_NO_CREDENTIALS: msg="No credentials are available in the"
-            " security package.";
+      case SEC_E_NO_CREDENTIALS: msg="安全组件中没有可用"
+            "凭据。";
         break;
       case SEC_E_NO_AUTHENTICATING_AUTHORITY:
-        msg="No authority could be contacted for authentication."
-            "The domain name of the authenticating party could be wrong,"
-            " the domain could be unreachable, or there might have been"
-            " a trust relationship failure.";
+        msg="无法联系任何权威机构进行身份验证。"
+            "认证方的域名可能是错误的，该域名"
+            "可能无法访问，或者可能存在失败的"
+            "信任关系。";
         break;
       case SEC_E_INSUFFICIENT_MEMORY:
-        msg="One or more of the SecBufferDesc structures passed as"
-            " an OUT parameter has a buffer that is too small.";
+        msg="作为OUT传递参数的一个或者多个SecBufferDesc"
+            "结构的缓冲区太小。";
         break;
       case SEC_E_INVALID_TOKEN:
-        msg="The error is due to a malformed input token, such as a"
-            " token corrupted in transit, a token"
-            " of incorrect size, or a token passed into the wrong"
-            " security package. Passing a token to"
-            " the wrong package can happen if client and server did not"
-            " negotiate the proper security package.";
+        msg="错误来自输入标记格式错误，例如"
+            "令牌在传输过程中损坏，令牌大小"
+            "是不确定的，或者安全组件传递的"
+            "令牌错误。如果客户端与服务器没"
+            "有正确协商安全组件，则可能发生"
+            "令牌传递错误的情况。";
         break;
       default:
-        msg = "Internal SSPI error";
+        msg = "内部SSPI错误";
         break;
     }
 

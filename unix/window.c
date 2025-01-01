@@ -251,10 +251,10 @@ static void post_fatal_message_box(void *vctx, int result)
 static void common_connfatal_message_box(
     GtkFrontend *inst, const char *msg, post_dialog_fn_t postfn)
 {
-    char *title = dupcat(appname, " Fatal Error");
+    char *title = dupcat(appname, " 致命错误");
     GtkWidget *dialog = create_message_box(
         inst->window, title, msg,
-        string_width("REASONABLY LONG LINE OF TEXT FOR BASIC SANITY"),
+        string_width("请理智的使用合理的长文本行"),
         false, &buttons_ok, postfn, inst);
     register_dialog(&inst->seat, DIALOG_SLOT_CONNECTION_FATAL, dialog);
     sfree(title);
@@ -665,17 +665,17 @@ gint delete_window(GtkWidget *widget, GdkEvent *event, GtkFrontend *inst)
          * case we'll just re-emphasise that one.
          */
         if (!find_and_raise_dialog(inst, DIALOG_SLOT_WARN_ON_CLOSE)) {
-            char *title = dupcat(appname, " Exit Confirmation");
+            char *title = dupcat(appname, " 退出确认");
             char *msg, *additional = NULL;
             if (inst->backend && inst->backend->vt->close_warn_text) {
                 additional = inst->backend->vt->close_warn_text(inst->backend);
             }
-            msg = dupprintf("Are you sure you want to close this session?%s%s",
+            msg = dupprintf("是否确实要关闭此会话？%s%s",
                             additional ? "\n" : "",
                             additional ? additional : "");
             GtkWidget *dialog = create_message_box(
                 inst->window, title, msg,
-                string_width("Most of the width of the above text"),
+                string_width("以上文字大部分为宽体"),
                 false, &buttons_yn, warn_on_close_callback, inst);
             register_dialog(&inst->seat, DIALOG_SLOT_WARN_ON_CLOSE, dialog);
             sfree(title);
@@ -1042,7 +1042,7 @@ char *dup_keyval_name(guint keyval)
     if (name)
         return dupstr(name);
     else
-        return dupprintf("UNKNOWN[%u]", (unsigned)keyval);
+        return dupprintf("未知 [%u]", (unsigned)keyval);
 }
 #endif
 
@@ -1108,7 +1108,7 @@ gint key_event(GtkWidget *widget, GdkEventKey *event, gpointer data)
 
         type_string = (event->type == GDK_KEY_PRESS ? dupstr("PRESS") :
                        event->type == GDK_KEY_RELEASE ? dupstr("RELEASE") :
-                       dupprintf("UNKNOWN[%d]", (int)event->type));
+                       dupprintf("未知 [%d]", (int)event->type));
 
         {
             static const struct {
@@ -2561,7 +2561,7 @@ static void gtkwin_timer(void *vctx, unsigned long now)
     if (inst->win_resize_pending && now == inst->win_resize_timeout) {
         if (inst->term_resize_notification_required)
             term_resize_request_completed(inst->term);
-        inst->win_resize_pending = false;        
+        inst->win_resize_pending = false;
     }
 }
 
@@ -4339,7 +4339,7 @@ GdkCursor *make_mouse_ptr(GtkFrontend *inst, int cursor_val)
 void modalfatalbox(const char *p, ...)
 {
     va_list ap;
-    fprintf(stderr, "FATAL ERROR: ");
+    fprintf(stderr, "致命错误：");
     va_start(ap, p);
     vfprintf(stderr, p, ap);
     va_end(ap);
@@ -4376,7 +4376,7 @@ char *setup_fonts_ucs(GtkFrontend *inst)
     fonts[0] = multifont_create(inst->area, fs->name, false, false,
                                 shadowboldoffset, shadowbold);
     if (!fonts[0]) {
-        return dupprintf("unable to load font \"%s\"", fs->name);
+        return dupprintf("无法加载字体 \"%s\"", fs->name);
     }
 
     fs = conf_get_fontspec(inst->conf, CONF_boldfont);
@@ -4388,7 +4388,7 @@ char *setup_fonts_ucs(GtkFrontend *inst)
         if (!fonts[1]) {
             if (fonts[0])
                 unifont_destroy(fonts[0]);
-            return dupprintf("unable to load bold font \"%s\"", fs->name);
+            return dupprintf("无法加载粗体字体 \"%s\"", fs->name);
         }
     }
 
@@ -4400,7 +4400,7 @@ char *setup_fonts_ucs(GtkFrontend *inst)
             for (i = 0; i < 2; i++)
                 if (fonts[i])
                     unifont_destroy(fonts[i]);
-            return dupprintf("unable to load wide font \"%s\"", fs->name);
+            return dupprintf("无法加载宽字体 \"%s\"", fs->name);
         }
     } else {
         fonts[2] = NULL;
@@ -4416,7 +4416,7 @@ char *setup_fonts_ucs(GtkFrontend *inst)
             for (i = 0; i < 3; i++)
                 if (fonts[i])
                     unifont_destroy(fonts[i]);
-            return dupprintf("unable to load wide bold font \"%s\"", fs->name);
+            return dupprintf("无法加载加粗字体 \"%s\"", fs->name);
         }
     }
 
@@ -4766,7 +4766,7 @@ void change_settings_menuitem(GtkMenuItem *item, gpointer data)
     if (find_and_raise_dialog(inst, DIALOG_SLOT_RECONFIGURE))
         return;
 
-    title = dupcat(appname, " Reconfiguration");
+    title = dupcat(appname, " 重新配置");
 
     ctx = snew(struct after_change_settings_dialog_ctx);
     ctx->inst = inst;
@@ -4860,11 +4860,11 @@ static void after_change_settings_dialog(void *vctx, int retval)
             char *errmsg = setup_fonts_ucs(inst);
             if (errmsg) {
                 char *msgboxtext =
-                    dupprintf("Could not change fonts in terminal window: %s\n",
+                    dupprintf("无法在终端窗口中更改字体： %s\n",
                               errmsg);
                 create_message_box(
-                    inst->window, "Font setup error", msgboxtext,
-                    string_width("Could not change fonts in terminal window:"),
+                    inst->window, "字体设置错误", msgboxtext,
+                    string_width("无法在终端窗口中更改字体："),
                     false, &buttons_ok, trivial_post_dialog_fn, NULL);
                 sfree(msgboxtext);
                 sfree(errmsg);
@@ -5579,25 +5579,25 @@ void new_session_window(Conf *conf, const char *geometry_string)
         } while (0)
 
         if (new_session)
-            MKMENUITEM("New Session...", new_session_menuitem);
-        MKMENUITEM("Restart Session", restart_session_menuitem);
+            MKMENUITEM("新建会话...", new_session_menuitem);
+        MKMENUITEM("重启会话", restart_session_menuitem);
         inst->restartitem = menuitem;
         gtk_widget_set_sensitive(inst->restartitem, false);
-        MKMENUITEM("Duplicate Session", dup_session_menuitem);
+        MKMENUITEM("重复会话", dup_session_menuitem);
         if (saved_sessions) {
             inst->sessionsmenu = gtk_menu_new();
             /* sessionsmenu will be updated when it's invoked */
             /* XXX is this the right way to do dynamic menus in Gtk? */
-            MKMENUITEM("Saved Sessions", update_savedsess_menu);
+            MKMENUITEM("保存会话", update_savedsess_menu);
             gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem),
                                       inst->sessionsmenu);
         }
         MKSEP();
-        MKMENUITEM("Change Settings...", change_settings_menuitem);
+        MKMENUITEM("修改设置...", change_settings_menuitem);
         MKSEP();
         if (use_event_log)
-            MKMENUITEM("Event Log", event_log_menuitem);
-        MKSUBMENU("Special Commands");
+            MKMENUITEM("事件日志", event_log_menuitem);
+        MKSUBMENU("特殊命令");
         inst->specialsmenu = gtk_menu_new();
         gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), inst->specialsmenu);
         inst->specialsitem1 = menuitem;
@@ -5605,16 +5605,16 @@ void new_session_window(Conf *conf, const char *geometry_string)
         inst->specialsitem2 = menuitem;
         gtk_widget_hide(inst->specialsitem1);
         gtk_widget_hide(inst->specialsitem2);
-        MKMENUITEM("Clear Scrollback", clear_scrollback_menuitem);
-        MKMENUITEM("Reset Terminal", reset_terminal_menuitem);
+        MKMENUITEM("清除回滚", clear_scrollback_menuitem);
+        MKMENUITEM("重启终端", reset_terminal_menuitem);
         MKSEP();
-        MKMENUITEM("Copy to " CLIPNAME_EXPLICIT_OBJECT,
+        MKMENUITEM("复制到 " CLIPNAME_EXPLICIT_OBJECT,
                    copy_clipboard_menuitem);
-        MKMENUITEM("Paste from " CLIPNAME_EXPLICIT_OBJECT,
+        MKMENUITEM("粘贴自 " CLIPNAME_EXPLICIT_OBJECT,
                    paste_clipboard_menuitem);
-        MKMENUITEM("Copy All", copy_all_menuitem);
+        MKMENUITEM("复制所有", copy_all_menuitem);
         MKSEP();
-        s = dupcat("About ", appname);
+        s = dupcat("关于 ", appname);
         MKMENUITEM(s, about_menuitem);
         sfree(s);
 #undef MKMENUITEM

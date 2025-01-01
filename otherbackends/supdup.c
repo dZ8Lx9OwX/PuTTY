@@ -734,7 +734,7 @@ static char *supdup_init(const BackendVtable *x, Seat *seat,
     {
         char *buf;
         addressfamily = conf_get_int(supdup->conf, CONF_addressfamily);
-        buf = dupprintf("Looking up host \"%s\"%s", host,
+        buf = dupprintf("查找主机 \"%s\"%s", host,
                         (addressfamily == ADDRTYPE_IPV4 ? " (IPv4)" :
                          (addressfamily == ADDRTYPE_IPV6 ? " (IPv6)" :
                           "")));

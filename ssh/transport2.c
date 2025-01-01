@@ -120,14 +120,14 @@ static SeatPromptResult ssh2_transport_confirm_weak_crypto_primitive(
     const void *alg, WeakCryptoReason wcr);
 
 static const char *const kexlist_descr[NKEXLIST] = {
-    "key exchange algorithm",
-    "host key algorithm",
-    "client-to-server cipher",
-    "server-to-client cipher",
+    "密钥交换算法",
+    "主机密钥算法",
+    "client-to-server 加密",
+    "server-to-client 加密",
     "client-to-server MAC",
     "server-to-client MAC",
-    "client-to-server compression method",
-    "server-to-client compression method"
+    "client-to-server 压缩方法",
+    "server-to-client 压缩方法"
 };
 
 static int weak_algorithm_compare(void *av, void *bv);
@@ -358,21 +358,21 @@ bool ssh2_common_filter_queue(PacketProtocolLayer *ppl)
 {
     static const char *const ssh2_disconnect_reasons[] = {
         NULL,
-        "host not allowed to connect",
-        "protocol error",
-        "key exchange failed",
-        "host authentication failed",
-        "MAC error",
-        "compression error",
-        "service not available",
-        "protocol version not supported",
-        "host key not verifiable",
-        "connection lost",
-        "by application",
-        "too many connections",
-        "auth cancelled by user",
-        "no more auth methods available",
-        "illegal user name",
+        "主机不允许连接",
+        "协议错误",
+        "密钥交换失败",
+        "主机认证失败",
+        "MAC错误",
+        "压缩错误",
+        "服务不可用",
+        "不支持协议版本",
+        "主机密钥不可验证",
+        "连接丢失",
+        "经过应用",
+        "太多连接",
+        "用户取消了身份验证",
+        "没有更多可用的身份验证方法",
+        "非法用户名",
     };
 
     PktIn *pktin;
@@ -386,10 +386,10 @@ bool ssh2_common_filter_queue(PacketProtocolLayer *ppl)
             msg = get_string(pktin);
 
             ssh_remote_error(
-                ppl->ssh, "Remote side sent disconnect message\n"
-                "type %d (%s):\n\"%.*s\"", reason,
+                ppl->ssh, "远端发送断开消息\n"
+                "类型 %d (%s):\n\"%.*s\"", reason,
                 ((reason > 0 && reason < lenof(ssh2_disconnect_reasons)) ?
-                 ssh2_disconnect_reasons[reason] : "unknown"),
+                 ssh2_disconnect_reasons[reason] : "未知"),
                 PTRLEN_PRINTF(msg));
             /* don't try to pop the queue, because we've been freed! */
             return true;               /* indicate that we've been freed */
@@ -398,7 +398,7 @@ bool ssh2_common_filter_queue(PacketProtocolLayer *ppl)
             /* XXX maybe we should actually take notice of the return value */
             get_bool(pktin);
             msg = get_string(pktin);
-            ppl_logevent("Remote debug message: %.*s", PTRLEN_PRINTF(msg));
+            ppl_logevent("远程调试消息：%.*s", PTRLEN_PRINTF(msg));
             pq_pop(ppl->in_pq);
             break;
 
@@ -515,8 +515,8 @@ static bool ssh2_transport_filter_queue(struct ssh2_transport_state *s)
              * packets coming from the server before we've seen
              * the first NEWKEYS. */
             if (!s->higher_layer_ok) {
-                ssh_proto_error(s->ppl.ssh, "Received premature higher-"
-                                "layer packet, type %d (%s)", pktin->type,
+                ssh_proto_error(s->ppl.ssh, "收到超时的"
+                                "高层数据包，类型 %d (%s)", pktin->type,
                                 ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                               s->ppl.bpp->pls->actx,
                                               pktin->type));
@@ -1225,7 +1225,7 @@ static ScanKexinitsResult ssh2_scan_kexinits(
             break;
 
           default:
-            unreachable("Bad list index in scan_kexinits");
+            unreachable("扫描Kex初始化中的列表索引错误");
         }
     }
 
@@ -1278,19 +1278,19 @@ static void ssh2_report_scan_kexinits_error(Ssh *ssh, ScanKexinitsResult skr)
         /* Report a better error than the spurious "Couldn't
          * agree" that we'd generate if we pressed on regardless
          * and treated the empty get_string() result as genuine */
-        ssh_proto_error(ssh, "KEXINIT packet was incomplete");
+        ssh_proto_error(ssh, "KEXINIT数据包不完整");
         break;
       case SKR_UNKNOWN_ID:
-        ssh_sw_abort(ssh, "Selected %s \"%.*s\" does not correspond to "
-                     "any supported algorithm",
+        ssh_sw_abort(ssh, "选择 %s \"%.*s\"没有"
+                     "任何支持的算法与之对应",
                      skr.kind, PTRLEN_PRINTF(skr.desc));
         break;
       case SKR_NO_AGREEMENT:
-        ssh_sw_abort(ssh, "Couldn't agree a %s (available: %.*s)",
+        ssh_sw_abort(ssh, "不同意 %s (可用：%.*s)",
                      skr.kind, PTRLEN_PRINTF(skr.desc));
         break;
       default:
-        unreachable("bad ScanKexinitsResult");
+        unreachable("扫描Kex初始化结果出错");
     }
 }
 
@@ -1543,8 +1543,8 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
      */
     crMaybeWaitUntilV((pktin = ssh2_transport_pop(s)) != NULL);
     if (pktin->type != SSH2_MSG_KEXINIT) {
-        ssh_proto_error(s->ppl.ssh, "Received unexpected packet when "
-                        "expecting KEXINIT, type %d (%s)", pktin->type,
+        ssh_proto_error(s->ppl.ssh, "等待 KEX 初始化时，收到意外"
+                        "数据包，类型 %d (%s)", pktin->type,
                         ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                       s->ppl.bpp->pls->actx, pktin->type));
         return;
@@ -1592,10 +1592,10 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
          * retrospectively fault any pre-KEXINIT extraneous packets.
          */
         if (!s->got_session_id && s->strict_kex) {
-            ppl_logevent("Enabling strict key exchange semantics");
+            ppl_logevent("启用严格的密钥交换规则");
             if (s->seen_non_kexinit) {
-                ssh_proto_error(s->ppl.ssh, "Received a packet before KEXINIT "
-                                "in strict-kex mode");
+                ssh_proto_error(s->ppl.ssh, "在严格的密钥交换(strict-kex模式)中，"
+                                "接收到KEXINIT之前的数据包");
                 return;
             }
         }
@@ -1627,11 +1627,11 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
 
     if (s->warn_kex) {
         s->spr = ssh2_transport_confirm_weak_crypto_primitive(
-            s, "key-exchange algorithm", s->kex_alg->name, s->kex_alg,
+            s, "密钥交换算法", s->kex_alg->name, s->kex_alg,
             WCR_BELOW_THRESHOLD);
         crMaybeWaitUntilV(s->spr.kind != SPRK_INCOMPLETE);
         if (spr_is_abort(s->spr)) {
-            ssh_spr_close(s->ppl.ssh, s->spr, "kex warning");
+            ssh_spr_close(s->ppl.ssh, s->spr, "密钥警告");
             return;
         }
     }
@@ -1679,34 +1679,34 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
             /* If none exist, use the more general 'weak crypto'
              * warning prompt */
             s->spr = ssh2_transport_confirm_weak_crypto_primitive(
-                s, "host key type", s->hostkey_alg->ssh_id,
+                s, "主机密钥类型", s->hostkey_alg->ssh_id,
                 s->hostkey_alg, WCR_BELOW_THRESHOLD);
         }
         crMaybeWaitUntilV(s->spr.kind != SPRK_INCOMPLETE);
         if (spr_is_abort(s->spr)) {
-            ssh_spr_close(s->ppl.ssh, s->spr, "host key warning");
+            ssh_spr_close(s->ppl.ssh, s->spr, "主机密钥警告");
             return;
         }
     }
 
     if (s->warn_cscipher) {
         s->spr = ssh2_transport_confirm_weak_crypto_primitive(
-            s, "client-to-server cipher", s->out.cipher->ssh2_id,
+            s, " client-to-server 加密", s->out.cipher->ssh2_id,
             s->out.cipher, WCR_BELOW_THRESHOLD);
         crMaybeWaitUntilV(s->spr.kind != SPRK_INCOMPLETE);
         if (spr_is_abort(s->spr)) {
-            ssh_spr_close(s->ppl.ssh, s->spr, "cipher warning");
+            ssh_spr_close(s->ppl.ssh, s->spr, "加密警告");
             return;
         }
     }
 
     if (s->warn_sccipher) {
         s->spr = ssh2_transport_confirm_weak_crypto_primitive(
-            s, "server-to-client cipher", s->in.cipher->ssh2_id,
+            s, " server-to-client 加密", s->in.cipher->ssh2_id,
             s->in.cipher, WCR_BELOW_THRESHOLD);
         crMaybeWaitUntilV(s->spr.kind != SPRK_INCOMPLETE);
         if (spr_is_abort(s->spr)) {
-            ssh_spr_close(s->ppl.ssh, s->spr, "cipher warning");
+            ssh_spr_close(s->ppl.ssh, s->spr, "加密警告");
             return;
         }
     }
@@ -1717,37 +1717,37 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
         s->terrapin.wcr = WCR_TERRAPIN;
 
         if (s->terrapin.csvuln || s->terrapin.scvuln) {
-            ppl_logevent("SSH connection is vulnerable to 'Terrapin' attack "
-                         "(CVE-2023-48795)");
+            ppl_logevent("当前SSH连接容易受到'Terrapin'攻击"
+                         "(别名CVE-2023-48795)");
             if (try_to_avoid_terrapin(s))
                 s->terrapin.wcr = WCR_TERRAPIN_AVOIDABLE;
         }
 
         if (s->terrapin.csvuln) {
             s->spr = ssh2_transport_confirm_weak_crypto_primitive(
-                s, "client-to-server cipher", s->terrapin.csvuln,
+                s, "client-to-server 加密", s->terrapin.csvuln,
                 terrapin_weakness, s->terrapin.wcr);
             crMaybeWaitUntilV(s->spr.kind != SPRK_INCOMPLETE);
             if (spr_is_abort(s->spr)) {
-                ssh_spr_close(s->ppl.ssh, s->spr, "vulnerability warning");
+                ssh_spr_close(s->ppl.ssh, s->spr, "漏洞警告");
                 return;
             }
         }
 
         if (s->terrapin.scvuln) {
             s->spr = ssh2_transport_confirm_weak_crypto_primitive(
-                s, "server-to-client cipher", s->terrapin.scvuln,
+                s, "server-to-client 加密", s->terrapin.scvuln,
                 terrapin_weakness, s->terrapin.wcr);
             crMaybeWaitUntilV(s->spr.kind != SPRK_INCOMPLETE);
             if (spr_is_abort(s->spr)) {
-                ssh_spr_close(s->ppl.ssh, s->spr, "vulnerability warning");
+                ssh_spr_close(s->ppl.ssh, s->spr, "漏洞警告");
                 return;
             }
         }
 
         if (s->terrapin.csvuln || s->terrapin.scvuln) {
-            ppl_logevent("Continuing despite 'Terrapin' vulnerability, "
-                         "at user request");
+            ppl_logevent("尽管存在'Terrapin'漏洞，"
+                         "但用户仍旧要求继续进行连接");
         }
     }
 
@@ -1891,8 +1891,8 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
      */
     crMaybeWaitUntilV((pktin = ssh2_transport_pop(s)) != NULL);
     if (pktin->type != SSH2_MSG_NEWKEYS) {
-        ssh_proto_error(s->ppl.ssh, "Received unexpected packet when "
-                        "expecting SSH_MSG_NEWKEYS, type %d (%s)",
+        ssh_proto_error(s->ppl.ssh, "等待 SSH_MSG_NEWKEYS 数据包时"
+                        "收到意外的数据，类型 %d (%s)",
                         pktin->type,
                         ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                       s->ppl.bpp->pls->actx,
@@ -1982,8 +1982,8 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
             pq_push(s->ppl.out_pq, pktout);
             crMaybeWaitUntilV((pktin = ssh2_transport_pop(s)) != NULL);
             if (pktin->type != SSH2_MSG_SERVICE_ACCEPT) {
-                ssh_sw_abort(s->ppl.ssh, "Server refused request to start "
-                             "'%s' protocol", s->higher_layer->vt->name);
+                ssh_sw_abort(s->ppl.ssh, "服务器拒接请求启用 "
+                             "'%s' 协议", s->higher_layer->vt->name);
                 return;
             }
         } else {
@@ -1992,8 +1992,8 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
             /* We're the server, so expect SERVICE_REQUEST. */
             crMaybeWaitUntilV((pktin = ssh2_transport_pop(s)) != NULL);
             if (pktin->type != SSH2_MSG_SERVICE_REQUEST) {
-                ssh_proto_error(s->ppl.ssh, "Received unexpected packet when "
-                                "expecting SERVICE_REQUEST, type %d (%s)",
+                ssh_proto_error(s->ppl.ssh, "等待 SERVICE_REQUEST 数据包时 "
+                                "收到意外的数据，类型 %d (%s)",
                                 pktin->type,
                                 ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                               s->ppl.bpp->pls->actx,
@@ -2002,8 +2002,8 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
             }
             service_name = get_string(pktin);
             if (!ptrlen_eq_string(service_name, s->higher_layer->vt->name)) {
-                ssh_proto_error(s->ppl.ssh, "Client requested service "
-                                "'%.*s' when we only support '%s'",
+                ssh_proto_error(s->ppl.ssh, "客户端请求的服务是 "
+                                "'%.*s' 当前支持的是 '%s'",
                                 PTRLEN_PRINTF(service_name),
                                 s->higher_layer->vt->name);
                 return;
@@ -2032,16 +2032,16 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
          * higher layer (via filter_queue). */
         if ((pktin = ssh2_transport_pop(s)) != NULL) {
             if (pktin->type != SSH2_MSG_KEXINIT) {
-                ssh_proto_error(s->ppl.ssh, "Received unexpected transport-"
-                                "layer packet outside a key exchange, "
-                                "type %d (%s)", pktin->type,
+                ssh_proto_error(s->ppl.ssh, "在密钥交换期间"
+                                "意外接收到其它传输层数据包，"
+                                "类型 %d (%s)", pktin->type,
                                 ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                               s->ppl.bpp->pls->actx,
                                               pktin->type));
                 return;
             }
             pq_push_front(s->ppl.in_pq, pktin);
-            ppl_logevent("Remote side initiated key re-exchange");
+            ppl_logevent("远程发起的密钥重新交换");
             s->rekey_class = RK_SERVER;
         }
 
@@ -2058,7 +2058,7 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
              * an attempt to populate the cache now.
              */
             if (s->need_gss_transient_hostkey) {
-                s->rekey_reason = "populating transient host key cache";
+                s->rekey_reason = "临时填充主机密钥缓存";
                 s->rekey_class = RK_NORMAL;
             } else {
                 /* No need to rekey at this time. */
@@ -2070,10 +2070,10 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
             /* If we don't yet have any other reason to rekey, check
              * if we've hit our data limit in either direction. */
             if (s->stats->in.expired) {
-                s->rekey_reason = "too much data received";
+                s->rekey_reason = "接收到的数据过多";
                 s->rekey_class = RK_NORMAL;
             } else if (s->stats->out.expired) {
-                s->rekey_reason = "too much data sent";
+                s->rekey_reason = "发送的数据过多";
                 s->rekey_class = RK_NORMAL;
             }
         }
@@ -2086,7 +2086,7 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
              * rekey, we process it anyway!)
              */
             if ((s->ppl.remote_bugs & BUG_SSH2_REKEY)) {
-                ppl_logevent("Remote bug prevents key re-exchange (%s)",
+                ppl_logevent("远程错误阻止密钥重新交换(%s)",
                              s->rekey_reason);
                 /* Reset the counters, so that at least this message doesn't
                  * hit the event log _too_ often. */
@@ -2095,7 +2095,7 @@ static void ssh2_transport_process_queue(PacketProtocolLayer *ppl)
                 (void) ssh2_transport_timer_update(s, 0);
                 s->rekey_class = RK_NONE;
             } else {
-                ppl_logevent("Initiating key re-exchange (%s)",
+                ppl_logevent("启动密钥重新交换(%s)",
                              s->rekey_reason);
             }
         }
@@ -2129,7 +2129,7 @@ static void ssh2_transport_timer(void *ctx, unsigned long now)
     /* Rekey if enough time has elapsed */
     ticks = mins * 60 * TICKSPERSEC;
     if (now - s->last_rekey > ticks - 30*TICKSPERSEC) {
-        s->rekey_reason = "timeout";
+        s->rekey_reason = "超时";
         s->rekey_class = RK_NORMAL;
         queue_idempotent_callback(&s->ppl.ic_process_queue);
         return;
@@ -2145,7 +2145,7 @@ static void ssh2_transport_timer(void *ctx, unsigned long now)
         if ((s->gss_status & GSS_KEX_CAPABLE) != 0 &&
             (s->gss_status & GSS_CTXT_MAYFAIL) == 0 &&
             (s->gss_status & (GSS_CRED_UPDATED|GSS_CTXT_EXPIRES)) != 0) {
-            s->rekey_reason = "GSS credentials updated";
+            s->rekey_reason = "GSS凭据已更新";
             s->rekey_class = RK_GSS_UPDATE;
             queue_idempotent_callback(&s->ppl.ic_process_queue);
             return;
@@ -2272,11 +2272,11 @@ static void ssh2_transport_gss_update(struct ssh2_transport_state *s,
             s->shgss->lib, s->fullhostname, &s->shgss->srv_name);
         if (gss_stat != SSH_GSS_OK) {
             if (gss_stat == SSH_GSS_BAD_HOST_NAME)
-                ppl_logevent("GSSAPI import name failed - Bad service name;"
-                             " won't use GSS key exchange");
+                ppl_logevent("GSSAPI 导入名称失败—服务名称错误；"
+                             "不会使用GSS密钥交换");
             else
-                ppl_logevent("GSSAPI import name failed;"
-                             " won't use GSS key exchange");
+                ppl_logevent("GSSAPI 导入名称失败；"
+                             "不会使用GSS密钥交换");
             return;
         }
     }
@@ -2318,7 +2318,7 @@ static void ssh2_transport_gss_update(struct ssh2_transport_state *s,
          * it shouldn't pop up all the time regardless.
          */
         if (definitely_rekeying)
-            ppl_logevent("No GSSAPI security context available");
+            ppl_logevent("没有GSSAPI安全可用的使用条件");
 
         return;
     }
@@ -2401,14 +2401,14 @@ static bool ssh2_transport_get_specials(
             need_separator = false;
         }
 
-        add_special(ctx, "Repeat key exchange", SS_REKEY, 0);
+        add_special(ctx, "重复密钥交换", SS_REKEY, 0);
         toret = true;
 
         if (s->n_uncert_hostkeys) {
             int i;
 
             add_special(ctx, NULL, SS_SEP, 0);
-            add_special(ctx, "Cache new host key type", SS_SUBMENU, 0);
+            add_special(ctx, "缓存新的主机密钥类型", SS_SUBMENU, 0);
             for (i = 0; i < s->n_uncert_hostkeys; i++) {
                 const ssh_keyalg *alg =
                     ssh2_hostkey_algs[s->uncert_hostkeys[i]].alg;
@@ -2430,14 +2430,14 @@ static void ssh2_transport_special_cmd(PacketProtocolLayer *ppl,
 
     if (code == SS_REKEY) {
         if (!s->kex_in_progress) {
-            s->rekey_reason = "at user request";
+            s->rekey_reason = "用户发起请求";
             s->rekey_class = RK_NORMAL;
             queue_idempotent_callback(&s->ppl.ic_process_queue);
         }
     } else if (code == SS_XCERT) {
         if (!s->kex_in_progress) {
             s->cross_certifying = s->hostkey_alg = ssh2_hostkey_algs[arg].alg;
-            s->rekey_reason = "cross-certifying new host key";
+            s->rekey_reason = "交叉验证新主机密钥";
             s->rekey_class = RK_NORMAL;
             queue_idempotent_callback(&s->ppl.ic_process_queue);
         }
@@ -2478,7 +2478,7 @@ static void ssh2_transport_reconfigure(PacketProtocolLayer *ppl, Conf *conf)
     rekey_time = sanitise_rekey_time(
         conf_get_int(conf, CONF_ssh_rekey_time), 60);
     if (ssh2_transport_timer_update(s, rekey_time))
-        rekey_reason = "timeout shortened";
+        rekey_reason = "缩短超时";
 
     old_max_data_size = s->max_data_size;
     ssh2_transport_set_max_data_size(s);
@@ -2490,7 +2490,7 @@ static void ssh2_transport_reconfigure(PacketProtocolLayer *ppl, Conf *conf)
             dts_consume(&s->stats->out, diff);
             dts_consume(&s->stats->in, diff);
             if (s->stats->out.expired || s->stats->in.expired)
-                rekey_reason = "data limit lowered";
+                rekey_reason = "数据限制降低";
         } else {
             unsigned long diff = s->max_data_size - old_max_data_size;
             if (s->stats->out.running)
@@ -2502,19 +2502,19 @@ static void ssh2_transport_reconfigure(PacketProtocolLayer *ppl, Conf *conf)
 
     if (conf_get_bool(s->conf, CONF_compression) !=
         conf_get_bool(conf, CONF_compression)) {
-        rekey_reason = "compression setting changed";
+        rekey_reason = "压缩设置已更改";
         rekey_mandatory = true;
     }
 
     for (i = 0; i < CIPHER_MAX; i++)
         if (conf_get_int_int(s->conf, CONF_ssh_cipherlist, i) !=
             conf_get_int_int(conf, CONF_ssh_cipherlist, i)) {
-            rekey_reason = "cipher settings changed";
+            rekey_reason = "加密设置已更改";
             rekey_mandatory = true;
         }
     if (conf_get_bool(s->conf, CONF_ssh2_des_cbc) !=
         conf_get_bool(conf, CONF_ssh2_des_cbc)) {
-        rekey_reason = "cipher settings changed";
+        rekey_reason = "加密设置已更改";
         rekey_mandatory = true;
     }
 
@@ -2612,7 +2612,7 @@ static const char *terrapin_vulnerable(
      * and probabilistically exploitable.
      */
     if (d->etm_mode && (d->cipher->flags & SSH_CIPHER_IS_CBC))
-        return "a CBC-mode cipher in OpenSSH ETM mode";
+        return "OpenSSH ETM模式下的CBC-mode加密";
 
     return NULL;
 }

@@ -238,7 +238,7 @@ static Token lex(ptrlen *text, ptrlen *token, char **err)
          */
         p++;
         type = TOK_ERROR;
-        *err = dupstr("unrecognised boolean operator");
+        *err = dupstr("无法识别的布尔运算符。");
         goto out;
     } else if (is_atom_char(*p)) {
         /*
@@ -259,7 +259,7 @@ static Token lex(ptrlen *text, ptrlen *token, char **err)
          */
         p++;
         type = TOK_ERROR;
-        *err = dupstr("unexpected character in expression");
+        *err = dupstr("表达式中出现非法字符。");
         goto out;
     }
 
@@ -327,7 +327,7 @@ static void exprnode_free(ExprNode *en)
       case OP_PORT_RANGE:
         break;
       default:
-        unreachable("unhandled node type in exprnode_free");
+        unreachable("在exprnode_free有未处理的节点类型。");
     }
 
     sfree(en);
@@ -391,7 +391,7 @@ static ExprNode *parse_atom(ParserState *ps)
             return NULL;
 
         if (ps->tok != TOK_RPAR) {
-            error(ps, dupstr("expected ')' after parenthesised subexpression"),
+            error(ps, dupstr("预期括号 ')' 在子表达式之后。"),
                   subexpr->text);
             exprnode_free(subexpr);
             return NULL;
@@ -443,7 +443,7 @@ static ExprNode *parse_atom(ParserState *ps)
             if (tail.len > 0 && ptrlen_contains_only(tail, DIGITS)) {
                 lo = ptrlen_to_port_number(tail);
                 if (lo >= 65536) {
-                    error(ps, dupstr("port number too large"), tail);
+                    error(ps, dupstr("端口号过大。"), tail);
                     return NULL;
                 }
                 hi = lo;
@@ -456,18 +456,18 @@ static ExprNode *parse_atom(ParserState *ps)
 
                     lo = ptrlen_to_port_number(pl_lo);
                     if (lo >= 65536) {
-                        error(ps, dupstr("port number too large"), pl_lo);
+                        error(ps, dupstr("端口号过大。"), pl_lo);
                         return NULL;
                     }
 
                     hi = ptrlen_to_port_number(pl_hi);
                     if (hi >= 65536) {
-                        error(ps, dupstr("port number too large"), pl_hi);
+                        error(ps, dupstr("端口号过大。"), pl_hi);
                         return NULL;
                     }
 
                     if (hi < lo) {
-                        error(ps, dupstr("port number range is backwards"),
+                        error(ps, dupstr("端口号顺序颠倒。"),
                               make_ptrlen_startend(pl_lo.ptr,
                                                    ptrlen_end(pl_hi)));
                         return NULL;
@@ -478,7 +478,7 @@ static ExprNode *parse_atom(ParserState *ps)
             }
 
             if (!parse_ok) {
-                error(ps, dupstr("unable to parse port number specification"),
+                error(ps, dupstr("无法解析端口号格式。"),
                       ps->toktext);
                 return NULL;
             }
@@ -492,7 +492,7 @@ static ExprNode *parse_atom(ParserState *ps)
         }
     }
 
-    error(ps, dupstr("expected a predicate or a parenthesised subexpression"),
+    error(ps, dupstr("应该使用一个字符串或者是带有括号的表达式。"),
           ps->toktext);
     return NULL;
 }
@@ -531,8 +531,8 @@ static ExprNode *parse_expr(ParserState *ps)
             return en;
 
         if (ps->tok != operator) {
-            error(ps, dupstr("expected parentheses to disambiguate && and || "
-                             "on either side of expression"), subexpr->text);
+            error(ps, dupstr("需要使用括号在 && 和 || 的表达式的"
+                             "任一侧来消除分歧。"), subexpr->text);
             exprnode_free(en);
             return NULL;
         }
@@ -548,7 +548,7 @@ static ExprNode *parse(ptrlen expr, char **error_msg, ptrlen *error_loc)
 
     ExprNode *en = parse_expr(ps);
     if (en && ps->tok != TOK_END) {
-        error(ps, dupstr("unexpected text at end of expression"),
+        error(ps, dupstr("表达式末尾出现意外文本。"),
               make_ptrlen_startend(ps->toktext.ptr, ptrlen_end(expr)));
         exprnode_free(en);
         en = NULL;
@@ -592,7 +592,7 @@ static bool eval(ExprNode *en, const char *hostname, unsigned port)
         return en->lo <= port && port <= en->hi;
 
       default:
-        unreachable("unhandled node type in eval");
+        unreachable("未处理的节点类型。");
     }
 }
 
@@ -674,7 +674,7 @@ char *cert_expr_expression(CertExprBuilder *eb)
 
 #ifdef TEST
 
-void out_of_memory(void) { fprintf(stderr, "out of memory\n"); abort(); }
+void out_of_memory(void) { fprintf(stderr, "内存不足！！\n"); abort(); }
 
 static void exprnode_dump(BinarySink *bs, ExprNode *en, const char *origtext)
 {
@@ -703,7 +703,7 @@ static void exprnode_dump(BinarySink *bs, ExprNode *en, const char *origtext)
         put_fmt(bs, "port-range %u %u", en->lo, en->hi);
         break;
       default:
-        unreachable("unhandled node type in exprnode_dump");
+        unreachable("在exprnode_dump中有未处理的节点类型。");
     }
     put_byte(bs, ')');
 }

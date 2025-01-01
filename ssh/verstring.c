@@ -210,7 +210,7 @@ static void ssh_verstring_send(struct ssh_verstring_state *s)
         bufchain_add(s->bpp.out_raw, "\015", 1);
     bufchain_add(s->bpp.out_raw, "\012", 1);
 
-    bpp_logevent("We claim version: %s", s->our_vstring);
+    bpp_logevent("我们声明的版本：%s", s->our_vstring);
 }
 
 #define BPP_WAITFOR(minlen) do                          \
@@ -313,7 +313,7 @@ void ssh_verstring_handle_input(BinaryPacketProtocol *bpp)
             s->vstring->s[s->vstring->len-1] == '\012'))
         strbuf_shrink_by(s->vstring, 1);
 
-    bpp_logevent("Remote version: %s", s->vstring->s);
+    bpp_logevent("远程版本：%s", s->vstring->s);
 
     /*
      * Pick out the protocol version and software version. The former
@@ -368,18 +368,18 @@ void ssh_verstring_handle_input(BinaryPacketProtocol *bpp)
          */
         if (!ssh_version_includes_v2(s->our_protoversion)) {
             ssh_sw_abort(s->bpp.ssh,
-                         "SSH protocol version 1 required by our "
-                         "configuration but not provided by remote");
+                         "当前的配置需要SSH v1协议版本 "
+                         "但远程不提供支持");
         } else {
             ssh_sw_abort(s->bpp.ssh,
-                         "SSH protocol version 2 required by our "
-                         "configuration but remote only provides "
-                         "(old, insecure) SSH-1");
+                         "当前的配置需要SSH v2协议版本 "
+                         "但远程仅提供"
+                         "(旧的，不安全的)SSH-1");
         }
         crStopV;
     }
 
-    bpp_logevent("Using SSH protocol version %d", s->major_protoversion);
+    bpp_logevent("使用SSH协议版本 %d", s->major_protoversion);
 
     if (!s->send_early) {
         /*
@@ -400,7 +400,7 @@ void ssh_verstring_handle_input(BinaryPacketProtocol *bpp)
 
   eof:
     ssh_remote_error(s->bpp.ssh,
-                     "Remote side unexpectedly closed network connection");
+                     "远程端意外关闭网络连接");
     return;  /* avoid touching s now it's been freed */
 
     crFinishV;
@@ -408,15 +408,15 @@ void ssh_verstring_handle_input(BinaryPacketProtocol *bpp)
 
 static PktOut *ssh_verstring_new_pktout(int type)
 {
-    unreachable("Should never try to send packets during SSH version "
-                "string exchange");
+    unreachable("永远不要在SSH版本字符交换期间尝试发送"
+                "数据包");
 }
 
 static void ssh_verstring_handle_output(BinaryPacketProtocol *bpp)
 {
     if (pq_peek(&bpp->out_pq)) {
-        unreachable("Should never try to send packets during SSH version "
-                    "string exchange");
+        unreachable("永远不要在SSH版本字符串交换期间尝试发送 "
+                    "数据包");
     }
 }
 
@@ -450,7 +450,7 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * sniffing.
          */
         s->remote_bugs |= BUG_CHOKES_ON_SSH1_IGNORE;
-        bpp_logevent("We believe remote version has SSH-1 ignore bug");
+        bpp_logevent("我们认为远程版本有 SSH-1 忽略错误");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_plainpw1) == FORCE_ON ||
@@ -462,8 +462,8 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * the password.
          */
         s->remote_bugs |= BUG_NEEDS_SSH1_PLAIN_PASSWORD;
-        bpp_logevent("We believe remote version needs a "
-                     "plain SSH-1 password");
+        bpp_logevent("我们相信远程版本需要一个"
+                     "普通 SSH-1 密码");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_rsa1) == FORCE_ON ||
@@ -475,8 +475,8 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * an AUTH_RSA message.
          */
         s->remote_bugs |= BUG_CHOKES_ON_RSA;
-        bpp_logevent("We believe remote version can't handle SSH-1 "
-                     "RSA authentication");
+        bpp_logevent("我们认为远程版本无法处理 SSH-1"
+                     "RSA 认证");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_hmac2) == FORCE_ON ||
@@ -489,7 +489,7 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * These versions have the HMAC bug.
          */
         s->remote_bugs |= BUG_SSH2_HMAC;
-        bpp_logevent("We believe remote version has SSH-2 HMAC bug");
+        bpp_logevent("我们认为远程版本有 SSH-2 HMAC 错误");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_derivekey2) == FORCE_ON ||
@@ -502,8 +502,8 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * generate the keys).
          */
         s->remote_bugs |= BUG_SSH2_DERIVEKEY;
-        bpp_logevent("We believe remote version has SSH-2 "
-                     "key-derivation bug");
+        bpp_logevent("我们相信远程版本有 SSH-2"
+                     "密钥派生错误");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_rsapad2) == FORCE_ON ||
@@ -516,7 +516,7 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * These versions have the SSH-2 RSA padding bug.
          */
         s->remote_bugs |= BUG_SSH2_RSA_PADDING;
-        bpp_logevent("We believe remote version has SSH-2 RSA padding bug");
+        bpp_logevent("我们认为远程版本有 SSH-2 RSA 填充错误");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_pksessid2) == FORCE_ON ||
@@ -527,8 +527,8 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * public-key authentication.
          */
         s->remote_bugs |= BUG_SSH2_PK_SESSIONID;
-        bpp_logevent("We believe remote version has SSH-2 "
-                     "public-key-session-ID bug");
+        bpp_logevent("我们相信远程版本有 SSH-2"
+                     "公钥会话 ID 错误");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_rekey2) == FORCE_ON ||
@@ -544,7 +544,7 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * These versions have the SSH-2 rekey bug.
          */
         s->remote_bugs |= BUG_SSH2_REKEY;
-        bpp_logevent("We believe remote version has SSH-2 rekey bug");
+        bpp_logevent("我们认为远程版本存在 SSH-2 密钥更新错误");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_maxpkt2) == FORCE_ON ||
@@ -555,8 +555,8 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * This version ignores our makpkt and needs to be throttled.
          */
         s->remote_bugs |= BUG_SSH2_MAXPKT;
-        bpp_logevent("We believe remote version ignores SSH-2 "
-                     "maximum packet size");
+        bpp_logevent("我们相信远程版本会忽略 SSH-2"
+                     "最大数据包大小");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_ignore2) == FORCE_ON) {
@@ -565,7 +565,7 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * none detected automatically.
          */
         s->remote_bugs |= BUG_CHOKES_ON_SSH2_IGNORE;
-        bpp_logevent("We believe remote version has SSH-2 ignore bug");
+        bpp_logevent("我们认为远程版本有 SSH-2 忽略错误");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_oldgex2) == FORCE_ON ||
@@ -577,7 +577,7 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * we use the newer version.
          */
         s->remote_bugs |= BUG_SSH2_OLDGEX;
-        bpp_logevent("We believe remote version has outdated SSH-2 GEX");
+        bpp_logevent("我们认为远程版本已经过时 SSH-2 GEX");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_winadj) == FORCE_ON) {
@@ -586,7 +586,7 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * reason or another. Currently, none detected automatically.
          */
         s->remote_bugs |= BUG_CHOKES_ON_WINADJ;
-        bpp_logevent("We believe remote version has winadj bug");
+        bpp_logevent("我们认为远程版本有 winadj 错误");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_chanreq) == FORCE_ON ||
@@ -603,14 +603,14 @@ static void ssh_detect_bugs(struct ssh_verstring_state *s)
          * https://secure.ucc.asn.au/hg/dropbear/rev/cd02449b709c
          */
         s->remote_bugs |= BUG_SENDS_LATE_REQUEST_REPLY;
-        bpp_logevent("We believe remote version has SSH-2 "
-                     "channel request bug");
+        bpp_logevent("我们相信远程版本有 SSH-2"
+                     "通道请求错误");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_filter_kexinit) == FORCE_ON) {
         s->remote_bugs |= BUG_REQUIRES_FILTERED_KEXINIT;
-        bpp_logevent("We believe remote version requires us to "
-                     "filter our KEXINIT");
+        bpp_logevent("我们相信远程版本要求我们"
+                     "过滤我们的KEXINIT。");
     }
 
     if (conf_get_int(s->conf, CONF_sshbug_rsa_sha2_cert_userauth) == FORCE_ON ||

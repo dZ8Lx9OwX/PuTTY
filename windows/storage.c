@@ -19,7 +19,7 @@
 #endif
 
 static const char *const reg_jumplist_key = PUTTY_REG_POS "\\Jumplist";
-static const char *const reg_jumplist_value = "Recent sessions";
+static const char *const reg_jumplist_value = "最近会话";
 static const char *const puttystr = PUTTY_REG_POS "\\Sessions";
 static const char *const host_ca_key = PUTTY_REG_POS "\\SshHostCAs";
 
@@ -37,14 +37,14 @@ settings_w *open_settings_w(const char *sessionname, char **errmsg)
     *errmsg = NULL;
 
     if (!sessionname || !*sessionname)
-        sessionname = "Default Settings";
+        sessionname = "默认设置";
 
     strbuf *sb = strbuf_new();
     escape_registry_key(sessionname, sb);
 
     HKEY sesskey = create_regkey(HKEY_CURRENT_USER, puttystr, sb->s);
     if (!sesskey) {
-        *errmsg = dupprintf("Unable to create registry key\n"
+        *errmsg = dupprintf("无法创建注册表项\n"
                             "HKEY_CURRENT_USER\\%s\\%s", puttystr, sb->s);
         strbuf_free(sb);
         return NULL;
@@ -81,7 +81,7 @@ struct settings_r {
 settings_r *open_settings_r(const char *sessionname)
 {
     if (!sessionname || !*sessionname)
-        sessionname = "Default Settings";
+        sessionname = "默认设置";
 
     strbuf *sb = strbuf_new();
     escape_registry_key(sessionname, sb);
@@ -531,7 +531,7 @@ static bool try_random_seed(char const *path, int action, HANDLE *ret)
 {
     if (action == DEL) {
         if (!DeleteFile(path) && GetLastError() != ERROR_FILE_NOT_FOUND) {
-            nonfatal("Unable to delete '%s': %s", path,
+            nonfatal("无法删除 '%s': %s", path,
                      win_strerror(GetLastError()));
         }
         *ret = INVALID_HANDLE_VALUE;

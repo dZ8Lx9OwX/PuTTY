@@ -1,8 +1,8 @@
 #include "rcstuff.h"
 #include "putty-rc.h"
 
-#define APPNAME "pterm"
-#define APPDESC "PuTTY-style wrapper for Windows command prompts"
+#define APPNAME "Pterm"
+#define APPDESC "Windows命令提示符的PuTTY样式包装器"
 
 IDI_MAINICON ICON "pterm.ico"
 IDI_CFGICON ICON "ptermcfg.ico"

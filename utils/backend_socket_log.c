@@ -15,21 +15,21 @@ void backend_socket_log(Seat *seat, LogContext *logctx, Socket *sock,
       case PLUGLOG_CONNECT_TRYING:
         sk_getaddr(addr, addrbuf, lenof(addrbuf));
         if (sk_addr_needs_port(addr)) {
-            msg = dupprintf("Connecting to %s port %d", addrbuf, port);
+            msg = dupprintf("连接到 %s 端口 %d", addrbuf, port);
         } else {
-            msg = dupprintf("Connecting to %s", addrbuf);
+            msg = dupprintf("连接到 %s", addrbuf);
         }
         break;
       case PLUGLOG_CONNECT_FAILED:
         sk_getaddr(addr, addrbuf, lenof(addrbuf));
-        msg = dupprintf("Failed to connect to %s: %s", addrbuf, error_msg);
+        msg = dupprintf("连接失败 %s: %s", addrbuf, error_msg);
         break;
       case PLUGLOG_CONNECT_SUCCESS:
         if (addr)
             sk_getaddr(addr, addrbuf, lenof(addrbuf));
         else /* fallback if address unavailable */
-            sprintf(addrbuf, "remote host");
-        msg = dupprintf("Connected to %s", addrbuf);
+            sprintf(addrbuf, "远程主机");
+        msg = dupprintf("连接到 %s", addrbuf);
         if (sock) {
             SocketEndpointInfo *local_end = sk_endpoint_info(sock, false);
             if (local_end) {

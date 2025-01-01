@@ -511,68 +511,68 @@ void sigwinch(int signum)
  */
 static void usage(void)
 {
-    printf("Plink: command-line connection utility\n");
+    printf("Plink：命令行连接实用程序\n");
     printf("%s\n", ver);
-    printf("Usage: plink [options] [user@]host [command]\n");
-    printf("       (\"host\" can also be a PuTTY saved session name)\n");
-    printf("Options:\n");
-    printf("  -V        print version information and exit\n");
-    printf("  -pgpfp    print PGP key fingerprints and exit\n");
-    printf("  -v        show verbose messages\n");
-    printf("  -load sessname  Load settings from saved session\n");
+    printf("用法： plink [选项] [user@]host [command]\n");
+    printf("       (\"host\" 也可以是PuTTY保存的会话名称)\n");
+    printf("选项： \n");
+    printf("  -V        打印版本信息并退出\n");
+    printf("  -pgpfp    打印PGP密钥指纹并退出\n");
+    printf("  -v        显示详细消息\n");
+    printf("  -load 会话名  从保存的会话加载设置\n");
     printf("  -ssh -telnet -rlogin -raw -serial\n");
-    printf("            force use of a particular protocol\n");
+    printf("            强制使用特定协议\n");
     printf("  -ssh-connection\n");
-    printf("            force use of the bare ssh-connection protocol\n");
-    printf("  -P port   connect to specified port\n");
-    printf("  -l user   connect with specified username\n");
-    printf("  -batch    disable all interactive prompts\n");
+    printf("            强制使用裸SSH连接协议\n");
+    printf("  -P 端口   连接到指定端口\n");
+    printf("  -l 用户   使用指定的用户名连接\n");
+    printf("  -batch    禁用所有交互式提示\n");
     printf("  -proxycmd command\n");
-    printf("            use 'command' as local proxy\n");
-    printf("  -sercfg configuration-string (e.g. 19200,8,n,1,X)\n");
-    printf("            Specify the serial configuration (serial only)\n");
-    printf("The following options only apply to SSH connections:\n");
-    printf("  -pwfile file   login with password read from specified file\n");
+    printf("            使用'command'作为本地代理\n");
+    printf("  -sercfg   配置字符串(例如 19200,8,n,1,X)\n");
+    printf("            指定串行配置(仅串口)\n");
+    printf("“以下选项仅适用于SSH连接：\n");
+    printf("  -pwfile 文件   使用从指定文件读取的密码登录\n");
     printf("  -D [listen-IP:]listen-port\n");
-    printf("            Dynamic SOCKS-based port forwarding\n");
+    printf("            基于SOCKS的动态端口转发\n");
     printf("  -L [listen-IP:]listen-port:host:port\n");
-    printf("            Forward local port to remote address\n");
+    printf("            将本地端口转发到远程地址\n");
     printf("  -R [listen-IP:]listen-port:host:port\n");
-    printf("            Forward remote port to local address\n");
-    printf("  -X -x     enable / disable X11 forwarding\n");
-    printf("  -A -a     enable / disable agent forwarding\n");
-    printf("  -t -T     enable / disable pty allocation\n");
-    printf("  -1 -2     force use of particular SSH protocol version\n");
-    printf("  -4 -6     force use of IPv4 or IPv6\n");
-    printf("  -C        enable compression\n");
-    printf("  -i key    private key file for user authentication\n");
-    printf("  -noagent  disable use of Pageant\n");
-    printf("  -agent    enable use of Pageant\n");
+    printf("            将远程端口转发到本地地址\n");
+    printf("  -X -x     启用/禁用 X11转发\n");
+    printf("  -A -a     启用/禁用代理转发\n");
+    printf("  -t -T     启用/禁用PTY分配\n");
+    printf("  -1 -2     强制使用特定的SSH协议版本\n");
+    printf("  -4 -6     强制使用IPv4或IPv6\n");
+    printf("  -C        启用压缩\n");
+    printf("  -i key    用于用户身份验证的私钥文件\n");
+    printf("  -noagent  禁用Pageant\n");
+    printf("  -agent    启用Pageant\n");
     printf("  -no-trivial-auth\n");
-    printf("            disconnect if SSH authentication succeeds trivially\n");
-    printf("  -noshare  disable use of connection sharing\n");
-    printf("  -share    enable use of connection sharing\n");
+    printf("            如果SSH仅连接无身份验证，则断开连接\n");
+    printf("  -noshare  禁用连接共享\n");
+    printf("  -share    启用连接共享\n");
     printf("  -hostkey keyid\n");
-    printf("            manually specify a host key (may be repeated)\n");
+    printf("            手动指定主机密钥(可以重复)\n");
     printf("  -sanitise-stderr, -sanitise-stdout, "
            "-no-sanitise-stderr, -no-sanitise-stdout\n");
-    printf("            do/don't strip control chars from standard "
-           "output/error\n");
-    printf("  -no-antispoof   omit anti-spoofing prompt after "
-           "authentication\n");
-    printf("  -m file   read remote command(s) from file\n");
-    printf("  -s        remote command is an SSH subsystem (SSH-2 only)\n");
-    printf("  -N        don't start a shell/command (SSH-2 only)\n");
+    printf("            执行/不执行从标准输出/错误"
+           "中删除控制字符\n");
+    printf("  -no-antispoof   认证后省略"
+           "反欺骗提示\n");
+    printf("  -m 文件   从文件中读取远程命令\n");
+    printf("  -s        远程命令是一个SSH子系统(仅SSH-2)\n");
+    printf("  -N        不要启动shell/command (仅SSH-2)\n");
     printf("  -nc host:port\n");
-    printf("            open tunnel in place of session (SSH-2 only)\n");
-    printf("  -sshlog file\n");
-    printf("  -sshrawlog file\n");
-    printf("            log protocol details to a file\n");
+    printf("            打开隧道代替会话(仅SSH-2)\n");
+    printf("  -sshlog 文件\n");
+    printf("  -sshrawlog 文件\n");
+    printf("            将协议详细信息记录到文件\n");
     printf("  -logoverwrite\n");
     printf("  -logappend\n");
-    printf("            control what happens when a log file already exists\n");
+    printf("            控制日志文件已存在时发生的情况\n");
     printf("  -shareexists\n");
-    printf("            test whether a connection-sharing upstream exists\n");
+    printf("            测试上游是否存在连接共享\n");
 }
 
 static void version(void)
@@ -731,7 +731,7 @@ int main(int argc, char **argv)
         int ret = cmdline_process_param(arg, nextarg, 1, conf);
         if (ret == -2) {
             fprintf(stderr,
-                    "plink: option \"%s\" requires an argument\n", p);
+                    "plink: 选项 \"%s\" 需要一个参数\n", p);
             errors = true;
         } else if (ret == 2) {
             arglistpos++;
@@ -751,7 +751,7 @@ int main(int argc, char **argv)
         } else if (!strcmp(p, "-o")) {
             if (argc <= 1) {
                 fprintf(stderr,
-                        "plink: option \"-o\" requires an argument\n");
+                        "plink: 选项 \"-o\" 需要一个参数\n");
                 errors = true;
             } else {
                 --argc;
@@ -797,7 +797,7 @@ int main(int argc, char **argv)
             strbuf_free(cmdbuf);
             break;                     /* done with cmdline */
         } else {
-            fprintf(stderr, "plink: unknown option \"%s\"\n", p);
+            fprintf(stderr, "plink: 未知选项 \"%s\"\n", p);
             errors = true;
         }
     }
@@ -806,8 +806,8 @@ int main(int argc, char **argv)
         return 1;
 
     if (!cmdline_host_ok(conf)) {
-        fprintf(stderr, "plink: no valid host name provided\n"
-                "try \"plink --help\" for help\n");
+        fprintf(stderr, "plink: 未提供有效的主机名\n"
+                "请尝试输入 \"plink --help\" 来寻求帮助\n");
         cmdline_arg_list_free(arglist);
         return 1;
     }
@@ -846,13 +846,13 @@ int main(int argc, char **argv)
     backvt = backend_vt_from_proto(conf_get_int(conf, CONF_protocol));
     if (!backvt) {
         fprintf(stderr,
-                "Internal fault: Unsupported protocol found\n");
+                "内部故障：发现不支持的协议\n");
         return 1;
     }
 
     if (backvt->flags & BACKEND_NEEDS_TERMINAL) {
         fprintf(stderr,
-                "Plink doesn't support %s, which needs terminal emulation\n",
+                "Plink不支持 %s, 需要终端仿真\n",
                 backvt->displayname_lc);
         return 1;
     }
@@ -929,8 +929,8 @@ int main(int argc, char **argv)
 
     if (just_test_share_exists) {
         if (!backvt->test_for_upstream) {
-            fprintf(stderr, "Connection sharing not supported for this "
-                    "connection type (%s)'\n", backvt->displayname_lc);
+            fprintf(stderr, "此连接类型不支持"
+                    "连接共享(%s)'\n", backvt->displayname_lc);
             return 1;
         }
         if (backvt->test_for_upstream(conf_get_str(conf, CONF_host),
@@ -960,7 +960,7 @@ int main(int argc, char **argv)
                              &realhost, nodelay,
                              conf_get_bool(conf, CONF_tcp_keepalives));
         if (error) {
-            fprintf(stderr, "Unable to open connection:\n%s\n", error);
+            fprintf(stderr, "无法打开连接：\n%s\n", error);
             sfree(error);
             return 1;
         }
@@ -981,7 +981,7 @@ int main(int argc, char **argv)
 
     exitcode = backend_exitcode(backend);
     if (exitcode < 0) {
-        fprintf(stderr, "Remote process exit code unavailable\n");
+        fprintf(stderr, "远程进程退出代码不可用\n");
         exitcode = 1;                  /* this is an error condition */
     }
     cleanup_exit(exitcode);

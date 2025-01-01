@@ -125,11 +125,11 @@ static size_t conpty_gotdata(
         }
 
         if (err)
-            error_msg = dupprintf("Error reading from console pty: %s",
+            error_msg = dupprintf("从控制台pty读取错误：%s",
                                   win_strerror(err));
         else
             error_msg = dupprintf(
-                "Unexpected end of file reading from console pty");
+                "从控制台pty读取文件意外结束");
 
         logevent(conpty->logctx, error_msg);
         seat_connection_fatal(conpty->seat, "%s", error_msg);
@@ -146,7 +146,7 @@ static void conpty_sentdata(struct handle *h, size_t new_backlog, int err,
 {
     ConPTY *conpty = (ConPTY *)handle_get_privdata(h);
     if (err) {
-        const char *error_msg = "Error writing to conpty device";
+        const char *error_msg = "写入conpty设备时出错";
 
         conpty_terminate(conpty);
 
@@ -180,17 +180,17 @@ static char *conpty_init(const BackendVtable *vt, Seat *seat,
     memset(&si, 0, sizeof(si));
 
     if (!init_conpty_api()) {
-        err = dupprintf("Pseudo-console API is not available on this "
-                        "Windows system");
+        err = dupprintf("伪控制台API在此“Windows 系统”上"
+                        "不可用");
         goto out;
     }
 
     if (!CreatePipe(&in_r, &in_w, NULL, 0)) {
-        err = dupprintf("CreatePipe: %s", win_strerror(GetLastError()));
+        err = dupprintf("创建管道：%s", win_strerror(GetLastError()));
         goto out;
     }
     if (!CreatePipe(&out_r, &out_w, NULL, 0)) {
-        err = dupprintf("CreatePipe: %s", win_strerror(GetLastError()));
+        err = dupprintf("创建管道：%s", win_strerror(GetLastError()));
         goto out;
     }
 
@@ -201,10 +201,10 @@ static char *conpty_init(const BackendVtable *vt, Seat *seat,
     HRESULT result = p_CreatePseudoConsole(size, in_r, out_w, 0, &pcon);
     if (FAILED(result)) {
         if (HRESULT_FACILITY(result) == FACILITY_WIN32)
-            err = dupprintf("CreatePseudoConsole: %s",
+            err = dupprintf("创建伪控制台：%s",
                             win_strerror(HRESULT_CODE(result)));
         else
-            err = dupprintf("CreatePseudoConsole failed: HRESULT=0x%08x",
+            err = dupprintf("创建伪控制台失败：HRESULT=0x%08x",
                             (unsigned)result);
         goto out;
     }
@@ -222,7 +222,7 @@ static char *conpty_init(const BackendVtable *vt, Seat *seat,
     si.lpAttributeList = smalloc(attrsize);
     if (!InitializeProcThreadAttributeList(
             si.lpAttributeList, 1, 0, &attrsize)) {
-        err = dupprintf("InitializeProcThreadAttributeList: %s",
+        err = dupprintf("初始化Proc线程属性列表：%s",
                         win_strerror(GetLastError()));
         goto out;
     }
@@ -230,7 +230,7 @@ static char *conpty_init(const BackendVtable *vt, Seat *seat,
             si.lpAttributeList,
             0, PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE,
             pcon, sizeof(pcon), NULL, NULL)) {
-        err = dupprintf("UpdateProcThreadAttribute: %s",
+        err = dupprintf("更新Proc线程属性：%s",
                         win_strerror(GetLastError()));
         goto out;
     }
@@ -255,7 +255,7 @@ static char *conpty_init(const BackendVtable *vt, Seat *seat,
                                      NULL, NULL, &si.StartupInfo, &pi);
     sfree(command);
     if (!created_ok) {
-        err = dupprintf("CreateProcess: %s",
+        err = dupprintf("创建过程：%s",
                         win_strerror(GetLastError()));
         goto out;
     }

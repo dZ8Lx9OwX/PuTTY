@@ -35,7 +35,7 @@
 
 #elif defined NOT_X_WINDOWS
 
-#define BUILDINFO_PLATFORM_GTK "Unix (pure GTK)"
+#define BUILDINFO_PLATFORM_GTK "Unix (纯GTK)"
 #define BUILDINFO_GTK
 
 #else
@@ -119,9 +119,9 @@ unsigned long getticks(void);
 /* OS X has no PRIMARY selection */
 #define MOUSE_SELECT_CLIPBOARD CLIP_NULL
 #define MOUSE_PASTE_CLIPBOARD CLIP_LOCAL
-#define CLIPNAME_IMPLICIT "Last selected text"
-#define CLIPNAME_EXPLICIT "System clipboard"
-#define CLIPNAME_EXPLICIT_OBJECT "system clipboard"
+#define CLIPNAME_IMPLICIT "最近的文本"
+#define CLIPNAME_EXPLICIT "系统剪贴板"
+#define CLIPNAME_EXPLICIT_OBJECT "系统剪贴板"
 /* These defaults are the ones that more or less comply with the OS X
  * Human Interface Guidelines, i.e. copy/paste to the system clipboard
  * is _not_ implicit but requires a specific UI action. This is at
@@ -135,9 +135,9 @@ unsigned long getticks(void);
 #else
 #define MOUSE_SELECT_CLIPBOARD CLIP_PRIMARY
 #define MOUSE_PASTE_CLIPBOARD CLIP_PRIMARY
-#define CLIPNAME_IMPLICIT "PRIMARY"
-#define CLIPNAME_EXPLICIT "CLIPBOARD"
-#define CLIPNAME_EXPLICIT_OBJECT "CLIPBOARD"
+#define CLIPNAME_IMPLICIT "最近的文本"
+#define CLIPNAME_EXPLICIT "剪贴板"
+#define CLIPNAME_EXPLICIT_OBJECT "剪贴板"
 /* These defaults are the ones Unix PuTTY has historically had since
  * it was first thought of in 2002 */
 #define CLIPUI_DEFAULT_AUTOCOPY false
@@ -403,7 +403,7 @@ void fd_socket_set_psb_prefix(Socket *s, const char *prefix);
 #ifdef NOT_X_WINDOWS
 #define DEFAULT_GTK_FONT "client:Monospace 12"
 #else
-#define DEFAULT_GTK_FONT "server:fixed"
+#define DEFAULT_GTK_FONT "client:Monospace 12"
 #endif
 
 /*

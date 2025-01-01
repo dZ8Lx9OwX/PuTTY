@@ -11,7 +11,7 @@
 
 void out_of_memory(void)
 {
-    fprintf(stderr, "out of memory!\n");
+    fprintf(stderr, "内存不足！！\n");
     exit(2);
 }
 

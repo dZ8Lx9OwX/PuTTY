@@ -882,7 +882,7 @@ static char *rsa2_invalid(ssh_key *key, unsigned flags)
     const ssh_hashalg *halg = rsa2_hash_alg_for_flags(flags, &sign_alg_name);
     if (nbytes < rsa_pkcs1_length_of_fixed_parts(halg)) {
         return dupprintf(
-            "%"SIZEu"-bit RSA key is too short to generate %s signatures",
+            "%"SIZEu"-bit RSA 密钥太短，无法生成 %s 签名",
             bits, sign_alg_name);
     }
 

@@ -615,7 +615,7 @@ char *ssh_sftp_get_cmdline(const char *prompt, bool no_fds_ok)
     hThread = CreateThread(NULL, 0, command_read_thread, ctx, 0, &threadid);
     if (!hThread) {
         CloseHandle(ctx->event);
-        fprintf(stderr, "Unable to create command input thread\n");
+        fprintf(stderr, "无法创建命令输入线程\n");
         cleanup_exit(1);
     }
 
@@ -637,7 +637,7 @@ char *ssh_sftp_get_cmdline(const char *prompt, bool no_fds_ok)
 void platform_psftp_pre_conn_setup(LogPolicy *lp)
 {
     if (restricted_acl()) {
-        lp_eventlog(lp, "Running with restricted process ACL");
+        lp_eventlog(lp, "使用受限进程 ACL 运行");
     }
 }
 

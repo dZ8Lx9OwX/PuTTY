@@ -328,14 +328,14 @@ int main(int argc, char **argv)
         } else if (ptrlen_eq_string(arg, "--keep")) {
             remove_files = false;
         } else if (ptrlen_eq_string(arg, "--help")) {
-            printf("usage:     cgtest [options] [key types]\n");
-            printf("options:   -v, --verbose         "
-                   "print more output during tests\n");
+            printf("用法：     cgtest [选项] [密钥类型s]\n");
+            printf("选项：   -v, --verbose         "
+                   "在测试期间打印更多输出\n");
             printf("           --keep                "
-                   "do not delete the temporary output files\n");
+                   "不要删除临时输出文件\n");
             printf("           --help                "
-                   "display this help text\n");
-            printf("key types: ");
+                   "显示帮助信息\n");
+            printf("密钥类型：");
             for (i = 0; i < lenof(cgtest_keytypes); i++)
                 printf("%s%s", i ? ", " : "", cgtest_keytypes[i].name);
             printf("\n");
@@ -345,14 +345,14 @@ int main(int argc, char **argv)
                 if (ptrlen_eq_string(arg, cgtest_keytypes[i].name))
                     break;
             if (i == lenof(cgtest_keytypes)) {
-                fprintf(stderr, "cgtest: unrecognised key type '%.*s'\n",
+                fprintf(stderr, "cgtest: 无法识别的密钥类型 '%.*s'\n",
                         PTRLEN_PRINTF(arg));
                 return 1;
             }
             active_value = 1; /* disables all keys not explicitly enabled */
             active[i] = active_value;
         } else {
-            fprintf(stderr, "cgtest: unrecognised option '%.*s'\n",
+            fprintf(stderr, "cgtest: 无法识别的选项 '%.*s'\n",
                     PTRLEN_PRINTF(arg));
             return 1;
         }

@@ -43,7 +43,7 @@ static void wm_copydata_agent_query(strbuf *query, void **out, int *outlen)
     hwnd = FindWindow("Pageant", "Pageant");
     if (!hwnd)
         return;                        /* *out == NULL, so failure */
-    mapname = dupprintf("PageantRequest%08x", (unsigned)GetCurrentThreadId());
+    mapname = dupprintf("Pageant请求%08x", (unsigned)GetCurrentThreadId());
 
     psa = NULL;
     if (got_advapi()) {

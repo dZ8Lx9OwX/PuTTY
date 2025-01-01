@@ -155,8 +155,8 @@ static void ssh2_userauth_server_process_queue(PacketProtocolLayer *ppl)
     while (1) {
         crMaybeWaitUntilV((pktin = ssh2_userauth_server_pop(s)) != NULL);
         if (pktin->type != SSH2_MSG_USERAUTH_REQUEST) {
-            ssh_proto_error(s->ppl.ssh, "Received unexpected packet when "
-                            "expecting USERAUTH_REQUEST, type %d (%s)",
+            ssh_proto_error(s->ppl.ssh, "等待 USERAUTH_REQUEST 数据包时，"
+                            "收到意外的数据包，类型：%d (%s)",
                             pktin->type,
                             ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                           s->ppl.bpp->pls->actx, pktin->type));
@@ -309,8 +309,8 @@ static void ssh2_userauth_server_process_queue(PacketProtocolLayer *ppl)
                     (pktin = ssh2_userauth_server_pop(s)) != NULL);
                 if (pktin->type != SSH2_MSG_USERAUTH_INFO_RESPONSE) {
                     ssh_proto_error(
-                        s->ppl.ssh, "Received unexpected packet when "
-                        "expecting USERAUTH_INFO_RESPONSE, type %d (%s)",
+                        s->ppl.ssh, "等待 USERAUTH_INFO_RESPONSE 时，"
+                        "收到意外的数据包，类型：%d (%s)",
                         pktin->type,
                         ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                       s->ppl.bpp->pls->actx, pktin->type));
@@ -320,8 +320,8 @@ static void ssh2_userauth_server_process_queue(PacketProtocolLayer *ppl)
                 n = get_uint32(pktin);
                 if (n != s->aki->nprompts) {
                     ssh_proto_error(
-                        s->ppl.ssh, "Received %u keyboard-interactive "
-                        "responses after sending %u prompts",
+                        s->ppl.ssh, "收到 %u 键盘交互"
+                        "发送 %u 提示后的响应",
                         n, s->aki->nprompts);
                     return;
                 }

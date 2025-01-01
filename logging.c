@@ -49,8 +49,8 @@ static void logwrite(LogContext *ctx, ptrlen data)
         if (fwrite(data.ptr, 1, data.len, ctx->lgfp) < data.len) {
             logfclose(ctx);
             ctx->state = L_ERROR;
-            lp_eventlog(ctx->lp, "Disabled writing session log "
-                        "due to error while writing");
+            lp_eventlog(ctx->lp, "由于写入时出错，"
+                        "禁止写入会话日志。");
         }
     }                                  /* else L_ERROR, so ignore the write */
 }
@@ -116,15 +116,15 @@ static void logfopen_callback(void *vctx, int mode)
                   " =~=~=~=~=~=~=~=~=~=~=~=\r\n", buf);
     }
 
-    event = dupprintf("%s session log (%s mode) to file: %s",
+    event = dupprintf("%s 会话日志(%s 模式),记录到文件：%s",
                       ctx->state == L_ERROR ?
-                      (mode == 0 ? "Disabled writing" : "Error writing") :
-                      (mode == 1 ? "Appending" : "Writing new"),
+                      (mode == 0 ? "禁止写入" : "写入出错") :
+                      (mode == 1 ? "追加写入" : "新建写入"),
                       (ctx->logtype == LGTYP_ASCII ? "ASCII" :
                        ctx->logtype == LGTYP_DEBUG ? "raw" :
-                       ctx->logtype == LGTYP_PACKETS ? "SSH packets" :
-                       ctx->logtype == LGTYP_SSHRAW ? "SSH raw data" :
-                       "unknown"),
+                       ctx->logtype == LGTYP_PACKETS ? "SSH数据包" :
+                       ctx->logtype == LGTYP_SSHRAW ? "SSH数据包和raw数据" :
+                       "未知"),
                       filename_to_str(ctx->currlogfilename));
     lp_eventlog(ctx->lp, event);
     if (shout) {
@@ -216,7 +216,7 @@ void logtraffic(LogContext *ctx, unsigned char c, int logmode)
 static void logevent_internal(LogContext *ctx, const char *event)
 {
     if (ctx->logtype == LGTYP_PACKETS || ctx->logtype == LGTYP_SSHRAW) {
-        logprintf(ctx, "Event Log: %s\r\n", event);
+        logprintf(ctx, "事件日志： %s\r\n", event);
         logflush(ctx);
     }
     lp_eventlog(ctx->lp, event);
@@ -275,16 +275,16 @@ void log_packet(LogContext *ctx, int direction, int type,
 
     /* Packet header. */
     if (texttype) {
-        logprintf(ctx, "%s packet ",
-                  direction == PKT_INCOMING ? "Incoming" : "Outgoing");
+        logprintf(ctx, "%s包 ",
+                  direction == PKT_INCOMING ? "输入" : "输出");
 
         if (seq)
             logprintf(ctx, "#0x%lx, ", *seq);
 
-        logprintf(ctx, "type %d / 0x%02x (%s)", type, type, texttype);
+        logprintf(ctx, "类型 %d/0x%02x (%s)", type, type, texttype);
 
         if (downstream_id) {
-            logprintf(ctx, " on behalf of downstream #%u", downstream_id);
+            logprintf(ctx, " 代表下游 #%u", downstream_id);
             if (additional_log_text)
                 logprintf(ctx, " (%s)", additional_log_text);
         }
@@ -303,8 +303,8 @@ void log_packet(LogContext *ctx, int direction, int type,
         struct tm tm;
         tm = ltime();
         strftime(buf, 24, "%Y-%m-%d %H:%M:%S", &tm);
-        logprintf(ctx, "%s raw data at %s\r\n",
-                  direction == PKT_INCOMING ? "Incoming" : "Outgoing",
+        logprintf(ctx, "%sRAW数据时间 %s\r\n",
+                  direction == PKT_INCOMING ? "输入" : "输出",
                   buf);
     }
 
@@ -330,7 +330,7 @@ void log_packet(LogContext *ctx, int direction, int type,
         /* If we're about to stop omitting, it's time to say how
          * much we omitted. */
         if ((blktype != PKTLOG_OMIT) && omitted) {
-            logprintf(ctx, "  (%"SIZEu" byte%s omitted)\r\n",
+            logprintf(ctx, "  (%"SIZEu" 字节%s 省略)\r\n",
                       omitted, (omitted==1?"":"s"));
             omitted = 0;
         }
@@ -374,7 +374,7 @@ void log_packet(LogContext *ctx, int direction, int type,
 
     /* Tidy up */
     if (omitted)
-        logprintf(ctx, "  (%"SIZEu" byte%s omitted)\r\n",
+        logprintf(ctx, "  (%"SIZEu" 字节%s 省略)\r\n",
                   omitted, (omitted==1?"":"s"));
     logflush(ctx);
 }

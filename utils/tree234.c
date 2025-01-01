@@ -1557,7 +1557,7 @@ int main(int argc, char **argv)
         if (!strcmp(arg, "-v")) {
             verbose++;
         } else {
-            fprintf(stderr, "unrecognised option '%s'\n", arg);
+            fprintf(stderr, "无法识别的选项 '%s'\n", arg);
             return 1;
         }
     }

@@ -726,7 +726,7 @@ static char *ssh_close_warn_text(Backend *be)
     int ndowns = share_ndownstreams(ssh->connshare);
     if (ndowns == 0)
         return NULL;
-    char *msg = dupprintf("This will also close %d downstream connection%s.",
+    char *msg = dupprintf("这也将关闭 %d 的下游连接 %s。",
                           ndowns, ndowns==1 ? "" : "s");
     return msg;
 }
@@ -816,7 +816,7 @@ static char *connect_to_host(
              * to avoid confusing users as to why this session doesn't
              * behave in quite the usual way. */
             const char *msg =
-                "Reusing a shared connection to this server.\r\n";
+                "重用到此服务器的共享连接。\r\n";
             seat_stderr_pl(ssh->seat, ptrlen_from_asciz(msg));
         }
     } else {
@@ -829,7 +829,7 @@ static char *connect_to_host(
          */
         addressfamily = conf_get_int(ssh->conf, CONF_addressfamily);
         addr = name_lookup(host, port, realhost, ssh->conf, addressfamily,
-                           ssh->logctx, "SSH connection");
+                           ssh->logctx, "SSH连接");
         if ((err = sk_addr_error(addr)) != NULL) {
             sk_addr_free(addr);
             return dupstr(err);

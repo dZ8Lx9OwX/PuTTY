@@ -15,5 +15,5 @@ char *gtk_askpass_main(const char *display, const char *wintitle,
                        const char *prompt, bool *success)
 {
     *success = false;
-    return dupstr("this Pageant was built without GTK");
+    return dupstr("这个Pageant是在没有GTK的情况下构建的");
 }

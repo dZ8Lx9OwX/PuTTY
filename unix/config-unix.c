@@ -27,7 +27,7 @@ void unix_setup_config_box(struct controlbox *b, bool midsession, int protocol)
      * On Unix, we don't have a drop-down list for the printer
      * control.
      */
-    s = ctrl_getset(b, "Terminal", "printing", "Remote-controlled printing");
+    s = ctrl_getset(b, "终端", "printing", "远程打印：");
     assert(s->ncontrols == 1 && s->ctrls[0]->type == CTRL_EDITBOX);
     s->ctrls[0]->editbox.has_list = false;
 
@@ -36,7 +36,7 @@ void unix_setup_config_box(struct controlbox *b, bool midsession, int protocol)
      */
     if (!midsession) {
         int i;
-        s = ctrl_getset(b, "Connection/Proxy", "basics", NULL);
+        s = ctrl_getset(b, "连接/代理", "basics", NULL);
         for (i = 0; i < s->ncontrols; i++) {
             c = s->ctrls[i];
             if (c->type == CTRL_LISTBOX &&

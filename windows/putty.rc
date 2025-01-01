@@ -2,7 +2,7 @@
 #include "putty-rc.h"
 
 #define APPNAME "PuTTY"
-#define APPDESC "SSH, Telnet, Rlogin, and SUPDUP client"
+#define APPDESC "SSH,Telnet,Rlogin和SUPDUP客户端"
 
 IDI_MAINICON ICON "putty.ico"
 IDI_CFGICON ICON "puttycfg.ico"

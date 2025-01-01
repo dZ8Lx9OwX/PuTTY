@@ -302,9 +302,9 @@ void out_of_memory(void)
 static void usage(FILE *fp)
 {
     fprintf(fp, "\
-usage:   bidi_test ( ( --class | --char ) infile... )...\n\
-e.g.:    bidi_test --class BidiTest.txt --char BidiCharacterTest.txt\n\
-also:    --help              display this text\n\
+用法：   bidi_test ( ( --class | --char ) infile... )...\n\
+例如：   bidi_test --class BidiTest.txt --char BidiCharacterTest.txt\n\
+其他：   --help              显示帮助信息\n\
 ");
 }
 

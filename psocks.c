@@ -441,22 +441,22 @@ void psocks_cmdline(psocks_state *ps, CmdlineArgList *arglist)
 		ps->rec_dest = REC_FILE;
             } else if (!strcmp(p, "-p")) {
                 if (!ps->platform->open_pipes) {
-		    fprintf(stderr, "psocks: '-p' is not supported on this "
-                            "platform\n");
+		    fprintf(stderr, "psocks: '-p' 不支持"
+                            "当前平台\n");
 		    exit(1);
                 }
 		if (arglist->args[arglistpos] > 0) {
 		    ps->rec_cmd = dupstr(
                         cmdline_arg_to_str(arglist->args[arglistpos++]));
 		} else {
-		    fprintf(stderr, "psocks: expected an argument to '-p'\n");
+		    fprintf(stderr, "psocks: 期望一个参数 '-p'\n");
 		    exit(1);
 		}
 		ps->rec_dest = REC_PIPE;
 	    } else if (!strcmp(p, "--exec")) {
                 if (!ps->platform->start_subcommand) {
-		    fprintf(stderr, "psocks: running a subcommand is not "
-                            "supported on this platform\n");
+		    fprintf(stderr, "psocks: 此平台不支持"
+                            "运行子命令\n");
 		    exit(1);
                 }
                 if (!arglist->args[arglistpos]) {
@@ -469,29 +469,29 @@ void psocks_cmdline(psocks_state *ps, CmdlineArgList *arglist)
                 ps->got_subcmd = true;
                 break;
 	    } else if (!strcmp(p, "--help")) {
-                printf("usage: psocks [ -d ] [ -f");
+                printf("用法： psocks [ -d ] [ -f");
                 if (ps->platform->open_pipes)
-                    printf(" | -p pipe-cmd");
-                printf(" ] [ -g ] port-number");
+                    printf(" | -p 管道命令");
+                printf(" ] [ -g ] 端口号");
                 printf("\n");
-                printf("where: -d           log all connection contents to"
-                       " standard output\n");
-                printf("       -f           record each half-connection to "
-                       "a file sockin.N/sockout.N\n");
+                printf("where: -d           将所有连接内容打印到"
+                       "标准输出\n");
+                printf("       -f           记录每对连接到文件"
+                       "sockin.N/sockout.N\n");
                 if (ps->platform->open_pipes)
-                    printf("       -p pipe-cmd  pipe each half-connection"
-                           " to 'pipe-cmd [in|out] N'\n");
-                printf("       -g           accept connections from anywhere,"
-                       " not just localhost\n");
+                    printf("       -p 管道命令  每对连接到"
+                           "管道命令[in|out]\n");
+                printf("       -g           接受来自任何地方的连接,"
+                       "不仅仅是本地主机\n");
                 if (ps->platform->start_subcommand)
-                    printf("       --exec subcmd [args...]   run command, and "
-                           "terminate when it exits\n");
-                printf("       port-number  listen on this port"
-                       " (default 1080)\n");
-                printf("also: psocks --help      display this help text\n");
+                    printf("       --exec 子命令 [参数...]   运行命令，并在"
+                           "退出时终止\n");
+                printf("       端口号  侦听此端口"
+                       " (默认 1080)\n");
+                printf("其他：psocks --help      显示帮助信息\n");
                 exit(0);
             } else {
-                fprintf(stderr, "psocks: unrecognised option '%s'\n", p);
+                fprintf(stderr, "psocks: 无法识别的选项 '%s'\n", p);
                 exit(1);
             }
 	} else {
@@ -500,7 +500,7 @@ void psocks_cmdline(psocks_state *ps, CmdlineArgList *arglist)
                 ps->listen_port = atoi(p);
                 break;
               default:
-                fprintf(stderr, "psocks: unexpected extra argument '%s'\n", p);
+                fprintf(stderr, "psocks: 意外的额外参数 '%s'\n", p);
                 exit(1);
                 break;
             }

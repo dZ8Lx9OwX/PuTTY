@@ -50,7 +50,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
          * requesting a group.
          */
         if (dh_is_gex(s->kex_alg)) {
-            ppl_logevent("Doing Diffie-Hellman group exchange");
+            ppl_logevent("执行Diffie-Hellman组交换");
             s->ppl.bpp->pls->kctx = SSH2_PKTCTX_DHGEX;
             /*
              * Work out how big a DH group we will need to allow that
@@ -76,8 +76,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
 
             crMaybeWaitUntilV((pktin = ssh2_transport_pop(s)) != NULL);
             if (pktin->type != SSH2_MSG_KEX_DH_GEX_GROUP) {
-                ssh_proto_error(s->ppl.ssh, "Received unexpected packet when "
-                                "expecting Diffie-Hellman group, type %d (%s)",
+                ssh_proto_error(s->ppl.ssh, "等待 Diffie-Hellman group 时，"
+                                "收到意外的数据包，类型 %d (%s)",
                                 pktin->type,
                                 ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                               s->ppl.bpp->pls->actx,
@@ -89,7 +89,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             s->g = get_mp_ssh2(pktin);
             if (get_err(pktin)) {
                 ssh_proto_error(s->ppl.ssh,
-                                "Unable to parse Diffie-Hellman group packet");
+                                "无法解析 Diffie-Hellman group 数据包");
                 *aborted = true;
                 return;
             }
@@ -97,8 +97,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             s->kex_init_value = SSH2_MSG_KEX_DH_GEX_INIT;
             s->kex_reply_value = SSH2_MSG_KEX_DH_GEX_REPLY;
 
-            ppl_logevent("Doing Diffie-Hellman key exchange using %d-bit "
-                         "modulus and hash %s with a server-supplied group",
+            ppl_logevent("进行Diffie-Hellman密钥交换，使用%d-bit"
+                         "模数和%s哈希,包含服务器提供的组",
                          dh_modulus_bit_size(s->dh_ctx),
                          ssh_hash_alg(s->exhash)->text_name);
         } else {
@@ -107,8 +107,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             s->kex_init_value = SSH2_MSG_KEXDH_INIT;
             s->kex_reply_value = SSH2_MSG_KEXDH_REPLY;
 
-            ppl_logevent("Doing Diffie-Hellman key exchange using %d-bit "
-                         "modulus and hash %s with standard group \"%s\"",
+            ppl_logevent("进行Diffie-Hellman密钥交换，使用%d-bit"
+                         "模数和%s哈希,包含标准组\"%s\"",
                          dh_modulus_bit_size(s->dh_ctx),
                          ssh_hash_alg(s->exhash)->text_name,
                          s->kex_alg->groupname);
@@ -126,8 +126,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
         seat_set_busy_status(s->ppl.seat, BUSY_WAITING);
         crMaybeWaitUntilV((pktin = ssh2_transport_pop(s)) != NULL);
         if (pktin->type != s->kex_reply_value) {
-            ssh_proto_error(s->ppl.ssh, "Received unexpected packet when "
-                            "expecting Diffie-Hellman reply, type %d (%s)",
+            ssh_proto_error(s->ppl.ssh, "等待 Diffie-Hellman 回复时，"
+                            "收到意外的数据包，类型 %d (%s)",
                             pktin->type,
                             ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                           s->ppl.bpp->pls->actx,
@@ -142,7 +142,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
         s->sigdata = get_string(pktin);
         if (get_err(pktin)) {
             ssh_proto_error(s->ppl.ssh,
-                            "Unable to parse Diffie-Hellman reply packet");
+                            "无法解析 Diffie-Hellman 回复数据包");
             *aborted = true;
             return;
         }
@@ -150,8 +150,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
         {
             const char *err = dh_validate_f(s->dh_ctx, s->f);
             if (err) {
-                ssh_proto_error(s->ppl.ssh, "Diffie-Hellman reply failed "
-                                "validation: %s", err);
+                ssh_proto_error(s->ppl.ssh, "Diffie-Hellman 回复"
+                                "验证失败：%s", err);
                 *aborted = true;
                 return;
             }
@@ -186,7 +186,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
         }
     } else if (s->kex_alg->main_type == KEXTYPE_ECDH) {
         char *desc = ecdh_keyalg_description(s->kex_alg);
-        ppl_logevent("Doing %s, using hash %s", desc,
+        ppl_logevent("执行 %s,使用哈希 %s", desc,
                      ssh_hash_alg(s->exhash)->text_name);
         sfree(desc);
 
@@ -205,8 +205,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
 
         crMaybeWaitUntilV((pktin = ssh2_transport_pop(s)) != NULL);
         if (pktin->type != SSH2_MSG_KEX_ECDH_REPLY) {
-            ssh_proto_error(s->ppl.ssh, "Received unexpected packet when "
-                            "expecting ECDH reply, type %d (%s)", pktin->type,
+            ssh_proto_error(s->ppl.ssh, "期待 ECDH 回复时，"
+                            "收到意外的数据包，类型 %d (%s)", pktin->type,
                             ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                           s->ppl.bpp->pls->actx,
                                           pktin->type));
@@ -231,8 +231,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             bool ok = ecdh_key_getkey(s->ecdh_key, keydata,
                                       BinarySink_UPCAST(s->kex_shared_secret));
             if (!get_err(pktin) && !ok) {
-                ssh_proto_error(s->ppl.ssh, "Received invalid elliptic curve "
-                                "point in ECDH reply");
+                ssh_proto_error(s->ppl.ssh, "在 ECDH 回复中收到"
+                                "无效的椭圆曲线点");
                 *aborted = true;
                 return;
             }
@@ -240,7 +240,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
 
         s->sigdata = get_string(pktin);
         if (get_err(pktin)) {
-            ssh_proto_error(s->ppl.ssh, "Unable to parse ECDH reply packet");
+            ssh_proto_error(s->ppl.ssh, "无法解析 ECDH 回复数据包");
             *aborted = true;
             return;
         }
@@ -283,7 +283,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             s->ecdh_key = ecdh_key_new(s->kex_alg, false);
 
             char *desc = ecdh_keyalg_description(s->kex_alg);
-            ppl_logevent("Doing GSSAPI (with Kerberos V5) %s with hash %s",
+            ppl_logevent("执行GSSAPI(包含 Kerberos V5) %s 带有哈希 %s",
                          desc, ssh_hash_alg(s->exhash)->text_name);
             sfree(desc);
         } else if (dh_is_gex(s->kex_alg)) {
@@ -292,8 +292,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
              * much data.
              */
             s->pbits = 512 << ((s->nbits - 1) / 64);
-            ppl_logevent("Doing GSSAPI (with Kerberos V5) Diffie-Hellman "
-                         "group exchange, with minimum %d bits, and hash %s",
+            ppl_logevent("执行GSSAPI(包含Kerberos V5) Diffie-Hellman "
+                         "group exchange, 包含最少 %d 位,和哈希 %s",
                          s->pbits, ssh_hash_alg(s->exhash)->text_name);
             pktout = ssh_bpp_new_pktout(s->ppl.bpp, SSH2_MSG_KEXGSS_GROUPREQ);
             put_uint32(pktout, s->pbits); /* min */
@@ -304,8 +304,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             crMaybeWaitUntilV(
                 (pktin = ssh2_transport_pop(s)) != NULL);
             if (pktin->type != SSH2_MSG_KEXGSS_GROUP) {
-                ssh_proto_error(s->ppl.ssh, "Received unexpected packet when "
-                                "expecting Diffie-Hellman group, type %d (%s)",
+                ssh_proto_error(s->ppl.ssh, "等待 Diffie-Hellman group 时，收到"
+                                "意外的数据包，类型 %d (%s)",
                                 pktin->type,
                                 ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                               s->ppl.bpp->pls->actx,
@@ -317,15 +317,15 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             s->g = get_mp_ssh2(pktin);
             if (get_err(pktin)) {
                 ssh_proto_error(s->ppl.ssh,
-                                "Unable to parse Diffie-Hellman group packet");
+                                "无法解析 Diffie-Hellman group 数据包");
                 *aborted = true;
                 return;
             }
             s->dh_ctx = dh_setup_gex(s->p, s->g);
         } else {
             s->dh_ctx = dh_setup_group(s->kex_alg);
-            ppl_logevent("Using GSSAPI (with Kerberos V5) Diffie-Hellman with"
-                         " standard group \"%s\" and hash %s",
+            ppl_logevent("执行GSSAPI(包含Kerberos V5) Diffie-Hellman 包含"
+                         " standard group \"%s\" 和哈希 %s",
                          s->kex_alg->groupname,
                          ssh_hash_alg(s->exhash)->text_name);
         }
@@ -350,7 +350,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             s->shgss->lib, &s->shgss->ctx, &s->gss_cred_expiry);
         if (s->gss_stat != SSH_GSS_OK) {
             ssh_sw_abort(s->ppl.ssh,
-                         "GSSAPI key exchange failed to initialise");
+                         "GSSAPI 密钥交换初始化失败");
             *aborted = true;
             return;
         }
@@ -379,8 +379,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                         &s->gss_buf) == SSH_GSS_OK) {
                     char *err = s->gss_buf.value;
                     ssh_sw_abort(s->ppl.ssh,
-                                 "GSSAPI key exchange failed to initialise "
-                                 "context: %s", err);
+                                 "GSSAPI 密钥交换未能初始化"
+                                 "上下文令牌：%s", err);
                     sfree(err);
                     *aborted = true;
                     return;
@@ -394,8 +394,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                 pktout = ssh_bpp_new_pktout(s->ppl.bpp,
                                             SSH2_MSG_KEXGSS_INIT);
                 if (s->gss_sndtok.length == 0) {
-                    ssh_sw_abort(s->ppl.ssh, "GSSAPI key exchange failed: "
-                                 "no initial context token");
+                    ssh_sw_abort(s->ppl.ssh, "GSSAPI 密钥交换失败："
+                                 "没有初始化上下文令牌");
                     *aborted = true;
                     return;
                 }
@@ -408,7 +408,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                 }
                 pq_push(s->ppl.out_pq, pktout);
                 s->shgss->lib->free_tok(s->shgss->lib, &s->gss_sndtok);
-                ppl_logevent("GSSAPI key exchange initialised");
+                ppl_logevent("GSSAPI 密钥交换已初始化");
             } else if (s->gss_sndtok.length != 0) {
                 pktout = ssh_bpp_new_pktout(
                     s->ppl.bpp, SSH2_MSG_KEXGSS_CONTINUE);
@@ -474,8 +474,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                 get_uint32(pktin); /* server's major status */
                 get_uint32(pktin); /* server's minor status */
                 data = get_string(pktin);
-                ppl_logevent("GSSAPI key exchange failed; "
-                             "server's message: %.*s", PTRLEN_PRINTF(data));
+                ppl_logevent("GSSAPI 密钥交换失败；"
+                             "服务器消息：%.*s", PTRLEN_PRINTF(data));
                 /* Language tag, but we have no use for it */
                 get_string(pktin);
                 /*
@@ -486,8 +486,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                  */
                 goto wait_for_gss_token;
               default:
-                ssh_proto_error(s->ppl.ssh, "Received unexpected packet "
-                                "during GSSAPI key exchange, type %d (%s)",
+                ssh_proto_error(s->ppl.ssh, "在 GSSAPR 密钥交换期间"
+                                "收到意外的数据包，类型 %d (%s)",
                                 pktin->type,
                                 ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                               s->ppl.bpp->pls->actx,
@@ -511,8 +511,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
         } else {
             const char *err = dh_validate_f(s->dh_ctx, s->f);
             if (err) {
-                ssh_proto_error(s->ppl.ssh, "GSSAPI reply failed "
-                                "validation: %s", err);
+                ssh_proto_error(s->ppl.ssh, "GSSAPI 回复验证"
+                                "失败：%s", err);
                 *aborted = true;
                 return;
             }
@@ -569,7 +569,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
         ptrlen rsakeydata;
 
         assert(s->kex_alg->main_type == KEXTYPE_RSA);
-        ppl_logevent("Doing RSA key exchange with hash %s",
+        ppl_logevent("进行RSA密钥交换,包含%s哈希",
                      ssh_hash_alg(s->exhash)->text_name);
         s->ppl.bpp->pls->kctx = SSH2_PKTCTX_RSAKEX;
         /*
@@ -578,8 +578,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
          */
         crMaybeWaitUntilV((pktin = ssh2_transport_pop(s)) != NULL);
         if (pktin->type != SSH2_MSG_KEXRSA_PUBKEY) {
-            ssh_proto_error(s->ppl.ssh, "Received unexpected packet when "
-                            "expecting RSA public key, type %d (%s)",
+            ssh_proto_error(s->ppl.ssh, "等待 RSA 公钥时，"
+                            "收到意外数据包，类型：%d (%s)",
                             pktin->type,
                             ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                           s->ppl.bpp->pls->actx,
@@ -597,7 +597,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
         s->rsa_kex_key = ssh_rsakex_newkey(rsakeydata);
         if (!s->rsa_kex_key) {
             ssh_proto_error(s->ppl.ssh,
-                            "Unable to parse RSA public key packet");
+                            "无法解析 RSA 公钥数据包");
             *aborted = true;
             return;
         }
@@ -617,9 +617,9 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             const struct ssh_rsa_kex_extra *extra =
                 (const struct ssh_rsa_kex_extra *)s->kex_alg->extra;
             if (klen < extra->minklen) {
-                ssh_proto_error(s->ppl.ssh, "Server sent %d-bit RSA key, "
-                                "less than the minimum size %d for %s "
-                                "key exchange", klen, extra->minklen,
+                ssh_proto_error(s->ppl.ssh, "服务器发送 %d-bit RSA 密钥，"
+                                "小于 %d 密钥交换的最小大小 %s "
+                                "最小大小 %s ", klen, extra->minklen,
                                 s->kex_alg->name);
                 *aborted = true;
                 return;
@@ -671,8 +671,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
 
         crMaybeWaitUntilV((pktin = ssh2_transport_pop(s)) != NULL);
         if (pktin->type != SSH2_MSG_KEXRSA_DONE) {
-            ssh_proto_error(s->ppl.ssh, "Received unexpected packet when "
-                            "expecting RSA kex signature, type %d (%s)",
+            ssh_proto_error(s->ppl.ssh, "等待 RSA 密钥签名时，"
+                            "收到意外的数据包，类型：%d (%s)",
                             pktin->type,
                             ssh2_pkt_type(s->ppl.bpp->pls->kctx,
                                           s->ppl.bpp->pls->actx,
@@ -683,7 +683,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
 
         s->sigdata = get_string(pktin);
         if (get_err(pktin)) {
-            ssh_proto_error(s->ppl.ssh, "Unable to parse RSA kex signature");
+            ssh_proto_error(s->ppl.ssh, "无法解析 RSA 密钥签名");
             *aborted = true;
             return;
         }
@@ -704,12 +704,12 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             if (s->shgss->lib->display_status(
                     s->shgss->lib, s->shgss->ctx, &s->gss_buf) == SSH_GSS_OK) {
                 char *err = s->gss_buf.value;
-                ssh_sw_abort(s->ppl.ssh, "GSSAPI key exchange MIC was "
-                             "not valid: %s", err);
+                ssh_sw_abort(s->ppl.ssh, "GSSAPI 密钥交换 MIC"
+                             "无效：%s", err);
                 sfree(err);
             } else {
-                ssh_sw_abort(s->ppl.ssh, "GSSAPI key exchange MIC was "
-                             "not valid");
+                ssh_sw_abort(s->ppl.ssh, "GSSAPI 密钥交换 MIC"
+                             "无效");
             }
             *aborted = true;
             return;
@@ -733,7 +733,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
         if (s->got_session_id) {
             s->shgss->lib->release_cred(s->shgss->lib, &s->shgss->ctx);
         }
-        ppl_logevent("GSSAPI Key Exchange complete!");
+        ppl_logevent("GSSAPI 密钥交换完成！");
     }
 #endif
 
@@ -742,7 +742,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
     /* In GSS keyex there's no hostkey signature to verify */
     if (!kex_is_gss(s->kex_alg)) {
         if (!s->hkey) {
-            ssh_proto_error(s->ppl.ssh, "Server's host key is invalid");
+            ssh_proto_error(s->ppl.ssh, "服务器的主机密钥无效");
             *aborted = true;
             return;
         }
@@ -751,8 +751,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                 s->hkey, s->sigdata,
                 make_ptrlen(s->exchange_hash, s->kex_alg->hash->hlen))) {
 #ifndef FUZZING
-            ssh_proto_error(s->ppl.ssh, "Signature from server's host key "
-                            "is invalid");
+            ssh_proto_error(s->ppl.ssh, "服务器主机密钥的签名"
+                            "无效");
             *aborted = true;
             return;
 #endif
@@ -775,7 +775,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             if (s->hkey) {
                 char *fingerprint = ssh2_double_fingerprint(
                     s->hkey, SSH_FPTYPE_DEFAULT);
-                ppl_logevent("GSS kex provided fallback host key:");
+                ppl_logevent("GSS kex 提供后备主机密钥：");
                 ppl_logevent("%s", fingerprint);
                 sfree(fingerprint);
 
@@ -817,7 +817,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                      * consequence.
                      */
                     if (!s->warned_about_no_gss_transient_hostkey) {
-                        ppl_logevent("No fallback host key available");
+                        ppl_logevent("没有可用的备用主机密钥");
                         s->warned_about_no_gss_transient_hostkey = true;
                     }
                 }
@@ -836,17 +836,17 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                 s->hkey, SSH_FPTYPE_DEFAULT);
 
             if (s->need_gss_transient_hostkey) {
-                ppl_logevent("Post-GSS rekey provided fallback host key:");
+                ppl_logevent("GSS 更新后提供的备用主机密钥：");
                 ppl_logevent("%s", fingerprint);
                 ssh_transient_hostkey_cache_add(s->thc, s->hkey);
                 s->need_gss_transient_hostkey = false;
             } else if (!ssh_transient_hostkey_cache_verify(s->thc, s->hkey)) {
-                ppl_logevent("Non-GSS rekey after initial GSS kex "
-                             "used host key:");
+                ppl_logevent("初始GSS kex后的非GSS重新生成密钥,"
+                             "使用的主机密钥：");
                 ppl_logevent("%s", fingerprint);
                 sfree(fingerprint);
-                ssh_sw_abort(s->ppl.ssh, "Server's host key did not match any "
-                             "used in previous GSS kex");
+                ssh_sw_abort(s->ppl.ssh, "服务器的主机密钥与以前的GSS 密钥中"
+                             "使用的任何密钥都不匹配");
                 *aborted = true;
                 return;
             }
@@ -885,10 +885,10 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                     }
                 }
                 if (list) {
-                    ppl_logevent("Server also has %s host key%s, but we "
-                                 "don't know %s", list,
-                                 nkeys > 1 ? "s" : "",
-                                 nkeys > 1 ? "any of them" : "it");
+                    ppl_logevent("服务器也有%s主机密钥,但我们"
+                                 "未存储%s", list,
+                                 nkeys > 1 ? "它们" : "",
+                                 nkeys > 1 ? "其中任何一个" : "它");
                     sfree(list);
                 }
             }
@@ -898,7 +898,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
 
             FingerprintType fptype_default =
                 ssh2_pick_default_fingerprint(fingerprints);
-            ppl_logevent("Host key fingerprint is:");
+            ppl_logevent("主机密钥指纹是：");
             ppl_logevent("%s", fingerprints[fptype_default]);
 
             /*
@@ -911,8 +911,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             if (ssh_key_alg(s->hkey)->is_certificate) {
                 char *base_fp = ssh2_fingerprint(
                     s->hkey, ssh_fptype_to_cert(fptype_default));
-                ppl_logevent("Host key is a certificate. "
-                             "Hash including certificate:");
+                ppl_logevent("主机密钥是一个证书,"
+                             "Hash值(包含证书)：");
                 ppl_logevent("%s", base_fp);
                 sfree(base_fp);
 
@@ -922,7 +922,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                 ssh_key_cert_id_string(
                     s->hkey, BinarySink_UPCAST(id_string_scc));
                 stripctrl_free(id_string_scc);
-                ppl_logevent("Certificate ID string is \"%s\"", id_string->s);
+                ppl_logevent("证书ID字符串为：\"%s\"", id_string->s);
                 strbuf_free(id_string);
 
                 strbuf *ca_pub = strbuf_new();
@@ -932,7 +932,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
 
                 char *ca_fp = ssh2_fingerprint_blob(ptrlen_from_strbuf(ca_pub),
                                                     fptype_default);
-                ppl_logevent("Fingerprint of certification authority:");
+                ppl_logevent("证书颁发机构的指纹：");
                 ppl_logevent("%s", ca_fp);
                 sfree(ca_fp);
 
@@ -942,9 +942,9 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                 bool cert_ok = false;
 
                 if (!hca_found) {
-                    put_fmt(error, "Certification authority is not trusted");
+                    put_fmt(error, "证书颁发机构不受信任");
                 } else {
-                    ppl_logevent("Certification authority matches '%s'",
+                    ppl_logevent("证书颁发机构匹配 '%s'",
                                  hca_found->name);
                     cert_ok = ssh_key_check_cert(
                         s->hkey,
@@ -957,10 +957,10 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                 if (cert_ok) {
                     strbuf_free(error);
                     ssh2_free_all_fingerprints(fingerprints);
-                    ppl_logevent("Accepted certificate");
+                    ppl_logevent("证书被接受");
                     goto host_key_ok;
                 } else {
-                    ppl_logevent("Rejected host key certificate: %s",
+                    ppl_logevent("主机密钥证书被拒绝：%s",
                                  error->s);
                     strbuf_free(error);
                     /* now fall through into normal host key checking */
@@ -986,7 +986,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                 crMaybeWaitUntilV(s->spr.kind != SPRK_INCOMPLETE);
                 if (spr_is_abort(s->spr)) {
                     *aborted = true;
-                    ssh_spr_close(s->ppl.ssh, s->spr, "host key verification");
+                    ssh_spr_close(s->ppl.ssh, s->spr, "主机密钥验证");
                     return;
                 }
 
@@ -998,8 +998,8 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
                      * explain why we chose to continue with the
                      * connection anyway!
                      */
-                    ppl_logevent("Accepting certified host key anyway based "
-                                 "on cache");
+                    ppl_logevent("无论任何时候,都接受经过认证的"
+                                 "主机密钥缓存");
                 }
             }
 
@@ -1017,7 +1017,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
 
             char *fingerprint = ssh2_double_fingerprint(
                 s->hkey, SSH_FPTYPE_DEFAULT);
-            ppl_logevent("Storing additional host key for this host:");
+            ppl_logevent("为该主机存储额外的主机密钥：");
             ppl_logevent("%s", fingerprint);
             sfree(fingerprint);
 
@@ -1044,7 +1044,7 @@ void ssh2kex_coroutine(struct ssh2_transport_state *s, bool *aborted)
             if (!match) {
 #ifndef FUZZING
                 ssh_sw_abort(s->ppl.ssh,
-                             "Host key was different in repeat key exchange");
+                             "重复密钥交换中的主机密钥不同");
                 *aborted = true;
                 return;
 #endif

@@ -704,8 +704,8 @@ static void proxy_http_process_queue(ProxyNegotiator *pn)
              * proceed from here if we have a way to ask the user
              * questions. */
             if (!pn->itr) {
-                pn->error = dupprintf("HTTP proxy requested authentication "
-                                      "which we do not have");
+                pn->error = dupprintf("HTTP代理请求了我们没有"
+                                      "的身份验证");
                 crStopV;
             }
 
@@ -758,7 +758,7 @@ static void proxy_http_process_queue(ProxyNegotiator *pn)
             s->prompts = NULL;
         } else {
             /* Any other HTTP response is treated as permanent failure */
-            pn->error = dupprintf("HTTP response %s",
+            pn->error = dupprintf("HTTP 回复 %s",
                                   s->response->s + s->http_status_pos);
             crStopV;
         }

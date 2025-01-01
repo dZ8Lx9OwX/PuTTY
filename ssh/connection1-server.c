@@ -66,7 +66,7 @@ bool ssh1_handle_direction_specific_packet(
         if (s->finished_setup)
             goto unexpected_setup_packet;
 
-        ppl_logevent("Client requested a shell");
+        ppl_logevent("客户端请求一个shell");
         chan_run_shell(s->mainchan_chan);
         s->finished_setup = true;
         return true;
@@ -76,7 +76,7 @@ bool ssh1_handle_direction_specific_packet(
             goto unexpected_setup_packet;
 
         cmd = get_string(pktin);
-        ppl_logevent("Client sent command '%.*s'", PTRLEN_PRINTF(cmd));
+        ppl_logevent("客户端发送命令 '%.*s'", PTRLEN_PRINTF(cmd));
         chan_run_command(s->mainchan_chan, cmd);
         s->finished_setup = true;
         return true;
@@ -113,12 +113,12 @@ bool ssh1_handle_direction_specific_packet(
             BinarySource_UPCAST(pktin), 1);
 
         if (get_err(pktin)) {
-            ppl_logevent("Unable to decode pty request packet");
+            ppl_logevent("无法解码 pty 请求数据包");
             success = false;
         } else if (!chan_allocate_pty(
                        s->mainchan_chan, termtype, width, height,
                        pixwidth, pixheight, modes)) {
-            ppl_logevent("Unable to allocate a pty");
+            ppl_logevent("无法分配 pty");
             success = false;
         } else {
             success = true;
@@ -138,7 +138,7 @@ bool ssh1_handle_direction_specific_packet(
         host = get_string(pktin);
         port = toint(get_uint32(pktin));
 
-        ppl_logevent("Client requested port %d forward to %.*s:%d",
+        ppl_logevent("客户端请求端口 %d 转发到 %.*s:%d",
                      listenport, PTRLEN_PRINTF(host), port);
 
         host_str = mkstr(host);
@@ -200,7 +200,7 @@ bool ssh1_handle_direction_specific_packet(
 
         host_str = mkstr(host);
 
-        ppl_logevent("Received request to connect to port %s:%d",
+        ppl_logevent("收到连接端口的请求 %s:%d",
                      host_str, port);
         c = snew(struct ssh1_channel);
         c->connlayer = s;
@@ -211,7 +211,7 @@ bool ssh1_handle_direction_specific_packet(
         sfree(host_str);
 
         if (err) {
-            ppl_logevent("Port open failed: %s", err);
+            ppl_logevent("端口打开失败：%s", err);
             sfree(err);
             ssh1_channel_free(c);
             pktout = ssh_bpp_new_pktout(
@@ -227,18 +227,18 @@ bool ssh1_handle_direction_specific_packet(
             put_uint32(pktout, c->remoteid);
             put_uint32(pktout, c->localid);
             pq_push(s->ppl.out_pq, pktout);
-            ppl_logevent("Forwarded port opened successfully");
+            ppl_logevent("转发端口打开成功");
         }
 
         return true;
 
       case SSH1_CMSG_EXIT_CONFIRMATION:
         if (!s->sent_exit_status) {
-            ssh_proto_error(s->ppl.ssh, "Received SSH1_CMSG_EXIT_CONFIRMATION"
-                            " without having sent SSH1_SMSG_EXIT_STATUS");
+            ssh_proto_error(s->ppl.ssh, "未发送 SSH1_SMSG_EXIT_STATUS 的情况下"
+                            "收到 SSH1_CMSG_EXIT_CONFIRMATION ");
             return true;
         }
-        ppl_logevent("Client sent exit confirmation");
+        ppl_logevent("客户发送退出确认");
         return true;
 
       default:
@@ -246,8 +246,8 @@ bool ssh1_handle_direction_specific_packet(
     }
 
   unexpected_setup_packet:
-    ssh_proto_error(s->ppl.ssh, "Received unexpected setup packet after the "
-                    "setup phase, type %d (%s)", pktin->type,
+    ssh_proto_error(s->ppl.ssh, "在设置阶段后收到意外的"
+                    "设置数据包, 类型 %d (%s)", pktin->type,
                     ssh1_pkt_type(pktin->type));
     /* FIXME: ensure caller copes with us just having freed the whole layer */
     return true;
@@ -328,7 +328,7 @@ SshChannel *ssh1_serverside_x11_open(
     c->halfopen = true;
     c->chan = chan;
 
-    ppl_logevent("Forwarding X11 connection to client");
+    ppl_logevent("将 X11 连接转发给客户端");
 
     pktout = ssh_bpp_new_pktout(s->ppl.bpp, SSH1_SMSG_X11_OPEN);
     put_uint32(pktout, c->localid);
@@ -350,7 +350,7 @@ SshChannel *ssh1_serverside_agent_open(ConnectionLayer *cl, Channel *chan)
     c->halfopen = true;
     c->chan = chan;
 
-    ppl_logevent("Forwarding agent connection to client");
+    ppl_logevent("将代理连接转发到客户端");
 
     pktout = ssh_bpp_new_pktout(s->ppl.bpp, SSH1_SMSG_AGENT_OPEN);
     put_uint32(pktout, c->localid);

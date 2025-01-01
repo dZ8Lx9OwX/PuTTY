@@ -573,7 +573,7 @@ char *gtk_askpass_main(const char *display, const char *wintitle,
     /* In case gtk_init hasn't been called yet by the program */
     if (!setup_gtk(display)) {
         *success = false;
-        return dupstr("unable to initialise GTK");
+        return dupstr("无法初始化GTK");
     }
 
     if ((err = gtk_askpass_setup(ctx, wintitle, prompt)) != NULL) {
@@ -598,7 +598,7 @@ char *gtk_askpass_main(const char *display, const char *wintitle,
 void modalfatalbox(const char *p, ...)
 {
     va_list ap;
-    fprintf(stderr, "FATAL ERROR: ");
+    fprintf(stderr, "致命错误：");
     va_start(ap, p);
     vfprintf(stderr, p, ap);
     va_end(ap);
@@ -616,9 +616,9 @@ int main(int argc, char **argv)
 
     if (argc != 2) {
         success = false;
-        ret = dupprintf("usage: %s <prompt text>", argv[0]);
+        ret = dupprintf("用法： %s <prompt text>", argv[0]);
     } else {
-        ret = gtk_askpass_main(NULL, "Enter passphrase", argv[1], &success);
+        ret = gtk_askpass_main(NULL, "输入密码", argv[1], &success);
     }
 
     if (!success) {

@@ -44,7 +44,7 @@
 void modalfatalbox(const char *p, ...)
 {
     va_list ap;
-    fprintf(stderr, "FATAL ERROR: ");
+    fprintf(stderr, "致命错误：");
     va_start(ap, p);
     vfprintf(stderr, p, ap);
     va_end(ap);
@@ -54,7 +54,7 @@ void modalfatalbox(const char *p, ...)
 void nonfatal(const char *p, ...)
 {
     va_list ap;
-    fprintf(stderr, "ERROR: ");
+    fprintf(stderr, "错误：");
     va_start(ap, p);
     vfprintf(stderr, p, ap);
     va_end(ap);
@@ -158,15 +158,15 @@ static const LogPolicyVtable server_logpolicy_vt = {
 
 static void show_help(FILE *fp)
 {
-    fputs("usage:   psusan [options]\n"
-          "options: --listen SOCKETPATH  listen for connections on a Unix-domain socket\n"
-          "         --listen-once        (with --listen) stop after one connection\n"
-          "         --verbose            print log messages to standard error\n"
-          "         --sessiondir DIR     cwd for session subprocess (default $HOME)\n"
-          "         --sshlog FILE        write ssh-connection packet log to FILE\n"
-          "         --sshrawlog FILE     write packets and raw data log to FILE\n"
-          "also:    psusan --help        show this text\n"
-          "         psusan --version     show version information\n", fp);
+    fputs("用法：   psusan [选项]\n"
+          "选项：   --listen SOCKETPATH  侦听Unix-domain socket上的连接\n"
+          "         --listen-once        (跟随 --listen)连接后停止\n"
+          "         --verbose            将日志消息打印为标准错误\n"
+          "         --sessiondir DIR     会话子进程的目录(默认 $HOME)\n"
+          "         --sshlog FILE        将SSH连接数据包日志写入文件\n"
+          "         --sshrawlog FILE     将SSH连接数据和原始数据写入文件\n"
+          "其他：   psusan --help        显示帮助信息\n"
+          "         psusan --version     显示版本信息\n", fp);
 }
 
 static void show_version_and_exit(void)
@@ -214,7 +214,7 @@ static bool longoptarg(const char *arg, const char *expected,
             *val = *++*argvp;
             return true;
         } else {
-            fprintf(stderr, "%s: option %s expects an argument\n",
+            fprintf(stderr, "%s: 选项 %s 期待一个参数\n",
                     appname, expected);
             exit(1);
         }
@@ -228,7 +228,7 @@ static bool longoptnoarg(const char *arg, const char *expected)
     if (memcmp(arg, expected, len))
         return false;
     if (arg[len] == '=') {
-        fprintf(stderr, "%s: option %s expects no argument\n",
+        fprintf(stderr, "%s: 选项 %s 不需要参数\n",
                 appname, expected);
         exit(1);
     } else if (arg[len] == '\0') {
@@ -386,7 +386,7 @@ int main(int argc, char **argv)
         } else if (!strcmp(arg, "--listen-once")) {
             listen_once = true;
         } else {
-            fprintf(stderr, "%s: unrecognised option '%s'\n", appname, arg);
+            fprintf(stderr, "%s: 无法识别的选项 '%s'\n", appname, arg);
             exit(1);
         }
     }
@@ -404,14 +404,14 @@ int main(int argc, char **argv)
         scfg.listening_plug.vt = &server_plugvt;
         SockAddr *addr = unix_sock_addr(listen_socket);
         scfg.listening_socket = new_unix_listener(addr, &scfg.listening_plug);
-        char *msg = dupprintf("listening on Unix socket %s", listen_socket);
+        char *msg = dupprintf("侦听Unix socket %s", listen_socket);
         log_to_stderr(-1, msg);
         sfree(msg);
     } else {
         struct server_instance *inst;
         Plug *plug = server_conn_plug(&scfg, &inst);
         ssh_server_start(plug, make_fd_socket(0, 1, -1, NULL, 0, plug));
-        log_to_stderr(inst->id, "running directly on stdio");
+        log_to_stderr(inst->id, "直接在标准输出上运行");
     }
 
     cli_main_loop(cliloop_no_pw_setup, cliloop_no_pw_check,

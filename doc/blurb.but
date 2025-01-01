@@ -25,18 +25,20 @@ page</a>.</p>}
 \cfg{chm-filename}{putty.chm}
 \cfg{pdf-filename}{putty.pdf}
 
-PuTTY is a free (MIT-licensed) Windows Telnet and SSH client. This
-manual documents PuTTY, and its companion utilities PSCP, PSFTP,
-Plink, Pageant and PuTTYgen.
+PuTTY是一个免费的Windows Telnet和SSH客户端(MIT许可)。
+本手册记录了PuTTY及其配套实用程序
+PSCP、PSFTP、Plink、Pageant和PuTTYgen。
 
-\e{Note to Unix users:} this manual currently primarily documents the
-Windows versions of the PuTTY utilities. Some options are therefore
-mentioned that are absent from the \i{Unix version}; the Unix version has
-features not described here; and the \i\cw{pterm} and command-line
-\cw{puttygen} and \cw{pageant} utilities are not described at all. The
-only Unix-specific documentation that currently exists is the
-\I{man pages for PuTTY tools}man pages.
+\e{Unix用户注意事项：}
+本手册目前主要记录Windows版本的PuTTY实用程序。
+因此提到了一些在\i{Unix版本}中没有的选项；
+Unix版本具有此处未描述的功能，并且根本没有
+描述中的\i\cw{pterm}、\cw{puttygen}命令行
+和\cw{pageant}实用程序。当前唯一存在于Unix的
+\I{man pages for PuTTY tools}特定文档是MAN手册。
 
-\copyright This manual is copyright \shortcopyrightdetails. All
-rights reserved. You may distribute this documentation under the MIT
-licence. See \k{licence} for the licence text in full.
+\s{  原版手册版权所有 (c) 1997-2025 Simon Tatham 保留所有权利。}
+
+\s{  中文版手册由 (c) 2021-2025 张朵(BI6LER) 提供并保留所有权利。}
+
+您可以在MIT许可下分发此文档。完整的许可证文本参见\k{licence}。

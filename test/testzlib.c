@@ -20,7 +20,7 @@
 
 void out_of_memory(void)
 {
-    fprintf(stderr, "Out of memory!\n");
+    fprintf(stderr, "内存不足!\n");
     exit(1);
 }
 
@@ -47,20 +47,20 @@ int main(int argc, char **argv)
             } else if (!strcmp(p, "--")) {
                 opts = false;          /* next thing is filename */
             } else if (!strcmp(p, "--help")) {
-                printf("usage: testzlib          decode zlib (RFC1950) data"
-                       " from standard input\n");
-                printf("       testzlib -d       decode Deflate (RFC1951) data"
-                       " from standard input\n");
-                printf("       testzlib --help   display this text\n");
+                printf("用法： testzlib          从标准输入解码zlib(RFC1950)"
+                       "数据\n");
+                printf("       testzlib -d       从标准输入解码(RFC1951)"
+                       "数据\n");
+                printf("       testzlib --help   显示帮助信息\n");
                 return 0;
             } else {
-                fprintf(stderr, "unknown command line option '%s'\n", p);
+                fprintf(stderr, "未知命令行选项 '%s'\n", p);
                 return 1;
             }
         } else if (!filename) {
             filename = p;
         } else {
-            fprintf(stderr, "can only handle one filename\n");
+            fprintf(stderr, "只能处理一个文件名\n");
             return 1;
         }
     }
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
     if (!fp) {
         assert(filename);
-        fprintf(stderr, "unable to open '%s'\n", filename);
+        fprintf(stderr, "无法打开 '%s'\n", filename);
         return 1;
     }
 
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
                 fwrite(outbuf, 1, outlen, stdout);
             sfree(outbuf);
         } else {
-            fprintf(stderr, "decoding error\n");
+            fprintf(stderr, "解码错误\n");
             fclose(fp);
             return 1;
         }

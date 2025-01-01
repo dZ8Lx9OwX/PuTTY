@@ -55,9 +55,9 @@ static size_t serial_gotdata(
          * may become meaningful here.
          */
         if (!err)
-            error_msg = "End of file reading from serial device";
+            error_msg = "从串行设备读取数据结束";
         else
-            error_msg = "Error reading from serial device";
+            error_msg = "从串行设备读取数据出错";
 
         serial_terminate(serial);
 
@@ -78,7 +78,7 @@ static void serial_sentdata(struct handle *h, size_t new_backlog, int err,
 {
     Serial *serial = (Serial *)handle_get_privdata(h);
     if (err) {
-        const char *error_msg = "Error writing to serial device";
+        const char *error_msg = "写入数据到串行设备出错";
 
         serial_terminate(serial);
 
@@ -127,34 +127,34 @@ static char *serial_configure(Serial *serial, HANDLE serport, Conf *conf)
          * Configurable parameters.
          */
         dcb.BaudRate = conf_get_int(conf, CONF_serspeed);
-        logeventf(serial->logctx, "Configuring baud rate %lu",
+        logeventf(serial->logctx, "配置 波特率 %lu",
                   (unsigned long)dcb.BaudRate);
 
         dcb.ByteSize = conf_get_int(conf, CONF_serdatabits);
-        logeventf(serial->logctx, "Configuring %u data bits",
+        logeventf(serial->logctx, "配置 数据位 %u位",
                   (unsigned)dcb.ByteSize);
 
         switch (conf_get_int(conf, CONF_serstopbits)) {
-          case 2: dcb.StopBits = ONESTOPBIT; str = "1 stop bit"; break;
-          case 3: dcb.StopBits = ONE5STOPBITS; str = "1.5 stop bits"; break;
-          case 4: dcb.StopBits = TWOSTOPBITS; str = "2 stop bits"; break;
-          default: return dupstr("Invalid number of stop bits "
-                                 "(need 1, 1.5 or 2)");
+          case 2: dcb.StopBits = ONESTOPBIT; str = "停止位 1"; break;
+          case 3: dcb.StopBits = ONE5STOPBITS; str = "停止位 1.5"; break;
+          case 4: dcb.StopBits = TWOSTOPBITS; str = "停止位 2"; break;
+          default: return dupstr("无效的停止位"
+                                 "(应为 1, 1.5 或 2)");
         }
-        logeventf(serial->logctx, "Configuring %s", str);
+        logeventf(serial->logctx, "配置 %s", str);
 
         switch (conf_get_int(conf, CONF_serparity)) {
-          case SER_PAR_NONE: dcb.Parity = NOPARITY; str = "no"; break;
+          case SER_PAR_NONE: dcb.Parity = NOPARITY; str = "暂无"; break;
           case SER_PAR_ODD: dcb.Parity = ODDPARITY; str = "odd"; break;
           case SER_PAR_EVEN: dcb.Parity = EVENPARITY; str = "even"; break;
           case SER_PAR_MARK: dcb.Parity = MARKPARITY; str = "mark"; break;
           case SER_PAR_SPACE: dcb.Parity = SPACEPARITY; str = "space"; break;
         }
-        logeventf(serial->logctx, "Configuring %s parity", str);
+        logeventf(serial->logctx, "配置 奇偶校验 %s ", str);
 
         switch (conf_get_int(conf, CONF_serflow)) {
           case SER_FLOW_NONE:
-            str = "no";
+            str = "暂无";
             break;
           case SER_FLOW_XONXOFF:
             dcb.fOutX = dcb.fInX = true;
@@ -171,10 +171,10 @@ static char *serial_configure(Serial *serial, HANDLE serport, Conf *conf)
             str = "DSR/DTR";
             break;
         }
-        logeventf(serial->logctx, "Configuring %s flow control", str);
+        logeventf(serial->logctx, "配置 流控制 %s ", str);
 
         if (!SetCommState(serport, &dcb))
-            return dupprintf("Configuring serial port: %s",
+            return dupprintf("配置串行端口: %s",
                              win_strerror(GetLastError()));
 
         timeouts.ReadIntervalTimeout = 1;
@@ -183,7 +183,7 @@ static char *serial_configure(Serial *serial, HANDLE serport, Conf *conf)
         timeouts.WriteTotalTimeoutMultiplier = 0;
         timeouts.WriteTotalTimeoutConstant = 0;
         if (!SetCommTimeouts(serport, &timeouts))
-            return dupprintf("Configuring serial timeouts: %s",
+            return dupprintf("配置串行超时: %s",
                              win_strerror(GetLastError()));
     }
 
@@ -224,7 +224,7 @@ static char *serial_init(const BackendVtable *vt, Seat *seat,
     serial->logctx = logctx;
 
     serline = conf_get_str(conf, CONF_serline);
-    logeventf(serial->logctx, "Opening serial device %s", serline);
+    logeventf(serial->logctx, "打开串口设备 %s", serline);
 
     /*
      * Munge the string supplied by the user into a Windows filename.
@@ -254,7 +254,7 @@ static char *serial_init(const BackendVtable *vt, Seat *seat,
     serport = CreateFile(serfilename, GENERIC_READ | GENERIC_WRITE, 0, NULL,
                          OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
     if (serport == INVALID_HANDLE_VALUE) {
-        err = dupprintf("Opening '%s': %s",
+        err = dupprintf("打开 '%s': %s",
                         serfilename, win_strerror(GetLastError()));
         sfree(serfilename);
         return err;
@@ -343,7 +343,7 @@ static void serbreak_timer(void *ctx, unsigned long now)
     if (now == serial->clearbreak_time && serial->port) {
         ClearCommBreak(serial->port);
         serial->break_in_progress = false;
-        logevent(serial->logctx, "Finished serial break");
+        logevent(serial->logctx, "完成串口中断");
     }
 }
 
@@ -355,7 +355,7 @@ static void serial_special(Backend *be, SessionSpecialCode code, int arg)
     Serial *serial = container_of(be, Serial, backend);
 
     if (serial->port && code == SS_BRK) {
-        logevent(serial->logctx, "Starting serial break at user request");
+        logevent(serial->logctx, "启动串口中断，用户发起请求");
         SetCommBreak(serial->port);
         /*
          * To send a serial break on Windows, we call SetCommBreak
@@ -382,7 +382,7 @@ static void serial_special(Backend *be, SessionSpecialCode code, int arg)
 static const SessionSpecial *serial_get_specials(Backend *be)
 {
     static const SessionSpecial specials[] = {
-        {"Break", SS_BRK},
+        {"中断", SS_BRK},
         {NULL, SS_EXITMENU}
     };
     return specials;
@@ -453,7 +453,7 @@ const BackendVtable serial_backend = {
     .unthrottle = serial_unthrottle,
     .cfg_info = serial_cfg_info,
     .id = "serial",
-    .displayname_tc = "Serial",
+    .displayname_tc = "串口",
     .displayname_lc = "serial",
     .protocol = PROT_SERIAL,
     .serial_parity_mask = ((1 << SER_PAR_NONE) |

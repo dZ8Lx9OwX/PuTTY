@@ -1,88 +1,88 @@
-\C{intro} Introduction to PuTTY
+\C{intro} PuTTY简介
 
-PuTTY is a free SSH, Telnet, Rlogin, and SUPDUP client for Windows
-systems.
+PuTTY是Windows系统下的免费
+SSH、Telnet、Rlogin和SUPDUP客户端。
 
-\H{you-what} What are SSH, Telnet, Rlogin, and SUPDUP?
+\H{you-what} 什么是SSH、Telnet、Rlogin和SUPDUP？
 
-If you already know what SSH, Telnet, Rlogin, and SUPDUP are, you can
-safely skip on to the next section.
+如果您已经知道 SSH、Telnet、Rlogin 和 SUPDUP
+是什么，您可以放心地跳到下一节。
 
-SSH, Telnet, Rlogin, and SUPDUP are four ways of doing the same thing:
-logging in to a multi-user computer from another computer, over a
-network.
+SSH、Telnet、Rlogin 和 SUPDUP
+是执行相同操作的四种方式：
+通过网络从另一台计算机登录到多用户计算机。
 
-Multi-user operating systems, typically of the Unix family (such as
-Linux, MacOS, and the BSD family), usually present a \i{command-line
-interface} to the user, much like the \q{\i{Command Prompt}} or
-\q{\i{MS-DOS Prompt}} in Windows. The system prints a prompt, and you
-type commands which the system will obey.
+多用户操作系统，通常是 Unix 家族（如 Linux、MacOS 和 BSD 家族），
+通常向用户提供\i{命令行界面}，很像Windows下的
+\q{\i{命令提示符}} 或\q{\i{MS-DOS 提示符}}。
+系统会打印一个提示，
+然后您输入系统将执行的命令。
 
-Using this type of interface, there is no need for you to be sitting
-at the same machine you are typing commands to. The commands, and
-responses, can be sent over a network, so you can sit at one
-computer and give commands to another one, or even to more than one.
+使用这种类型的界面，
+您无需真正坐在需要输入命令的同一台机器旁边。
+命令和响应可以通过网络发送，因此您可以坐在
+一台计算机前向另一台计算机甚至多台计算机发出命令。
 
-SSH, Telnet, Rlogin, and SUPDUP are \i\e{network protocols} that allow
-you to do this. On the computer you sit at, you run a \i\e{client},
-which makes a network connection to the other computer (the
-\i\e{server}).  The network connection carries your keystrokes and
-commands from the client to the server, and carries the server's
-responses back to you.
+SSH、Telnet、Rlogin 和 SUPDUP 是
+允许您执行此操作的\i\e{网络协议}。 在您坐的计算机上，
+您运行一个客户端，该\i\e{client}与另一台计算
+机（\i\e{server}）建立网络连接。
+网络连接将您的按键和命令从客户端传送到服务器，
+并将服务器的响应传回给您。
 
-These protocols can also be used for other types of keyboard-based
-interactive session. In particular, there are a lot of bulletin
-boards, \i{talker systems} and \i{MUDs} (Multi-User Dungeons) which support
-access using Telnet. There are even a few that support SSH.
+这些协议也可以用于其他类型的基于键盘的交互会话。
+特别是，有许多支持使用 Telnet 访问的公告
+板、\i{talker systems}和 \i{MUDs}(Multi-User Dungeons)（多用户系统）。
+甚至有一些支持 SSH。
 
-You might want to use SSH, Telnet, Rlogin, or SUPDUP if:
+在以下情况中，您可能需要使用 SSH、Telnet、Rlogin 或 SUPDUP：
 
-\b you have an account on a Unix system (or some other multi-user OS
-such as VMS or ITS) which you want to be able to access from somewhere
-else
+\b 您在 Unix 系统（或其他一些多用户操作系统，
+如 VMS 或 ITS）上有一个帐户，
+您希望能够从其他地方访问该帐户。
 
-\b your Internet Service Provider provides you with a login account
-on a \i{web server}. (This might also be known as a \i\e{shell account}.
-A \e{shell} is the program that runs on the server and interprets
-your commands for you.)
+\b 您的 Internet 服务提供商会在 \i{web server}
+上为您提供登录帐户。
+（这也可能称为 \i\e{shell 帐户}。
+\e{shell} 是在服务器上运行并为您解释命令的程序。）
 
-\b you want to use a \i{bulletin board system}, talker or MUD which can
-be accessed using Telnet.
+\b 您想使用 Telnet 访问
+的\i{bulletin board system}、talker或 MUD。
 
-You probably do \e{not} want to use SSH, Telnet, Rlogin, or SUPDUP if:
+在以下情况下，您可能\e{不需要}使用 SSH、Telnet、Rlogin 或 SUPDUP：
 
-\b you only use Windows. Windows computers have their own
-ways of networking between themselves, and unless you are doing
-something fairly unusual, you will not need to use any of these
-remote login protocols.
+\b 你只使用 Windows。
+Windows计算机在它们之间有自己的联网方式，
+除非您正在做一些非常不寻常的事情，
+否则您不需要使用任何这些远程登录协议。
 
-\H{which-one} How do SSH, Telnet, Rlogin, and SUPDUP differ?
+\H{which-one} SSH、Telnet、Rlogin和SUPDUP有何不同？
 
-This list summarises some of the \i{differences between SSH, Telnet,
-Rlogin, and SUPDUP}.
+此列表总结了\i{SSH、Telnet、Rlogin
+和 SUPDUP 之间差异}。
 
-\b SSH (which stands for \q{\i{secure shell}}) is a recently designed,
-high-security protocol. It uses strong cryptography to protect your
-connection against eavesdropping, hijacking and other attacks. Telnet,
-Rlogin, and SUPDUP are all older protocols offering minimal security.
+\b SSH (代表\q{\i{secure shell}})是最近
+设计的一种高安全性协议。
+它使用强大的加密技术来保护您的连接免受窃听、劫持和其他攻击。
+ Telnet、Rlogin 和 SUPDUP 都是较旧的协议，提供的安全性最低。
 
-\b SSH and Rlogin both allow you to \I{passwordless login}log in to the
-server without having to type a password. (Rlogin's method of doing this is
-insecure, and can allow an attacker to access your account on the
-server. SSH's method is much more secure, and typically breaking the
-security requires the attacker to have gained access to your actual
-client machine.)
+\b SSH 和 Rlogin 都允许您\I{passwordless login}即可登录服务器。
+（Rlogin 这样做的方法是不安全的，
+并且可能允许攻击者访问您在服务器上的帐户。
+SSH 的方法更加安全，
+并且通常破坏安全性需要攻击者获得对
+您实际客户端计算机的访问权限。）
 
-\b SSH allows you to connect to the server and automatically send a
-command, so that the server will run that command and then
-disconnect. So you can use it in automated processing.
+\b SSH 允许您连接到服务器并自动发送命令，
+以便服务器自动运行该命令然后断开连接。
+因此，您可以在自动化处理中使用它。
 
-The Internet is a hostile environment and security is everybody's
-responsibility. If you are connecting across the open Internet, then
-we recommend you use SSH. If the server you want to connect to
-doesn't support SSH, it might be worth trying to persuade the
-administrator to install it.
+互联网是一个充满敌意的环境，安全是每个人的责任。
+如果您通过开放的 Internet 进行连接，
+那么我们建议您使用 SSH。
+如果您要连接的服务器不支持 SSH，
+可能值得尝试说服管理员安装它。
 
-If your client and server are both behind the same (good) firewall,
-it is more likely to be safe to use Telnet, Rlogin, or SUPDUP, but we
-still recommend you use SSH.
+如果您的客户端和服务器都位于同一个（良好）防火墙之后，
+则使用 Telnet、Rlogin 或 SUPDUP 可能更安全，
+但我们仍然建议您使用 SSH。

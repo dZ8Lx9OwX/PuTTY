@@ -1,699 +1,699 @@
-\C{using} Using PuTTY
+\C{using} 使用PuTTY
 
-This chapter provides a general introduction to some more advanced
-features of PuTTY. For extreme detail and reference purposes,
-\k{config} is likely to contain more information.
+本章对 PuTTY 的一些更高级的功能进行了一般性介绍。
+出于极端细节和参考目的，
+\k{config}可能包含更多信息。
 
-\H{using-session} During your session
+\H{using-session} 在您的会话期间
 
-A lot of PuTTY's complexity and features are in the configuration
-panel. Once you have worked your way through that and started
-a session, things should be reasonably simple after that.
-Nevertheless, there are a few more useful features available.
+PuTTY 的许多复杂性和功能都在配置面板中。
+一旦你完成了这些工作并开始了一个会话，
+之后的事情就应该相当简单了。
+尽管如此，还有一些更有用的功能可用。
 
-\S{using-selection} Copying and pasting text
+\S{using-selection} 复制和粘贴文本
 
-\I{copy and paste}Often in a PuTTY session you will find text on
-your terminal screen which you want to type in again. Like most
-other terminal emulators, PuTTY allows you to copy and paste the
-text rather than having to type it again. Also, copy and paste uses
-the \I{Windows clipboard}Windows \i{clipboard}, so that you can
-paste (for example) URLs into a web browser, or paste from a word
-processor or spreadsheet into your terminal session.
+\I{copy and paste}通常在 PuTTY 会话中，
+您会在终端屏幕上找到要再次输入的文本。
+与大多数其他终端仿真器一样，PuTTY
+允许您复制和粘贴文本，而不必再次键入。
+此外，复制和粘贴使用\I{Windows clipboard}Windows \i{剪贴板}，
+以便您可以将（例如）URL 粘贴到 Web
+浏览器中，或从文字处理器或电子表格粘贴到终端会话中。
 
-By default, PuTTY's copy and paste works entirely with the \i{mouse}.
-(This will be familiar to people who have used \i\c{xterm} on Unix.)
-In order to copy text to the clipboard, you just click the \i{left
-mouse button} in the \i{terminal window}, and drag to
-\I{selecting text}select text. When you let go of the button, the text
-is \e{automatically} copied to the clipboard. You do not need to press
-\i{Ctrl-C} or \i{Ctrl-Ins}; in fact, if you do press Ctrl-C, PuTTY will
-send a Ctrl-C character down your session to the server where it will
-probably cause a process to be interrupted.
+默认情况下，PuTTY 的复制和粘贴完全使用\i{鼠标}。
+（这对于在 Unix 上使用过\i\c{xterm}
+的人来说会很熟悉。）为了将文本复制到剪贴板，
+您只需在\i{终端窗口}中单击\i{鼠
+标左键}，然后拖动以\I{selecting text}选择文本。
+当您松开按钮时，文本会\e{自动}复制到剪贴板。
+您不需要按 \i{Ctrl-C} 或 \i{Ctrl-Ins}；
+事实上，如果你按下 Ctrl-C，PuTTY 会在你的会话中发送一个
+Ctrl-C 字符到服务器，它可能会导致进程中断。
 
-Pasting into PuTTY is done using the right button (or the middle mouse
-button, if you have a \i{three-button mouse} and have set it up; see
-\k{config-mouse}). (Pressing \i{Shift-Ins}, or selecting \q{Paste}
-from the \I{right mouse button, with Ctrl}Ctrl+right-click
-\i{context menu}, have the same effect.) When
-you click the \i{right mouse button}, PuTTY will read whatever is in
-the Windows clipboard and paste it into your session. By default, this
-behaves \e{exactly} as if the clipboard contents had been typed at the
-keyboard; therefore, be careful of pasting formatted text into an
-editor that does automatic \i{indenting}, as you may find that the spaces
-pasted from the clipboard plus the spaces added by the editor add up
-to too many spaces and ruin the formatting. (Some remote applications
-can ask PuTTY to identify text that is being pasted, to avoid this
-sort of problem; but if your application does not, there is nothing
-PuTTY can do to avoid this.)
+粘贴到PuTTY是使用右键（或鼠标中键，如果您有一个\i{三键鼠标}并已设置；
+请参阅\k{config-mouse})。
+（按 \i{Shift-Ins} 或从\I{right mouse button, with Ctrl}Ctrl+right-click，
+右键单击弹出的\i{右键菜单}中选择\q{粘贴}具有相同的效果。）
+当您单击\i{鼠标右键}时，PuTTY 将读取 Windows
+剪贴板中的任何内容并将其粘贴到您的会话中。
+默认情况下，这与在键盘上输入剪贴板内容\e{完全}一样；
+因此，将格式化文本粘贴到自动执行\i{缩进}的编辑器时要小心，
+因为您可能会发现从
+剪贴板粘贴的空格加上编辑器添加的空格加起来太多空格会破坏格式。
+（一些远程应用程序可以要求
+PuTTY识别正在粘贴的文本，
+以避免此类问题；
+但如果您的应用程序没有要求，
+则PuTTY无法避免这种情况。）
 
-If you \i{double-click} the left mouse button, PuTTY will
-\I{selecting words}select a whole word. If you double-click, hold
-down the second click, and drag the mouse, PuTTY will select a
-sequence of whole words. (You can adjust precisely what PuTTY
-considers to be part of a word; see \k{config-charclasses}.)
-If you \e{triple}-click, or \i{triple-click} and drag, then
-PuTTY will \I{selecting lines}select a whole line or sequence of lines.
+如果\i{双击}\i{鼠标左键}，
+PuTTY 将\I{selecting words}选择整个单词。
+如果双击，按住第二次单击并拖动鼠标，
+PuTTY 将选择一个完整的单词序列。
+（您可以精确调整 PuTTY 认为是单词的一部分；
+请参阅\k{config-charclasses}。) 如果您\e{三击}或\i{三击并拖动}，
+则 PuTTY将\I{selecting lines}选择整行或行序列。
 
-If you want to select a \I{rectangular selection}rectangular region
-instead of selecting to the end of each line, you can do this by
-holding down Alt when you make your selection. You can also
-configure rectangular selection to be the default, and then holding
-down Alt gives the normal behaviour instead: see
-\k{config-rectselect} for details.
+如果您想\I{rectangular selection}选择矩形区域而不是选择
+到每行的末尾，您可以通过在进行选择时按
+住 Alt 来执行此操作。
+您还可以将矩形选择配置为默认设置，
+然后按住 Alt会给出正常行为：
+请参阅 \k{config-rectselect} 。
 
-(In some Unix environments, Alt+drag is intercepted by the window
-manager. Shift+Alt+drag should work for rectangular selection as
-well, so you could try that instead.)
+（在某些 Unix 环境中，Alt+drag
+会被窗口管理器拦截。Shift+Alt+drag
+也应该适用于矩形选择，因此您可以尝试这样做。）
 
-If you have a \i{middle mouse button}, then you can use it to
-\I{adjusting a selection}adjust an existing selection if you
-selected something slightly wrong. (If you have configured the
-middle mouse button to paste, then the right mouse button does this
-instead.) Click the button on the screen, and you can pick up the
-nearest end of the selection and drag it to somewhere else.
+如果您有\i{鼠标中键}，则可以将其用于
+\I{adjusting a selection}调整现有选区，
+纠正您选择的一些错误内容。
+（如果您已将鼠标中键配置为粘贴，
+则鼠标右键将执行此操作。）单击屏幕上的按钮，
+您可以选择最近的选择端并将其拖动到其他位置。
 
-If you are running PuTTY itself on Unix (not just using it to connect
-to a Unix system from Windows), by default you will likely have to use
-similar mouse actions in other applications to paste the text you
-copied from PuTTY, and to copy text for pasting into PuTTY; actions
-like \i{Ctrl-C} and Ctrl-V will likely not behave as you expect.
-\K{config-clipboards} explains why this is, and how you can change the
-behaviour. (On Windows there is only a single selection shared with other
-applications, so this confusion does not arise.)
+如果您在 Unix 上运行 PuTTY 本身（不仅仅是使用
+它从 Windows 连接到 Unix系统），默认情况下，
+您可能必须在其他应用程序中使用类似的鼠标操作来粘贴从
+PuTTY 复制的文本，并复制文本 用于粘贴到 PuTTY 中；\i{Ctrl-C} 和 Ctrl-V
+之类的操作可能不会像您预期的那样运行。
+\k{config-clipboards}解释为什么会这样，
+以及如何改变行为。 （在 Windows
+上，只有一个选择与其他应用程序共享，因此不会出现这种混淆。）
 
-It's possible for the server to ask to \I{mouse reporting}handle mouse
-clicks in the PuTTY window itself.  If this happens, the \i{mouse pointer}
-will turn into an arrow, and using the mouse to copy and paste will only
-work if you hold down Shift.  See \k{config-features-mouse} and
-\k{config-mouseshift} for details of this feature and how to configure
-it.
+服务器可能会要求处理鼠标在 PuTTY 窗口
+中的单击事件\I{mouse reporting}。如果发生这种情况，
+\i{鼠标指针}会变成一个箭头，并且只有按住 Shift
+才能使用鼠标进行复制和粘贴。
+请参阅 \k{config-features-mouse} 和\k{config-mouseshift}
+有关此功能的详细信息以及如何配置它。
 
-You can customise much of this behaviour, for instance to enable copy
-and paste from the keyboard; see \k{config-selection}.
+您可以自定义大部分此类行为，例如启用从键盘复制和粘贴；
+请参阅\k{config-selection}。
 
-\S{using-scrollback} \I{scrollback}Scrolling the screen back
+\S{using-scrollback} \I{scrollback}向后滚动屏幕
 
-PuTTY keeps track of text that has scrolled up off the top of the
-terminal. So if something appears on the screen that you want to
-read, but it scrolls too fast and it's gone by the time you try to
-look for it, you can use the \i{scrollbar} on the right side of the
-window to look back up the session \i{history} and find it again.
+PuTTY 会跟踪从终端顶部向上滚动的文本。
+因此，如果屏幕上出现了您想要阅读的内容，
+但它滚动得太快并且在您尝试查找时已经
+消失，您可以使用窗口右侧的\i{滚动条}来
+查看会话\i{历史}记录 并再次找到它。
 
-As well as using the scrollbar, you can also page the scrollback up
-and down by pressing \i{Shift-PgUp} and \i{Shift-PgDn}. You can
-scroll a line at a time using \i{Ctrl-PgUp} and \i{Ctrl-PgDn}, or
-to the top/bottom of the scrollback with \i{Ctrl-Shift-PgUp} and
-\i{Ctrl-Shift-PgDn}. These are still available if you configure the
-scrollbar to be invisible.
+除了使用滚动条之外，您还可以通过按 \i{Shift-PgUp}
+和 \i{Shift-PgDn}上下翻页。
+您可以使用 \i{Ctrl-PgUp} 和 \i{Ctrl-PgDn}
+一次滚动一行，或者使用 \i{Ctrl-Shift-PgUp} 和 \i{Ctrl-Shift-PgDn}
+滚动到回滚的顶部/底部。
+如果您将滚动条配置为不可见，这些仍然可用。
 
-By default the last 2000 lines scrolled off the top are
-preserved for you to look at. You can increase (or decrease) this
-value using the configuration box; see \k{config-scrollback}.
+默认情况下，从顶部滚动的最后 2000 行将保留供您查看。
+您可以使用配置框增加（或减少）该值,
+请参阅\k{config-scrollback}。
 
-\S{using-sysmenu} The \ii{System menu}
+\S{using-sysmenu} \ii{系统菜单}
 
-If you click the left mouse button on the icon in the top left
-corner of PuTTY's terminal window, or click the right mouse button
-on the title bar, you will see the standard Windows system menu
-containing items like Minimise, Move, Size and Close.
+如果在 PuTTY终端窗口左上角的图标上单击鼠标左键，
+或在标题栏上单击鼠标右键，
+您将看到标准的 Windows 系统菜单，
+其中包含最小化、移动、大小和关闭等项目。
 
-PuTTY's system menu contains extra program features in addition to
-the Windows standard options. These extra menu commands are
-described below.
+除了 Windows 标准选项之外，
+PuTTY 的系统菜单还包含额外的程序功能。
+这些额外的菜单命令如下所述。
 
-(These options are also available in a \i{context menu} brought up
-by holding Ctrl and clicking with the right mouse button anywhere
-in the \i{PuTTY window}.)
+（这些选项也可以在通过按住 Ctrl
+并在 \i{PuTTY窗口}中的任意位置单
+击鼠标右键来调出的\i{右键菜单}中使用。）
 
-\S2{using-eventlog} The PuTTY \i{Event Log}
+\S2{using-eventlog} PuTTY\i{事件日志}
 
-If you choose \q{Event Log} from the system menu, a small window
-will pop up in which PuTTY logs significant events during the
-connection. Most of the events in the log will probably take place
-during session startup, but a few can occur at any point in the
-session, and one or two occur right at the end.
+如果您从系统菜单中选择\q{事件日志}，则会弹
+出一个小窗口，PuTTY在其中记录连接期间的重要事件。
+日志中的大多数事件可能会在会话启动期间发生，
+但少数可能会在会话的任何时间点发
+生，最后会发生一两个。
 
-You can use the mouse to select one or more lines of the Event Log,
-and hit the Copy button to copy them to the \i{clipboard}. If you
-are reporting a bug, it's often useful to paste the contents of the
-Event Log into your bug report.
+您可以使用鼠标选择一行或多行事件日志，
+然后点击复制按钮将它们复制到\i{剪贴板}。
+如果您要报告错误，将事件日志的内容粘
+贴到错误报告中通常很有用。
 
-(The Event Log is not the same as the facility to create a log file
-of your session; that's described in \k{using-logging}.)
+（事件日志与创建会话日志文件的工具不同,
+请参阅 \k{using-logging}.)
 
-\S2{using-specials} \ii{Special commands}
+\S2{using-specials} \ii{特殊命令}
 
-Depending on the protocol used for the current session, there may be
-a submenu of \q{special commands}. These are protocol-specific
-tokens, such as a \q{break} signal, that can be sent down a
-connection in addition to normal data. Their precise effect is usually
-up to the server. Currently only Telnet, SSH, and serial connections
-have special commands.
+根据当前会话使用的协议，可能会有一个\q{特殊命令}子菜单。
+这些是特定于协议的指令，例如\q{中断}信号，
+除了正常数据外，还可以通过连接发送。
+它们的精确效果通常取决于服务器。
+目前只有 Telnet、SSH
+和串行连接有特殊命令。
 
-The \q{break} signal can also be invoked from the keyboard with
-\i{Ctrl-Break}.
+\q{中断}信号也可以使
+用 \i{Ctrl-Break} 从键盘调用。
 
-In an SSH connection, the following \I{SSH special commands}special
-commands are available:
+在 SSH 连接中，可以使用以
+下\I{SSH special commands}特殊命令：
 
-\b \I{IGNORE message, SSH special command}\I{No-op, in SSH}\ii{IGNORE message}
-
-\lcont{
-Should have no effect.
-}
-
-\b \I{Repeat key exchange, SSH special command}Repeat key exchange
+\b \I{IGNORE message, SSH special command}\I{No-op, in SSH}\ii{IGNORE 信息}
 
 \lcont{
-Only available in SSH-2. Forces a \i{repeat key exchange} immediately (and
-resets associated timers and counters). For more information about
-repeat key exchanges, see \k{config-ssh-kex-rekey}.
+应该没有影响。
 }
 
-\b \I{host key cache}Cache new host key type
+\b \I{Repeat key exchange, SSH special command}重复密钥交换
 
 \lcont{
-Only available in SSH-2. This submenu appears only if the server has
-host keys of a type that PuTTY doesn't already have cached, and so
-won't consider. Selecting a key here will allow PuTTY to use that key
-now and in future: PuTTY will do a fresh key-exchange with the selected
-key, and immediately add that key to its permanent cache (relying on
-the host key used at the start of the connection to cross-certify the
-new key). That key will be used for the rest of the current session;
-it may not actually be used for future sessions, depending on your
-preferences (see \k{config-ssh-hostkey-order}).
-
-Normally, PuTTY will carry on using a host key it already knows, even
-if the server offers key formats that PuTTY would otherwise prefer,
-to avoid host key prompts. As a result, if you've been using a server
-for some years, you may still be using an older key than a new user
-would use, due to server upgrades in the meantime. The SSH protocol
-unfortunately does not have organised facilities for host key migration
-and rollover, but this allows you to \I{host keys, upgrading}manually
-upgrade.
+仅在 SSH-2 中可用。
+立即强制\i{重复密钥交换}（并重置相关的计时器和计数器）。
+有关重复密钥交换的更多信息，请参阅 \k{config-ssh-kex-rekey} 。
 }
 
-\b \I{Break, SSH special command}Break
+\b \I{host key cache}缓存新的主机密钥类型
 
 \lcont{
-Only available in SSH-2, and only during a session. Optional
-extension; may not be supported by server. PuTTY requests the server's
-default break length.
+仅在 SSH-2 中可用。 仅当服务器具有 PuTTY
+尚未缓存的类型的主机密钥时才会出现此子菜单，一般不需要考虑。
+在此处选择一个密钥将允许 PuTTY 现在和将来使用该密钥：PuTTY
+将与所选密钥进行新的密钥交换，并立即将该密钥添加到其
+永久缓存中（依赖于在开始
+时使用的主机密钥） 连接以交叉验证新密钥）。
+该密钥将用于当前会话的其余部分；
+它实际上可能不会用于将来的会话，具体取决于您的偏好 (请参阅
+\k{config-ssh-hostkey-order}。
+
+通常，PuTTY 将继续使用它已经知道的主机密钥，
+即使服务器提供 PuTTY
+本来希望使用的密钥格式，以避免主机密钥提示。
+因此，如果您已经使用服务器多年，由于服务器升级，
+您可能仍在使用比新用户使用的
+旧的密钥。 遗憾的是，SSH
+协议没有用于主机密钥迁移和翻转的通告机制，
+但这允许您手动升级\I{host keys, upgrading}。
 }
 
-\b \I{Signal, SSH special command}Signals (SIGINT, SIGTERM etc)
+\b \I{Break, SSH special command}中断
 
 \lcont{
-Only available in SSH-2, and only during a session. Sends various
-POSIX signals. Not honoured by all servers.
+仅在 SSH-2 中可用，并且仅在会话期间可用。
+可选扩展； 服务器可能不支持。
+PuTTY 请求服务器的默认中断长度。
 }
 
-The following \I{Telnet special commands}special commands are
-available in Telnet:
-
-\b \I{Are You There, Telnet special command}Are You There
-
-\b \I{Break, Telnet special command}Break
-
-\b \I{Synch, Telnet special command}Synch
-
-\b \I{Erase Character, Telnet special command}Erase Character
+\b \I{Signal, SSH special command}信号 (SIGINT, SIGTERM 等等)
 
 \lcont{
-PuTTY can also be configured to send this when the Backspace key is
-pressed; see \k{config-telnetkey}.
+仅在 SSH-2 中可用，并且仅在会话期间可用。
+发送各种 POSIX 信号。 并非所有服务器都认可。
 }
 
-\b \I{Erase Line, Telnet special command}Erase Line
+Telnet \I{Telnet special commands}中
+提供了以下特殊命令：
 
-\b \I{Go Ahead, Telnet special command}Go Ahead
+\b \I{Are You There, Telnet special command}在线吗？
 
-\b \I{No Operation, Telnet special command}No Operation
+\b \I{Break, Telnet special command}中断
+
+\b \I{Synch, Telnet special command}同步
+
+\b \I{Erase Character, Telnet special command}删除字符
 
 \lcont{
-Should have no effect.
+PuTTY 也可以配置为在按下 Backspace 键时发送，
+请参阅 \k{config-telnetkey}。
 }
 
-\b \I{Abort Process, Telnet special command}Abort Process
+\b \I{Erase Line, Telnet special command}删除行
 
-\b \I{Abort Output, Telnet special command}Abort Output
+\b \I{Go Ahead, Telnet special command}前进
 
-\b \I{Interrupt Process, Telnet special command}Interrupt Process
+\b \I{No Operation, Telnet special command}无操作
 
 \lcont{
-PuTTY can also be configured to send this when Ctrl-C is typed; see
-\k{config-telnetkey}.
+应该没有影响。
 }
 
-\b \I{Suspend Process, Telnet special command}Suspend Process
+\b \I{Abort Process, Telnet special command}中止过程
+
+\b \I{Abort Output, Telnet special command}中止输出
+
+\b \I{Interrupt Process, Telnet special command}中断进程
 
 \lcont{
-PuTTY can also be configured to send this when Ctrl-Z is typed; see
-\k{config-telnetkey}.
+PuTTY 也可以配置为在键入 Ctrl-C 时发送，
+请参阅 \k{config-telnetkey}。
 }
 
-\b \I{End Of Record, Telnet special command}End Of Record
+\b \I{Suspend Process, Telnet special command}暂停进程
 
-\b \I{End Of File, Telnet special command}End Of File
+\lcont{
+PuTTY 也可以配置为在键入 Ctrl-Z 时发送，
+请参阅 \k{config-telnetkey}。
+}
 
-With a serial connection, the only available special command is
-\I{Break, serial special command}\q{Break}.
+\b \I{End Of Record, Telnet special command}记录结束
 
-\S2{using-newsession} Starting new sessions
+\b \I{End Of File, Telnet special command}文件结束
 
-PuTTY's system menu provides some shortcut ways to start new
-sessions:
+对于串行连接，唯一可用的特殊命令
+是\I{Break, serial special command}\q{中断}。
 
-\b Selecting \i{\q{New Session}} will start a completely new
-instance of PuTTY, and bring up the configuration box as normal.
+\S2{using-newsession} 开始新会话
 
-\b Selecting \i{\q{Duplicate Session}} will start a session in a
-new window with precisely the same options as your current one -
-connecting to the same host using the same protocol, with all the
-same terminal settings and everything.
+PuTTY 的系统菜单提供了
+一些启动新会话的快捷方式：
 
-\b In an inactive window, selecting \i{\q{Restart Session}} will
-do the same as \q{Duplicate Session}, but in the current window.
+\b 选择\i{\q{新建会话}}将启动一个全新的 PuTTY 实例，
+并正常显示配置框。
 
-\b The \i{\q{Saved Sessions} submenu} gives you quick access to any
-sets of stored session details you have previously saved. See
-\k{config-saving} for details of how to create saved sessions.
+\b 选择\i{\q{重复会话}}将在一个新窗口中启动一个会话，
+其选项与您当前的选项完全相同 -
+使用相同的协议连接到同一主机，
+具有所有相同的终端设置和所有内容。
 
-\S2{using-changesettings} \I{settings, changing}Changing your
-session settings
+\b 在非活动窗口中，选择\i{\q{重启会话}}将
+与\q{复制会话}相同，但在当前窗口中。
 
-If you select \i{\q{Change Settings}} from the system menu, PuTTY will
-display a cut-down version of its initial configuration box. This
-allows you to adjust most properties of your current session. You
-can change the terminal size, the font, the actions of various
-keypresses, the colours, and so on.
+\b \i{\q{保存会话}子菜单}可让您快速访问您之
+前保存的任何一组存储的会话详细信息。
+有关如何创建已保存会话的详细信息，请参阅 \k{config-saving}。
 
-Some of the options that are available in the main configuration box
-are not shown in the cut-down Change Settings box. These are usually
-options which don't make sense to change in the middle of a session
-(for example, you can't switch from SSH to Telnet in mid-session).
+\S2{using-changesettings} \I{settings, changing}更改
+会话设置
 
-You can save the current settings to a saved session for future use
-from this dialog box. See \k{config-saving} for more on saved
-sessions.
+如果您从系统菜单中选择\i{\q{更改设置}} ，
+PuTTY 将显示其初始配置框的简化版本。
+这允许您调整当前会话的大多数属性。
+您可以更改终端大小、字体、各种按
+键的操作、颜色等。
 
-\S2{using-copyall} \i{Copy All to Clipboard}
+主配置框中的一些可用选项未显示在缩
+减的更改设置框中。 这些通常是在会
+话中间更改没有意义的选项（例如，您
+不能在会话中间从 SSH 切换到 Telnet）。
 
-This system menu option provides a convenient way to copy the whole
-contents of the terminal screen (up to the last nonempty line) and
-scrollback to the \i{clipboard} in one go.
+您可以通过此对话框将当前设置保存
+到已保存的会话中以供将来使用。
+有关已保存会话的更多信息，请参阅 \k{config-saving} 。
 
-\S2{reset-terminal} \I{scrollback, clearing}Clearing and
-\I{terminal, resetting}resetting the terminal
+\S2{using-copyall} \i{全部复制到剪贴板}
 
-The \i{\q{Clear Scrollback}} option on the system menu tells PuTTY
-to discard all the lines of text that have been kept after they
-scrolled off the top of the screen. This might be useful, for
-example, if you displayed sensitive information and wanted to make
-sure nobody could look over your shoulder and see it. (Note that
-this only prevents a casual user from using the scrollbar to view
-the information; the text is not guaranteed not to still be in
-PuTTY's memory.)
+此系统菜单选项提供了一种方便的方式来复制
+终端屏幕的全部内容（直到最后一个非空行）
+并一次滚动回\i{剪贴板}。
 
-The \i{\q{Reset Terminal}} option causes a full reset of the
-\i{terminal emulation}. A VT-series terminal is a complex piece of
-software and can easily get into a state where all the text printed
-becomes unreadable. (This can happen, for example, if you
-accidentally output a binary file to your terminal.) If this
-happens, selecting Reset Terminal should sort it out.
+\S2{reset-terminal} \I{scrollback, clearing}清除和
+\I{terminal, resetting} 重启终端
 
-\S2{using-fullscreen} \ii{Full screen} mode
+系统菜单上的\i{\q{清除回滚}}选项
+告诉 PuTTY 丢弃所有从屏幕顶部滚动
+后保留的文本行。这可能很有用，
+例如，如果您显示敏感信息并希望
+确保没有人可以越过您的肩膀看到它。
+（请注意，这只会阻止临时用户
+使用滚动条查看信息；不保证文本
+不会仍在 PuTTY 的内存中。）
 
-If you find the title bar on a maximised window to be ugly or
-distracting, you can select Full Screen mode to maximise PuTTY
-\q{even more}. When you select this, PuTTY will expand to fill the
-whole screen and its borders, title bar and scrollbar will
-disappear. (You can configure the scrollbar not to disappear in
-full-screen mode if you want to keep it; see \k{config-scrollback}.)
+\i{\q{重启终端}}选项会导致\i{终端仿真}完全重置。
+VT 系列终端是一个复杂的软件，
+很容易进入打印的所有文本都无法阅读的状态。
+（例如，如果您不小心将二进制文件输出到终端，
+就会发生这种情况。）如果发生这种情况，
+选择“重启终端”应该可以解决这个问题。
 
-When you are in full-screen mode, you can still access the \i{system
-menu} if you click the left mouse button in the \e{extreme} top left
-corner of the screen.
+\S2{using-fullscreen} \ii{全屏模式}
 
-\H{using-logging} Creating a \i{log file} of your \I{session
-log}session
+如果您发现最大化窗口上的标题栏很难看或分散注意力，
+您可以选择全屏模式以\q{更多}最大化 PuTTY。
+当您选择此项时，PuTTY 将展开以填满整个屏幕，并且其边框、
+标题栏和滚动条将消失。
+（如果要保留滚动条，可以配置滚动条
+在全屏模式下不消失；请参阅  \k{config-scrollback}。)
 
-For some purposes you may find you want to log everything that
-appears on your screen. You can do this using the \q{Logging}
-panel in the configuration box.
+当您处于全屏模式时，如果单击屏
+幕\e{最}左上角的鼠标左键，
+您仍然可以访问\i{系统菜单}。
 
-To begin a session log, select \q{Change Settings} from the system
-menu and go to the Logging panel. Enter a log file name, and select
-a logging mode. (You can log all session output including the
-terminal \i{control sequence}s, or you can just log the printable text.
-It depends what you want the log for.) Click \q{Apply} and your log
-will be started. Later on, you can go back to the Logging panel and
-select \q{Logging turned off completely} to stop logging; then PuTTY
-will close the log file and you can safely read it.
+\H{using-logging} 创建会话的日志文件\I{session
+log}
 
-See \k{config-logging} for more details and options.
+出于某些目的，您可能会发现您想要记
+录屏幕上显示的所有内容。 您可以使
+用配置框中的\q{日志}面板来执行此操作。
 
-\H{using-translation} Altering your \i{character set} configuration
+要开始会话日志，请从系统菜单中选择\q{更改设置}，
+然后转到“日志记录”面板。 输入日志文件名，
+然后选择日志记录模式。 （您可以记录所有会话输出，包括终端\i{控制顺序}，
+或者您可以只记录可打印的文本。这取决于您想要的日志。）
+单击\q{应用}，您的日志将开始。 稍后，
+您可以返回日志记录面板并选择\q{完全关闭日志记录}
+以停止日志记录； 然后 PuTTY 将关闭日志文件，
+您可以安全地阅读它。
 
-If you find that special characters (\i{accented characters}, for
-example, or \i{line-drawing characters}) are not being displayed
-correctly in your PuTTY session, it may be that PuTTY is interpreting
-the characters sent by the server according to the wrong \e{character
-set}. There are a lot of different character sets available, and no
-good way for PuTTY to know which to use, so it's entirely possible
-for this to happen.
+了解更多详细信息和选项，请参阅 \k{config-logging} 。
 
-If you click \q{Change Settings} and look at the \q{Translation}
-panel, you should see a large number of character sets which you can
-select, and other related options. Now all you need is to find out
-which of them you want! (See \k{config-translation} for more
-information.)
+\H{using-translation} 改变你的\i{字符集}配置
 
-\H{using-x-forwarding} Using \i{X11 forwarding} in SSH
+如果您发现特殊字符（例如\i{重音字符}或\i{画线字符}）
+在 PuTTY 会话中未正确显示，
+则可能是 PuTTY 正在根据错误
+的\e{字符集设置}解释服
+务器发送的字符。 有很多不同的字符集可用
+，PuTTY 没有很好的方法知道该使用哪个，
+因此完全有可能发生这种情况。
 
-The SSH protocol has the ability to securely forward X Window System
-\i{graphical applications} over your encrypted SSH connection, so that
-you can run an application on the SSH server machine and have it put
-its windows up on your local machine without sending any X network
-traffic in the clear.
+如果您单击\q{更改设置}并查
+看\q{字符转换}面板，
+您应该会看到大量可供选择的
+字符集以及其他相关选项。 现在您所需要的就是找出您想要的！
+(更多信息，请参阅 \k{config-translation}。)
 
-In order to use this feature, you will need an X display server for
-your Windows machine, such as Cygwin/X, X-Win32, or Exceed. This will probably
-install itself as display number 0 on your local machine; if it
-doesn't, the manual for the \i{X server} should tell you what it
-does do.
+\H{using-x-forwarding} 在 SSH 中使用 X11 转发
 
-You should then tick the \q{Enable X11 forwarding} box in the
-X11 panel (see \k{config-ssh-x11}) before starting your SSH
-session. The \i{\q{X display location}} box is blank by default, which
-means that PuTTY will try to use a sensible default such as \c{:0},
-which is the usual display location where your X server will be
-installed. If that needs changing, then change it.
+SSH 协议能够通过加密的 SSH 连接安全地转发
+ X Window System \i{图形应用程序} ，
+这样您就可以在 SSH 服务器机器上运行应用程序，
+并让它在您的本地机器上打开它的窗口，
+而无需发送任何 X 网络流量。
 
-Now you should be able to log in to the SSH server as normal. To
-check that X forwarding has been successfully negotiated during
-connection startup, you can check the PuTTY Event Log (see
-\k{using-eventlog}). It should say something like this:
+为了使用此功能，您需要为您的 Windows 机
+器配备一个 X 显示服务器，例如 Cygwin/X、X-Win32
+或 Exceed。 这可能会将自己安装为本地计算
+机上的显示编号 0； 如果没有，\i{X 服务器}的
+手册应该会告诉你它做了什么。
+
+然后，您应该勾选 X11 面板中的\q{启用 X11 转发}
+(请参阅 \k{config-ssh-x11}) 在开始 SSH
+会话之前。 \i{\q{X 显示位置}}框默认为空白，
+这意味着 PuTTY 将尝试使用合理的默认值，例如 \c{:0}，
+ 这是安装 X 服务器的常用显示位置。
+ 如果需要改变，那就改变它。
+
+现在您应该可以正常登录 SSH 服务器了。
+要检查连接启动期间是否已成功协商 X 转发，
+您可以查看 PuTTY 事件日志(请参阅 \k{using-eventlog})。
+ 它应该这样显示：
 
 \c 2001-12-05 17:22:01 Requesting X11 forwarding
 \c 2001-12-05 17:22:02 X11 forwarding enabled
 
-If the remote system is Unix or Unix-like, you should also be able
-to see that the \i{\c{DISPLAY} environment variable} has been set to
-point at display 10 or above on the SSH server machine itself:
+如果远程系统是 Unix 或类 Unix，
+您还应该能够看到 \i{\c{DISPLAY}}环
+境变量已设置为指向 SSH 服务器机器本身的显示 10 或更高版本：
 
 \c fred@unixbox:~$ echo $DISPLAY
 \c unixbox:10.0
 
-If this works, you should then be able to run X applications in the
-remote session and have them display their windows on your PC.
+如果这可行，那么您应该能够在远程会话中
+运行 X 应用程序并让它们在您的 PC 上显示它们的窗口。
 
-For more options relating to X11 forwarding, see \k{config-ssh-x11}.
+有关 X11 转发的更多选项，请参阅 \k{config-ssh-x11}。
 
-\H{using-port-forwarding} Using \i{port forwarding} in SSH
+\H{using-port-forwarding} 在 SSH 中使用端口转发
 
-The SSH protocol has the ability to forward arbitrary \I{network
-connection}network (TCP) connections over your encrypted SSH
-connection, to avoid the network traffic being sent in clear. For
-example, you could use this to connect from your home computer to a
-\i{POP-3} server on a remote machine without your POP-3 password being
-visible to network sniffers.
+SSH 协议能够通过加密的 SSH 连接转
+发任意网络(TCP)连接\I{network connection} ，
+以避免网络流量以明文形式发送。
+ 例如，您可以使用它从您的家庭计算
+ 机连接到远程计算机上的 POP-3 服务器，
+ 而网络嗅探器不会看到您的 \i{POP-3}  密码。
 
-In order to use port forwarding to \I{local port forwarding}connect
-from your local machine to a port on a remote server, you need to:
+为了从计算机使用本地端口转发\I{local port forwarding}
+连接到远程服务器上的端口，您需要：
 
-\b Choose a \i{port number} on your local machine where PuTTY should
-listen for incoming connections. There are likely to be plenty of
-unused port numbers above 3000. (You can also use a local loopback
-address here; see below for more details.)
+\b 在本地计算机上选择一个\i{端口号} ，
+PuTTY 应在其中侦听传入连接。
+可能有很多未使用的端口号高于3000。
+（您也可以在此处使用本地环回地址；有关详细信息，请参见下文。）
 
-\b Now, before you start your SSH connection, go to the Tunnels
-panel (see \k{config-ssh-portfwd}). Make sure the \q{Local} radio
-button is set. Enter the local port number into the \q{Source port}
-box. Enter the destination host name and port number into the
-\q{Destination} box, separated by a colon (for example,
-\c{popserver.example.com:110} to connect to a POP-3 server).
+\b 现在，在开始 SSH 连接之前，
+请转到 隧道面板(请参阅 \k{config-ssh-portfwd})。
+ 确保设置了\q{本地}单选按钮。
+ 在\q{源端口}框中输入本地端口号。
+ 在\q{目标}框中输入目标主机名和端口号，
+ 用冒号分隔（例如，popserver.example.com:110 以连接到 POP-3 服务器）。
 
-\b Now click the \q{Add} button. The details of your port forwarding
-should appear in the list box.
+\b 现在单击\q{添加} 按钮。
+端口转发的详细信息应显示在列表框中。
 
-Now start your session and log in. (Port forwarding will not be
-enabled until after you have logged in; otherwise it would be easy
-to perform completely anonymous network attacks, and gain access to
-anyone's virtual private network.) To check that PuTTY has set up
-the port forwarding correctly, you can look at the PuTTY Event Log
-(see \k{using-eventlog}). It should say something like this:
+现在开始您的会话并登录。（只有在您登录
+后才会启用端口转发；否则很容易执行完全
+匿名的网络攻击，并获得对任何人的虚拟专
+用网络的访问权限。）检查 PuTTY 是否已设
+置 正确启动端口转发，您可以查看 PuTTY
+事件日志 (请参阅 \k{using-eventlog})。它应该这样显示：
 
 \c 2001-12-05 17:22:10 Local port 3110 forwarding to
 \c          popserver.example.com:110
 
-Now if you connect to the source port number on your local PC, you
-should find that it answers you exactly as if it were the service
-running on the destination machine. So in this example, you could
-then configure an e-mail client to use \c{localhost:3110} as a POP-3
-server instead of \c{popserver.example.com:110}. (Of course, the
-forwarding will stop happening when your PuTTY session closes down.)
+现在，如果您连接到本地 PC 上的源端口号，您应该会发现
+它完全可以回答您，就好像它是在目标计算机上运行的服务一样。
+因此，在本例中，您可以将电子邮件客户端配
+置为使用 \c{localhost:3110} 作为 POP-3
+服务器，而不是 \c{popserver.example.com:110}。
+（当然，当您的 PuTTY 会话关闭时，转发将停止。）
 
-You can also forward ports in the other direction: arrange for a
-particular port number on the \e{server} machine to be \I{remote
-port forwarding}forwarded back to your PC as a connection to a
-service on your PC or near it.
-To do this, just select the \q{Remote} radio button instead of the
-\q{Local} one. The \q{Source port} box will now specify a port
-number on the \e{server} (note that most servers will not allow you
-to use \I{privileged port}port numbers under 1024 for this purpose).
+您还可以在另一个方向转发端口：安排
+将\e{服务器}计算机上的\I{remoteport forwarding}
+特定端口号转发回您的 PC，作为与
+您 PC 上或附近的服务的连接。
+为此，只需选择\q{远程}单选按钮而不是\q{本地}单
+选按钮。 \q{源端口} 框现在将指定\e{服务器}上
+的端口号（请注意，大多数服务器不允许您为此使
+用 1024 以下的\I{privileged port}端口号）。
 
-An alternative way to forward local connections to remote hosts is
-to use \I{dynamic port forwarding}dynamic SOCKS proxying. In this
-mode, PuTTY acts as a SOCKS server, which SOCKS-aware programs can
-connect to and open forwarded connections to the destination of their
-choice, so this can be an alternative to long lists of static
-forwardings. To use this mode, you will need to select the \q{Dynamic}
-radio button instead of \q{Local}, and then you should not enter
-anything into the \q{Destination} box (it will be ignored). PuTTY will
-then listen for SOCKS connections on the port you have specified.
-Most \i{web browsers} can be configured to connect to this SOCKS proxy
-service; also, you can forward other PuTTY connections through it by
-setting up the Proxy control panel (see \k{config-proxy} for details).
+将本地连接转发到远程主机的另一种方法是
+使用\I{dynamic port forwarding}动态 SOCKS 代理。
+在这种模式下，PuTTY 充当 SOCKS 服务器，支持 SOCKS
+的程序可以连接到它并打开到他们选择的目的地
+的转发连接，因此这可以替代长静态转发列表。
+要使用此模式，您需要选择\q{动态}单选按钮而
+不是\q{本地}，然后您不应在\q{目的地}框中
+输入任何内容（它将被忽略）。 然后，PuTTY
+将在您指定的端口上侦听 SOCKS 连接。
+大多数\i{web浏览器}都可以配置为
+连接到这个 SOCKS 代理服务； 也可以通过设置
+代理控制面板转发其他PuTTY连接 (请参阅 \k{config-proxy} )。
 
-The source port for a forwarded connection usually does not accept
-connections from any machine except the \I{localhost}SSH client or
-server machine itself (for local and remote forwardings respectively).
-There are controls in the Tunnels panel to change this:
+转发连接的源端口通常不接受来自任
+何机器的连接，除了 SSH \I{localhost}客户端或服务
+器机器本身（分别用于本地和远程转发）。
+隧道面板中有一些控件可以更改此设置：
 
-\b The \q{Local ports accept connections from other hosts} option
-allows you to set up local-to-remote port forwardings (including
-dynamic port forwardings) in such a way that machines other than
-your client PC can connect to the forwarded port.
+\b \q{本地端口接受来自其他主机的连接}选项
+允许您设置本地到远程端口转发（包括动态
+端口转发），以便客户端 PC 以外的机器
+可以连接到转发的端口。
 
-\b The \q{Remote ports do the same} option does the same thing for
-remote-to-local port forwardings (so that machines other than the
-SSH server machine can connect to the forwarded port.) Note that
-this feature is only available in the SSH-2 protocol, and not all
-SSH-2 servers honour it (in \i{OpenSSH}, for example, it's usually
-disabled by default).
+\b \q{远程端口也是如此} 选项对远程
+到本地端口转发执行相同的操作（以便 SSH 服务
+器计算机以外的计算机可以连
+接到转发的端口。）请注意，此功能仅在 SSH- 中可用 2 协议，
+并不是所有的 SSH-2 服务器都支持
+它（例如，在\i{OpenSSH} 中，它通常默认禁用）。
 
-You can also specify an \i{IP address} to \I{listen address}listen
-on. Typically a Windows machine can be asked to listen on any single
-IP address in the \cw{127.*.*.*} range, and all of these are
-\i{loopback address}es available only to the local machine. So if
-you forward (for example) \c{127.0.0.5:79} to a remote machine's
-\i\cw{finger} port, then you should be able to run commands such as
-\c{finger fred@127.0.0.5}.
-This can be useful if the program connecting to the forwarded port
-doesn't allow you to change the port number it uses. This feature is
-available for local-to-remote forwarded ports; SSH-1 is unable to
-support it for remote-to-local ports, while SSH-2 can support it in
-theory but servers will not necessarily cooperate.
+您还可以指定要监听的\I{listen address} \i{IP 地址}。
+通常，可以要求 Windows 机器侦听 \cw{127.*.*.*}
+范围内的任何单个 IP 地址，所有这些都是仅对本
+地机器可用的\i{环回地址}。 因此，如果您
+将（例如）\c{127.0.0.5:79} 转发到远程机
+器的\i\cw{finger} 端口，那么您应该能够运
+行诸如\c{finger fred@127.0.0.5} 之类的命令。
+如果连接到转发端口的程序不允许您更改它使用
+的端口号，这将很有用。 此功能适用于本地到
+远程的转发端口； SSH-1 无法支持远程到本地
+的端口，而 SSH-2 理论上可以支持，
+但服务器不一定会配合。
 
-(Note that if you're using Windows XP Service Pack 2, you may need
-to obtain a fix from Microsoft in order to use addresses like
-\cw{127.0.0.5} - see \k{faq-alternate-localhost}.)
+（请注意，如果您使用的是 Windows XP Service Pack 2，
+则可能需要从 Microsoft 获得修复才能使
+用 \cw{127.0.0.5} 等地址 --- 请参阅 \k{faq-alternate-localhost}。)
 
-For more options relating to port forwarding, see
-\k{config-ssh-portfwd}.
+有关端口转发的更多选项，
+请参阅 \k{config-ssh-portfwd}。
 
-If the connection you are forwarding over SSH is itself a second SSH
-connection made by another copy of PuTTY, you might find the
-\q{logical host name} configuration option useful to warn PuTTY of
-which host key it should be expecting. See \k{config-loghost} for
-details of this.
+如果您通过 SSH 转发的连接本身是另一
+个 PuTTY 副本建立的第二个 SSH 连接，
+您可能会发现\q{逻辑主机名}配
+置选项可用于警告PuTTY 它应该期待哪个
+主机密钥。请参阅 \k{config-loghost} 。
 
-\H{using-serial} Connecting to a local serial line
+\H{using-serial} 连接到本地串行线
 
-PuTTY can connect directly to a local serial line as an alternative
-to making a network connection. In this mode, text typed into the
-PuTTY window will be sent straight out of your computer's serial
-port, and data received through that port will be displayed in the
-PuTTY window. You might use this mode, for example, if your serial
-port is connected to another computer which has a serial connection.
+PuTTY 可以直接连接到本地串行线路，作为建
+立网络连接的替代方法。在此模式下，
+输入到 PuTTY窗口的文本将直接从计算机的串行端口发送，
+通过该端口接收的数据将显示在PuTTY 窗口中。
+例如，如果您的串行端口连接到另一台具
+有串行连接的计算机，您可能会使用此模式。
 
-To make a connection of this type, simply select \q{Serial} from the
-\q{Connection type} radio buttons on the \q{Session} configuration
-panel (see \k{config-hostname}). The \q{Host Name} and \q{Port}
-boxes will transform into \q{Serial line} and \q{Speed}, allowing
-you to specify which serial line to use (if your computer has more
-than one) and what speed (baud rate) to use when transferring data.
-For further configuration options (data bits, stop bits, parity,
-flow control), you can use the \q{Serial} configuration panel (see
-\k{config-serial}).
+要建立这种类型的连接，只需从\q{会话}配置
+面板上的\q{连接类型}单选按钮中选择\q{串口}
+(请参阅 \k{config-hostname})。
+\q{主机名}和\q{端口}框将转换为\q{串行线}和\q{波特率}，
+允许您指定使用哪条串行线（如果您的计算机有多个）
+以及何时使用的速度（波特率） 传输数据。
+对于进一步的配置选项（数据位、停止位、
+奇偶校验、流控制），您可以使用\q{串口}
+配置面板(请参阅\k{config-serial})。
 
-After you start up PuTTY in serial mode, you might find that you
-have to make the first move, by sending some data out of the serial
-line in order to notify the device at the other end that someone is
-there for it to talk to. This probably depends on the device. If you
-start up a PuTTY serial session and nothing appears in the window,
-try pressing Return a few times and see if that helps.
+在串行模式下启动 PuTTY
+后，您可能会发现您必须迈出第一步，
+通过从串行线路发送一些数据以通知另一端的设
+备有人在那里与之交谈。 这可能取决于设备。
+如果您启动 PuTTY串行会话并且窗口中没有显示任何内容，
+请尝试按 Return 几次，看看是否有帮助。
 
-A serial line provides no well defined means for one end of the
-connection to notify the other that the connection is finished.
-Therefore, PuTTY in serial mode will remain connected until you
-close the window using the close button.
+串行线路没有为连接的一端提供明确
+定义的方法来通知另一端连接已完成。
+因此，串行模式下的 PuTTY 将保持连
+接状态，直到您使用关闭按钮关闭窗口。
 
-\H{using-rawprot} Making \i{raw TCP connections}
+\H{using-rawprot} 建立 \i{raw TCP 连接}
 
-A lot of \I{debugging Internet protocols}Internet protocols are
-composed of commands and responses in plain text. For example,
-\i{SMTP} (the protocol used to transfer e-mail), \i{NNTP} (the
-protocol used to transfer Usenet news), and \i{HTTP} (the protocol
-used to serve Web pages) all consist of commands in readable plain
-text.
+许多\I{debugging Internet protocols}互联网协议都是由
+纯文本的命令和响应组成的。
+例如，\i{SMTP}（用于传输电子邮件的协议）
+、\i{NNTP}（用于传输 Usenet 新闻的协议）
+和 \i{HTTP}（用于服务网页的协议）都
+由可读的纯文本命令组成。
 
-Sometimes it can be useful to connect directly to one of these
-services and speak the protocol \q{by hand}, by typing protocol
-commands and watching the responses. On Unix machines, you can do
-this using the system's \c{telnet} command to connect to the right
-port number. For example, \c{telnet mailserver.example.com 25} might
-enable you to talk directly to the SMTP service running on a mail
-server.
+有时，通过键入协议命令并观察响应，
+直接连接到其中一项服务并\q{手动}说
+出协议会很有用。在 Unix 机器上，
+您可以使用系统的 \c{telnet} 命令连
+接到正确的端口号。
+例如，\c{telnet mailserver.example.com 25}可能使您能够直接与邮件服务器上
+运行的 SMTP 服务通信。
 
-Although the Unix \c{telnet} program provides this functionality,
-the protocol being used is not really Telnet. Really there is no
-actual protocol at all; the bytes sent down the connection are
-exactly the ones you type, and the bytes shown on the screen are
-exactly the ones sent by the server. Unix \c{telnet} will attempt to
-detect or guess whether the service it is talking to is a real
-Telnet service or not; PuTTY prefers to be told for certain.
+尽管 Unix \c{telnet} 程序提供了此功能，
+但所使用的协议并不是真正的 Telnet。真的根本没有实际的协议；
+沿着连接发送的字节正是您键入的字节，
+屏幕上显示的字节正是服务器发送的字节。
+ Unix \c{telnet} 将尝试检测或猜测它正在
+ 与之交谈的服务是否是真正的 Telnet
+ 服务； PuTTY 更喜欢被告知。
 
-In order to make a debugging connection to a service of this type,
-you simply select the fourth protocol name, \I{\q{Raw}
-protocol}\q{Raw}, from the \q{Protocol} buttons in the \q{Session}
-configuration panel. (See \k{config-hostname}.) You can then enter a
-host name and a port number, and make the connection.
+为了与这种类型的服务建立调试连接，
+您只需从\q{会话}配置面板中连接类型，
+其他\q{协议}选项，选择第四个协议名称 \I{\q{Raw}
+protocol}\q{Raw}(请参阅 \k{config-hostname}。)
+然后，您可以输入主机名和端口号，然后进行连接。
 
-\H{using-telnet} Connecting using the \i{Telnet} protocol
+\H{using-telnet} 使用 \i{Telnet} 协议连接
 
-PuTTY can use the Telnet protocol to connect to a server.
+PuTTY 可以使用 Telnet 协议连接到服务器。
 
-Telnet was perhaps the most popular remote login protocol before SSH
-was introduced. It was general enough to be used by multiple server
-operating systems (Unix and VMS in particular), and supported many
-optional protocol extensions providing extra support for particular
-server features.
+Telnet 可能是在引入 SSH 之前最流行的远程登录协议。
+它足够通用，可以被多个服务器操作
+系统（特别是 Unix 和VMS）使用，
+并且支持许多可选的协议扩展，
+为特定的服务器功能提供额外的支持。
 
-Unlike SSH, Telnet runs over an unsecured network connection, so it is
-a very bad idea to use it over the hostile Internet (though it is
-still used to some extent as of 2020).
+与 SSH 不同，Telnet 运行在不安全的网络连
+接上，因此在充满敌意的 Internet 上使用它
+是一个非常糟糕的主意（尽管到 2020 年它仍在一定程度上使用）。
 
-\H{using-rlogin} Connecting using the \i{Rlogin} protocol
+\H{using-rlogin} 使用 \i{Rlogin} 协议连接
 
-PuTTY can use the Rlogin protocol to connect to a server.
+PuTTY 可以使用 Rlogin 协议连接到服务器。
 
-Rlogin was similar to Telnet in concept, but more focused on
-connections between Unix machines. It supported a feature for
-passwordless login, based on use of \q{privileged ports} (ports with
-numbers below 1024, which Unix traditionally does not allow users
-other than \cw{root} to allocate). Ultimately, based on the server
-trusting that the client's IP address was owned by the Unix machine it
-claimed to be, and that that machine would guard its privileged ports
-appropriately.
+Rlogin 在概念上类似于 Telnet，但更
+侧重于 Unix 机器之间的连接。 它支持
+基于\q{特权端口}（编号低于 1024 的端
+口，Unix 传统上不允许 \cw{root} 以外
+的用户分配）的无密码登录功能。 最终，
+基于服务器相信客户端的 IP 地址归它声
+称的 Unix 机器所有，并且该机器会适当
+地保护其特权端口。
 
-Like Telnet, Rlogin runs over an unsecured network connection.
+与 Telnet 一样，Rlogin 运行在不安全的网络连接上。
 
-\H{using-supdup} Connecting using the \i{SUPDUP} protocol
+\H{using-supdup} 使用 \i{SUPDUP} 协议连接
 
-PuTTY can use the SUPDUP protocol to connect to a server.
+PuTTY 可以使用 SUPDUP 协议连接到服务器。
 
-SUPDUP is a login protocol used mainly by PDP-10 and Lisp machines
-during the period 1975-1990. Like Telnet and Rlogin, it is unsecured,
-so modern systems almost never support it.
+SUPDUP 是 1975-1990 年期间主要由 PDP-10
+和 Lisp 机器使用的登录协议。 与 Telnet
+和 Rlogin 一样，它是不安全的，因此现代系统几乎从不支持它。
 
-To make a connection of this type, select \q{SUPDUP} from the
-\q{Connection type} radio buttons on the \q{Session} panel (see
-\k{config-hostname}). For further configuration options (character
-set, more processing, scrolling), you can use the \q{SUPDUP}
-configuration panel (see \k{config-supdup}).
+要建立这种类型的连接，请从\q{会话}面板
+上的\q{连接类型}单选按钮中选择\q{SUPDUP}
+(请参阅 \k{config-hostname})。如需更多配置
+选项（字符集、更多处理、滚动），您可以
+使用\q{SUPDUP}配置面板(请参阅 \k{config-supdup}).
 
-In SUPDUP, terminal emulation is more integrated with the network
-protocol than in other protocols such as SSH. The SUPDUP protocol can
-thus only be used with PuTTY proper, not with the command-line tool
-Plink.
+在 SUPDUP 中，终端仿真与网络协议的集
+成程度高于其他协议（如 SSH）。 因此，
+SUPDUP 协议只能与 PuTTY 一起使用，而
+不能与命令行工具 Plink 一起使用。
 
-The SUPDUP protocol does not support changing the terminal dimensions,
-so this capability is disabled during a SUPDUP session.
+SUPDUP 协议不支持更改终端尺寸，
+因此在 SUPDUP 会话期间禁用此功能。
 
-SUPDUP provides no well defined means for one end of the connection to
-notify the other that the connection is finished.  Therefore, PuTTY in
-SUPDUP mode will remain connected until you close the window using the
-close button.
+SUPDUP 没有为连接的一端提供明确定
+义的方法来通知另一端连接已完成。
+因此，SUPDUP 模式下的 PuTTY 将保
+持连接状态，直到您使用关闭按钮关闭窗口。
 
-\H{using-cmdline} The PuTTY command line
+\H{using-cmdline} PuTTY 命令行
 
-PuTTY can be made to do various things without user intervention by
-supplying \i{command-line arguments} (e.g., from a \i{command prompt
-window}, or a \i{Windows shortcut}).
+通过提供\i{命令行参数}（例如，
+从\i{命令提示符窗口}或 \i{Windows 快捷方式}），
+PuTTY 可以在没有用户干预的情况下执行各种操作。
 
-\S{using-cmdline-session} Starting a session from the command line
+\S{using-cmdline-session} 从命令行启动会话
 
 \I\c{-ssh}\I\c{-ssh-connection}\I\c{-telnet}\I\c{-rlogin}\I\c{-supdup}\I\c{-raw}\I\c{-serial}These
-options allow you to bypass the configuration window and launch
-straight into a session.
+这些选项允许您绕过配置窗口
+并直接启动到会话中。
 
-To start a connection to a server called \c{host}:
+要启动与名为 \c{host} 的服务器的连接：
 
 \c putty.exe [-ssh | -ssh-connection | -telnet | -rlogin | -supdup | -raw] [user@]host
 
-If this syntax is used, settings are taken from the \i{Default Settings}
-(see \k{config-saving}); \c{user} overrides these settings if
-supplied. Also, you can specify a protocol, which will override the
-default protocol (see \k{using-cmdline-protocol}).
+如果使用此语法，则从\i{默认设置}中获取设置(请参阅
+\k{config-saving})；如果提供\c{user}，
+将覆盖这些设置。 此外，您可以指定一个协议，
+该协议将覆盖默认协议 (请参阅 \k{using-cmdline-protocol})。
 
-For telnet sessions, the following alternative syntax is supported
-(this makes PuTTY suitable for use as a URL handler for \i{telnet
-URLs} in \i{web browsers}):
+对于 telnet 会话，支持以下替代语法
+（这使得 PuTTY 适合用作\i{浏览器}
+中 \i{telnet URLs} 的 URL 处理程序）：
 
 \c putty.exe telnet://host[:port]/
 
-To start a connection to a serial port, e.g. COM1:
+启动到串行端口的连接，例如 COM1：
 
 \c putty.exe -serial com1
 
-In order to start an existing saved session called \c{sessionname},
-use the \c{-load} option (described in \k{using-cmdline-load}).
+要启动一个名为 \c{sessionname} 的现有保存会话，
+请使用 \c{-load} 选项 (请参阅 \k{using-cmdline-load}).
 
 \c putty.exe -load "session name"
 
-\S{using-cleanup} \i\c{-cleanup}
+\S{using-cleanup} \i\c{-cleanup} 清理
 
-If invoked with the \c{-cleanup} option, rather than running as
-normal, PuTTY will remove its \I{removing registry entries}registry
-entries and \i{random seed file} from the local machine (after
-confirming with the user). It will also attempt to remove information
-about recently launched sessions stored in the \q{jump list} on
-Windows 7 and up.
+如果调用 \c{-cleanup} 选项，而不是正常运行，
+PuTTY 将从本地计算机中\i{删除注册表项}中的相关内容
+\I{removing registry entries}和\i{随机种子文件}
+（在与用户确认后）。 它还将尝试
+删除有关存储在 Windows 7 及更高版
+本的\q{跳转列表}中的最近启动会话的信息。
 
-Note that on \i{multi-user systems}, \c{-cleanup} only removes
-registry entries and files associated with the currently logged-in
-user.
+请注意，在\i{多用户系统}上，
+\c{-cleanup} 仅删除与当前登
+录用户相关联的注册表项和文件。
 
-\S{using-general-opts} Standard command-line options
+\S{using-general-opts} 标准命令行选项
 
-PuTTY and its associated tools support a range of command-line
-options, most of which are consistent across all the tools. This
-section lists the available options in all tools. Options which are
-specific to a particular tool are covered in the chapter about that
-tool.
+PuTTY及其相关工具支持一系列命令行选项，
+其中大部分在所有工具中都是一致的。
+本节列出了所有工具中的可用选项。
+特定于特定工具的选项在关于该工
+具的章节中进行了介绍。
 
 \S2{using-cmdline-load} \i\c{-load}: load a saved session
 

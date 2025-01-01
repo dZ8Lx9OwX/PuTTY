@@ -361,7 +361,7 @@ char *dlg_editbox_get_utf8(dlgcontrol *ctrl, dlgparam *dp)
         return dupstr(gtk_entry_get_text(GTK_ENTRY(uc->entry)));
     }
 
-    unreachable("bad control type in editbox_get");
+    unreachable("editbox_get中的控制类型错误");
 }
 
 char *dlg_editbox_get(dlgcontrol *ctrl, dlgparam *dp)
@@ -427,7 +427,7 @@ void dlg_listbox_clear(dlgcontrol *ctrl, dlgparam *dp)
         return;
     }
 #endif
-    unreachable("bad control type in listbox_clear");
+    unreachable("listbox_clear中的控制类型错误");
 }
 
 void dlg_listbox_del(dlgcontrol *ctrl, dlgparam *dp, int index)
@@ -461,7 +461,7 @@ void dlg_listbox_del(dlgcontrol *ctrl, dlgparam *dp, int index)
         return;
     }
 #endif
-    unreachable("bad control type in listbox_del");
+    unreachable("listbox_del中的控制类型错误");
 }
 
 void dlg_listbox_add(dlgcontrol *ctrl, dlgparam *dp, char const *text)
@@ -617,7 +617,7 @@ void dlg_listbox_addwithid(dlgcontrol *ctrl, dlgparam *dp,
         goto done;
     }
 #endif
-    unreachable("bad control type in listbox_addwithid");
+    unreachable("listbox_addwithid中的控制类型错误");
   done:
     dp->flags &= ~FLAG_UPDATING_COMBO_LIST;
 }
@@ -656,7 +656,7 @@ int dlg_listbox_getid(dlgcontrol *ctrl, dlgparam *dp, int index)
         return ret;
     }
 #endif
-    unreachable("bad control type in listbox_getid");
+    unreachable("listbox_getid中的控制类型错误");
     return -1;                         /* placate dataflow analysis */
 }
 
@@ -741,7 +741,7 @@ int dlg_listbox_index(dlgcontrol *ctrl, dlgparam *dp)
         return ret;
     }
 #endif
-    unreachable("bad control type in listbox_index");
+    unreachable("listbox_index中的控制类型错误");
     return -1;                         /* placate dataflow analysis */
 }
 
@@ -798,7 +798,7 @@ bool dlg_listbox_issel(dlgcontrol *ctrl, dlgparam *dp, int index)
         return ret;
     }
 #endif
-    unreachable("bad control type in listbox_issel");
+    unreachable("listbox_issel中的控制类型错误");
     return false;                      /* placate dataflow analysis */
 }
 
@@ -867,7 +867,7 @@ void dlg_listbox_select(dlgcontrol *ctrl, dlgparam *dp, int index)
         return;
     }
 #endif
-    unreachable("bad control type in listbox_select");
+    unreachable("listbox_select中的控制类型错误");
 }
 
 void dlg_text_set(dlgcontrol *ctrl, dlgparam *dp, char const *text)
@@ -1048,7 +1048,7 @@ void dlg_set_focus(dlgcontrol *ctrl, dlgparam *dp)
             break;
         }
 #endif
-        unreachable("bad control type in set_focus");
+        unreachable("set_focus中的控制类型错误");
     }
 }
 
@@ -1141,13 +1141,13 @@ void dlg_coloursel_start(dlgcontrol *ctrl, dlgparam *dp, int r, int g, int b)
 
 #if GTK_CHECK_VERSION(3,0,0)
     GtkWidget *coloursel =
-        gtk_color_chooser_dialog_new("Select a colour",
+        gtk_color_chooser_dialog_new("选择颜色",
                                      GTK_WINDOW(dp->window));
     gtk_color_chooser_set_use_alpha(GTK_COLOR_CHOOSER(coloursel), false);
 #else
     GtkWidget *okbutton, *cancelbutton;
     GtkWidget *coloursel =
-        gtk_color_selection_dialog_new("Select a colour");
+        gtk_color_selection_dialog_new("选择颜色");
     GtkColorSelectionDialog *ccs = GTK_COLOR_SELECTION_DIALOG(coloursel);
     GtkColorSelection *cs = GTK_COLOR_SELECTION(
         gtk_color_selection_dialog_get_color_selection(ccs));
@@ -1785,7 +1785,7 @@ static void filefont_clicked(GtkButton *button, gpointer data)
 
         gchar *spacings[] = { "c", "m", NULL };
         GtkWidget *fontsel =
-            gtk_font_selection_dialog_new("Select a font");
+            gtk_font_selection_dialog_new("选择字体");
         gtk_window_set_modal(GTK_WINDOW(fontsel), true);
         gtk_font_selection_dialog_set_filter(
             GTK_FONT_SELECTION_DIALOG(fontsel),
@@ -1841,7 +1841,7 @@ static void filefont_clicked(GtkButton *button, gpointer data)
          * Use the unifontsel code provided in unifont.c.
          */
 
-        unifontsel *fontsel = unifontsel_new("Select a font");
+        unifontsel *fontsel = unifontsel_new("选择字体");
 
         gtk_window_set_modal(fontsel->window, true);
         unifontsel_set_name(fontsel, fontname);
@@ -2161,7 +2161,7 @@ GtkWidget *layout_ctrls(
             if (!just_button) {
                 const char *browsebtn =
                     (ctrl->type == CTRL_FILESELECT ?
-                     "Browse..." : "Change...");
+                     "浏览..." : "改变...");
 
                 gint percentages[] = { 75, 25 };
                 w = columns_new(4);
@@ -2807,7 +2807,7 @@ gint win_key_press(GtkWidget *widget, GdkEventKey *event, gpointer data)
                     break;
                 }
 #endif
-                unreachable("bad listbox type in win_key_press");
+                unreachable("win_key_press中的错误列表框类型");
             }
             break;
         }
@@ -3045,7 +3045,7 @@ GtkWidget *create_config_box(const char *title, Conf *conf,
     cols = columns_new(4);
     gtk_box_pack_start(GTK_BOX(vbox), cols, false, false, 0);
     gtk_widget_show(cols);
-    label = gtk_label_new("Category:");
+    label = gtk_label_new("分类：");
     columns_add(COLUMNS(cols), label, 0, 1);
     columns_force_left_align(COLUMNS(cols), label);
     gtk_widget_show(label);
@@ -3358,14 +3358,14 @@ static void messagebox_handler(dlgcontrol *ctrl, dlgparam *dp,
 }
 
 static const struct message_box_button button_array_yn[] = {
-    {"Yes", 'y', +1, 1},
-    {"No", 'n', -1, 0},
+    {"是(Y)", 'y', +1, 1},
+    {"否(N)", 'n', -1, 0},
 };
 const struct message_box_buttons buttons_yn = {
     button_array_yn, lenof(button_array_yn),
 };
 static const struct message_box_button button_array_ok[] = {
-    {"OK", 'o', 1, 1},
+    {"确定", 'o', 1, 1},
 };
 const struct message_box_buttons buttons_ok = {
     button_array_ok, lenof(button_array_ok),
@@ -3585,7 +3585,7 @@ static GtkWidget *add_more_info_button(GtkWidget *w, void *vctx)
     GtkWidget *box = gtk_hbox_new(false, 10);
     gtk_widget_show(box);
     gtk_box_pack_end(GTK_BOX(box), w, false, true, 0);
-    GtkWidget *button = gtk_button_new_with_label("More info...");
+    GtkWidget *button = gtk_button_new_with_label("更多信息...");
     gtk_widget_show(button);
     gtk_box_pack_start(GTK_BOX(box), button, false, true, 0);
     *(GtkWidget **)vctx = button;
@@ -3609,7 +3609,7 @@ static void more_info_button_clicked(GtkButton *button, gpointer vctx)
         return;
 
     ctx->more_info_dialog = create_message_box(
-        ctx->main_dialog, "Host key information", ctx->more_info,
+        ctx->main_dialog, "主机密钥信息", ctx->more_info,
         string_width("SHA256 fingerprint: ecdsa-sha2-nistp521 521 "
                      "abcdefghkmnopqrsuvwxyzABCDEFGHJKLMNOPQRSTUW"), true,
         &buttons_ok, more_info_closed, ctx);
@@ -3618,12 +3618,12 @@ static void more_info_button_clicked(GtkButton *button, gpointer vctx)
 const SeatDialogPromptDescriptions *gtk_seat_prompt_descriptions(Seat *seat)
 {
     static const SeatDialogPromptDescriptions descs = {
-        .hk_accept_action = "press \"Accept\"",
-        .hk_connect_once_action = "press \"Connect Once\"",
-        .hk_cancel_action = "press \"Cancel\"",
-        .hk_cancel_action_Participle = "Pressing \"Cancel\"",
-        .weak_accept_action = "press \"Yes\"",
-        .weak_cancel_action = "press \"No\"",
+        .hk_accept_action = "选择 \"接受\"",
+        .hk_connect_once_action = "选择 \"连接一次\"",
+        .hk_cancel_action = "选择 \"取消\"",
+        .hk_cancel_action_Participle = "选择 \"取消\"",
+        .weak_accept_action = "选择 \"是(Y)\"",
+        .weak_cancel_action = "选择 \"否(N)\"",
     };
     return &descs;
 }
@@ -3676,9 +3676,9 @@ SeatPromptResult gtk_seat_confirm_ssh_host_key(
     void (*callback)(void *ctx, SeatPromptResult result), void *ctx)
 {
     static const struct message_box_button button_array_hostkey[] = {
-        {"Accept", 'a', 0, 2},
-        {"Connect Once", 'o', 0, 1},
-        {"Cancel", 'c', -1, 0},
+        {"接受", 'a', 0, 2},
+        {"连接一次", 'o', 0, 1},
+        {"取消", 'c', -1, 0},
     };
     static const struct message_box_buttons buttons_hostkey = {
         button_array_hostkey, lenof(button_array_hostkey),
@@ -3916,14 +3916,14 @@ void about_box(void *window)
 
     aboutbox = our_dialog_new();
     gtk_container_set_border_width(GTK_CONTAINER(aboutbox), 10);
-    title = dupcat("About ", appname);
+    title = dupcat("关于 ", appname);
     gtk_window_set_title(GTK_WINDOW(aboutbox), title);
     sfree(title);
 
     g_signal_connect(G_OBJECT(aboutbox), "destroy",
                      G_CALLBACK(about_window_destroyed), NULL);
 
-    w = gtk_button_new_with_label("Close");
+    w = gtk_button_new_with_label("关闭");
     gtk_widget_set_can_default(w, true);
     gtk_window_set_default(GTK_WINDOW(aboutbox), w);
     action_area = our_dialog_make_action_hbox(GTK_WINDOW(aboutbox));
@@ -3932,7 +3932,7 @@ void about_box(void *window)
                      G_CALLBACK(about_close_clicked), NULL);
     gtk_widget_show(w);
 
-    w = gtk_button_new_with_label("View Licence");
+    w = gtk_button_new_with_label("查看许可证");
     gtk_widget_set_can_default(w, true);
     gtk_box_pack_end(action_area, w, false, false, 0);
     g_signal_connect(G_OBJECT(w), "clicked",
@@ -3942,7 +3942,7 @@ void about_box(void *window)
     {
         char *buildinfo_text = buildinfo("\n");
         char *label_text = dupprintf(
-            "%s\n\n%s\n\n%s\n\n%s",
+            "cn%s\n\n%s\n\n%s\n\n%s",
             appname, ver, buildinfo_text,
             "Copyright " SHORT_COPYRIGHT_DETAILS ". All rights reserved");
         w = gtk_label_new(label_text);
@@ -4118,7 +4118,7 @@ void showeventlog(eventlog_stuff *es, void *parentwin)
 
     s0 = ctrl_getset(es->eventbox, "", "", "");
     ctrl_columns(s0, 3, 33, 34, 33);
-    c = ctrl_pushbutton(s0, "Close", 'c', HELPCTX(no_help),
+    c = ctrl_pushbutton(s0, "关闭", 'c', HELPCTX(no_help),
                         eventlog_ok_handler, P(NULL));
     c->column = 1;
     c->button.isdefault = true;
@@ -4135,7 +4135,7 @@ void showeventlog(eventlog_stuff *es, void *parentwin)
     c->listbox.percentages[2] = 65;
 
     es->window = window = our_dialog_new();
-    title = dupcat(appname, " Event Log");
+    title = dupcat(appname, " 事件日志");
     gtk_window_set_title(GTK_WINDOW(window), title);
     sfree(title);
     w0 = layout_ctrls(&es->dp, NULL, &es->scs, s0, GTK_WINDOW(window));
@@ -4275,14 +4275,14 @@ int gtkdlg_askappend(Seat *seat, Filename *filename,
                      void (*callback)(void *ctx, int result), void *ctx)
 {
     static const char msgtemplate[] =
-        "The session log file \"%.*s\" already exists. "
-        "You can overwrite it with a new session log, "
-        "append your session log to the end of it, "
-        "or disable session logging for this session.";
+        "会话日志文件 \"%.*s\" 已经存在."
+        "您可以使用新的会话日志覆盖它, "
+        "将会话日志附加到其末尾, "
+        "或禁用此会话的会话日志记录.";
     static const struct message_box_button button_array_append[] = {
-        {"Overwrite", 'o', 1, 2},
-        {"Append", 'a', 0, 1},
-        {"Disable", 'd', -1, 0},
+        {"覆盖", 'o', 1, 2},
+        {"追加", 'a', 0, 1},
+        {"禁用", 'd', -1, 0},
     };
     static const struct message_box_buttons buttons_append = {
         button_array_append, lenof(button_array_append),
@@ -4356,7 +4356,7 @@ static void make_ca_config_box(GtkWidget *spawning_window)
 
     cacfg->window = our_dialog_new();
     gtk_window_set_title(GTK_WINDOW(cacfg->window),
-                         "PuTTY trusted host certification authorities");
+                         "cnPuTTY受信任的主机证书颁发机构");
     gtk_widget_set_size_request(
         cacfg->window, string_width(
             "ecdsa-sha2-nistp256 256 SHA256:hsO5a8MYGzBoa2gW5"

@@ -213,7 +213,7 @@ static void proxy_negotiate(ProxySocket *ps)
     proxy_negotiator_process_queue(ps->pn);
 
     if (ps->pn->error) {
-        char *err = dupprintf("Proxy error: %s", ps->pn->error);
+        char *err = dupprintf("代理错误：%s", ps->pn->error);
         sfree(ps->pn->error);
         proxy_negotiator_cleanup(ps);
         plug_closing_error(ps->plug, err);
@@ -280,7 +280,7 @@ static void plug_proxy_sent (Plug *p, size_t bufsize)
 static int plug_proxy_accepting(Plug *p,
                                 accept_fn_t constructor, accept_ctx_t ctx)
 {
-    unreachable("ProxySockets never create listening Sockets");
+    unreachable("ProxySockets从不创建侦听套接字");
 }
 
 /*
@@ -387,7 +387,7 @@ static bool proxy_for_destination(SockAddr *addr, const char *hostname,
 static char *dns_log_msg(const char *host, int addressfamily,
                          const char *reason)
 {
-    return dupprintf("Looking up host \"%s\"%s for %s", host,
+    return dupprintf("查找主机 \"%s\"%s 来自 %s", host,
                      (addressfamily == ADDRTYPE_IPV4 ? " (IPv4)" :
                       addressfamily == ADDRTYPE_IPV6 ? " (IPv6)" :
                       ""), reason);
@@ -402,8 +402,8 @@ SockAddr *name_lookup(const char *host, int port, char **canonicalname,
         proxy_for_destination(NULL, host, port, conf)) {
 
         if (logctx)
-            logeventf(logctx, "Leaving host lookup to proxy of \"%s\""
-                      " (for %s)", host, reason);
+            logeventf(logctx, "将主机查找留给代理 \"%s\""
+                      " (对于 %s)", host, reason);
 
         *canonicalname = dupstr(host);
         return sk_nonamelookup(host);
@@ -452,7 +452,7 @@ static char *proxy_description(Interactor *itr)
 {
     ProxySocket *ps = container_of(itr, ProxySocket, interactor);
     assert(ps->pn);
-    return dupprintf("%s connection to %s port %d", ps->pn->vt->type,
+    return dupprintf("%s 连接到 %s 端口 %d", ps->pn->vt->type,
                      conf_get_str(ps->conf, CONF_proxy_host),
                      conf_get_int(ps->conf, CONF_proxy_port));
 }
@@ -578,7 +578,7 @@ Socket *new_connection(SockAddr *addr, const char *hostname,
             vt = &telnet_proxy_negotiator_vt;
             break;
           default:
-            ps->error = "Proxy error: Unknown proxy method";
+            ps->error = "代理错误：未知代理方法";
             return &ps->sock;
         }
         ps->pn = proxy_negotiator_new(vt);
@@ -593,8 +593,8 @@ Socket *new_connection(SockAddr *addr, const char *hostname,
         bufchain_sink_init(ps->pn->output, &ps->output_from_negotiator);
 
         {
-            char *logmsg = dupprintf("Will use %s proxy at %s:%d to connect"
-                                     " to %s:%d", vt->type,
+            char *logmsg = dupprintf("将使用 %s 代理在 %s:%d 进行连接"
+                                     "到 %s:%d", vt->type,
                                      conf_get_str(conf, CONF_proxy_host),
                                      conf_get_int(conf, CONF_proxy_port),
                                      hostname, port);
@@ -615,7 +615,7 @@ Socket *new_connection(SockAddr *addr, const char *hostname,
                                    &proxy_canonical_name,
                                    conf_get_int(conf, CONF_addressfamily));
         if (sk_addr_error(proxy_addr) != NULL) {
-            ps->error = "Proxy error: Unable to resolve proxy host name";
+            ps->error = "代理错误：无法解析代理主机名";
             sk_addr_free(proxy_addr);
             return &ps->sock;
         }
@@ -624,7 +624,7 @@ Socket *new_connection(SockAddr *addr, const char *hostname,
         {
             char addrbuf[256], *logmsg;
             sk_getaddr(proxy_addr, addrbuf, lenof(addrbuf));
-            logmsg = dupprintf("Connecting to %s proxy at %s port %d",
+            logmsg = dupprintf("正在连接到 %s 通过代理在 %s 端口 %d",
                                vt->type, addrbuf,
                                conf_get_int(conf, CONF_proxy_port));
             plug_log(plug, &ps->sock, PLUGLOG_PROXY_MSG, NULL, 0, logmsg, 0);

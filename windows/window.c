@@ -297,13 +297,13 @@ static void start_backend(WinGuiSeat *wgs)
                          conf_get_bool(wgs->conf, CONF_tcp_nodelay),
                          conf_get_bool(wgs->conf, CONF_tcp_keepalives));
     if (error) {
-        char *str = dupprintf("%s Error", appname);
+        char *str = dupprintf("cn%s错误", appname);
         char *msg;
         if (cmdline_tooltype & TOOLTYPE_NONNETWORK) {
             /* Special case for pterm. */
-            msg = dupprintf("Unable to open terminal:\n%s", error);
+            msg = dupprintf("无法打开终端：\n%s", error);
         } else {
-            msg = dupprintf("Unable to open connection to\n%s\n%s",
+            msg = dupprintf("无法打开连接到：\n%s\n%s",
                             conf_dest(wgs->conf), error);
         }
         sfree(error);
@@ -346,7 +346,7 @@ static void close_session(void *vctx)
     int i;
 
     wgs->session_closed = true;
-    newtitle = dupprintf("%s (inactive)", appname);
+    newtitle = dupprintf("%s (不活跃)", appname);
     win_set_icon_title(&wgs->termwin, newtitle, DEFAULT_CODEPAGE);
     win_set_title(&wgs->termwin, newtitle, DEFAULT_CODEPAGE);
     sfree(newtitle);
@@ -369,7 +369,7 @@ static void close_session(void *vctx)
     for (i = 0; i < lenof(wgs->popup_menus); i++) {
         DeleteMenu(wgs->popup_menus[i].menu, IDM_RESTART, MF_BYCOMMAND);
         InsertMenu(wgs->popup_menus[i].menu, IDM_DUPSESS,
-                   MF_BYCOMMAND | MF_ENABLED, IDM_RESTART, "&Restart Session");
+                   MF_BYCOMMAND | MF_ENABLED, IDM_RESTART, "重启会话(&R)");
     }
 }
 
@@ -500,8 +500,8 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
      */
     hr = CoInitialize(NULL);
     if (hr != S_OK && hr != S_FALSE) {
-        char *str = dupprintf("%s Fatal Error", appname);
-        MessageBox(NULL, "Failed to initialize COM subsystem",
+        char *str = dupprintf("cn%s致命错误", appname);
+        MessageBox(NULL, "初始化COM子系统失败！",
                    str, MB_OK | MB_ICONEXCLAMATION);
         sfree(str);
         return 1;
@@ -595,7 +595,7 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
 #endif
 
         if (!wgs->term_hwnd) {
-            modalfatalbox("Unable to create terminal window: %s",
+            modalfatalbox("无法创建终端窗口：%s",
                           win_strerror(GetLastError()));
         }
         memset(&wgs->dpi_info, 0, sizeof(struct _dpi_info));
@@ -742,8 +742,8 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
 
         for (j = 0; j < lenof(wgs->popup_menus); j++) {
             m = wgs->popup_menus[j].menu;
-            AppendMenu(m, MF_ENABLED, IDM_COPY, "&Copy");
-            AppendMenu(m, MF_ENABLED, IDM_PASTE, "&Paste");
+            AppendMenu(m, MF_ENABLED, IDM_COPY, "复制(&C)");
+            AppendMenu(m, MF_ENABLED, IDM_PASTE, "粘贴(&P)");
         }
 
         wgs->savedsess_menu = CreateMenu();
@@ -754,32 +754,32 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
             m = wgs->popup_menus[j].menu;
 
             AppendMenu(m, MF_SEPARATOR, 0, 0);
-            AppendMenu(m, MF_ENABLED, IDM_SHOWLOG, "&Event Log");
+            AppendMenu(m, MF_ENABLED, IDM_SHOWLOG, "事件日志(&E)");
             AppendMenu(m, MF_SEPARATOR, 0, 0);
-            AppendMenu(m, MF_ENABLED, IDM_NEWSESS, "Ne&w Session...");
-            AppendMenu(m, MF_ENABLED, IDM_DUPSESS, "&Duplicate Session");
+            AppendMenu(m, MF_ENABLED, IDM_NEWSESS, "新建会话(&W)...");
+            AppendMenu(m, MF_ENABLED, IDM_DUPSESS, "重复会话(&D)");
             AppendMenu(m, MF_POPUP | MF_ENABLED, (UINT_PTR)wgs->savedsess_menu,
-                       "Sa&ved Sessions");
-            AppendMenu(m, MF_ENABLED, IDM_RECONF, "Chan&ge Settings...");
+                       "保存会话(&V)");
+            AppendMenu(m, MF_ENABLED, IDM_RECONF, "修改设置(&G)...");
             AppendMenu(m, MF_SEPARATOR, 0, 0);
-            AppendMenu(m, MF_ENABLED, IDM_COPYALL, "C&opy All to Clipboard");
-            AppendMenu(m, MF_ENABLED, IDM_CLRSB, "C&lear Scrollback");
-            AppendMenu(m, MF_ENABLED, IDM_RESET, "Rese&t Terminal");
+            AppendMenu(m, MF_ENABLED, IDM_COPYALL, "复制所有内容到剪切板(&O)");
+            AppendMenu(m, MF_ENABLED, IDM_CLRSB, "清除回滚(&L)");
+            AppendMenu(m, MF_ENABLED, IDM_RESET, "重启终端(&T)");
             AppendMenu(m, MF_SEPARATOR, 0, 0);
             AppendMenu(m, (conf_get_int(wgs->conf, CONF_resize_action)
                            == RESIZE_DISABLED) ? MF_GRAYED : MF_ENABLED,
-                       IDM_FULLSCREEN, "&Full Screen");
+                       IDM_FULLSCREEN, "全屏显示(&F)");
             AppendMenu(m, MF_SEPARATOR, 0, 0);
             if (has_help())
-                AppendMenu(m, MF_ENABLED, IDM_HELP, "&Help");
-            str = dupprintf("&About %s", appname);
+                AppendMenu(m, MF_ENABLED, IDM_HELP, "帮助(&H)");
+            str = dupprintf("关于(&A)cn%s", appname);
             AppendMenu(m, MF_ENABLED, IDM_ABOUT, str);
             sfree(str);
         }
     }
 
     if (restricted_acl()) {
-        lp_eventlog(&wgs->logpolicy, "Running with restricted process ACL");
+        lp_eventlog(&wgs->logpolicy, "运行ACL进程受限");
     }
 
     winselgui_set_hwnd(wgs->term_hwnd);
@@ -965,7 +965,7 @@ bool handle_special_filemapping_cmdline(char *p, Conf *conf)
     BinarySource src[1];
     BinarySource_BARE_INIT(src, cp, cpsize);
     if (!conf_deserialise(conf, src))
-        modalfatalbox("Serialised configuration data was invalid");
+        modalfatalbox("序列化配置数据无效");
     UnmapViewOfFile(cp);
     CloseHandle(filemap);
     return true;
@@ -1036,7 +1036,7 @@ static void update_savedsess_menu(WinGuiSeat *wgs)
                    sesslist.sessions[i]);
     if (sesslist.nsessions <= 1)
         AppendMenu(wgs->savedsess_menu, MF_GRAYED, IDM_SAVED_MIN,
-                   "(No sessions)");
+                   "(暂无会话)");
 }
 
 /*
@@ -1103,7 +1103,7 @@ static void win_seat_update_specials_menu(Seat *seat)
         if (new_menu) {
             InsertMenu(wgs->popup_menus[j].menu, IDM_SHOWLOG,
                        MF_BYCOMMAND | MF_POPUP | MF_ENABLED,
-                       (UINT_PTR) new_menu, "S&pecial Command");
+                       (UINT_PTR) new_menu, "特殊命令(&P)");
             InsertMenu(wgs->popup_menus[j].menu, IDM_SHOWLOG,
                        MF_BYCOMMAND | MF_SEPARATOR, IDM_SPECIALSEP, 0);
         }
@@ -1132,7 +1132,7 @@ static void update_mouse_pointer(WinGuiSeat *wgs)
         force_visible = true;
         break;
       default:
-        unreachable("Bad busy_status");
+        unreachable("busy_status出错");
     }
     {
         HCURSOR cursor = LoadCursor(NULL, curstype);
@@ -1175,7 +1175,7 @@ static void wintw_set_raw_mouse_mode_pointer(TermWin *tw, bool activate)
 static void win_seat_connection_fatal(Seat *seat, const char *msg)
 {
     WinGuiSeat *wgs = container_of(seat, WinGuiSeat, seat);
-    char *title = dupprintf("%s Fatal Error", appname);
+    char *title = dupprintf("cn%s致命错误", appname);
     show_mouseptr(wgs, true);
     MessageBox(wgs->term_hwnd, msg, title, MB_ICONERROR | MB_OK);
     sfree(title);
@@ -1220,7 +1220,7 @@ void cmdline_error(const char *fmt, ...)
     va_start(ap, fmt);
     message = dupvprintf(fmt, ap);
     va_end(ap);
-    title = dupprintf("%s Command Line Error", appname);
+    title = dupprintf("cn%s命令行错误", appname);
     MessageBox(find_window_for_msgbox(), message, title, MB_ICONERROR | MB_OK);
     sfree(message);
     sfree(title);
@@ -2157,7 +2157,7 @@ static void exit_callback(void *vctx)
              * we should not generate this informational one. */
             if (exitcode != INT_MAX) {
                 show_mouseptr(wgs, true);
-                MessageBox(wgs->term_hwnd, "Connection closed by remote host",
+                MessageBox(wgs->term_hwnd, "连接被远程主机关闭",
                            appname, MB_OK | MB_ICONINFORMATION);
             }
         }
@@ -2245,11 +2245,11 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT message,
       case WM_CLOSE: {
         char *title, *msg, *additional = NULL;
         show_mouseptr(wgs, true);
-        title = dupprintf("%s Exit Confirmation", appname);
+        title = dupprintf("cn%s确认退出", appname);
         if (wgs->backend && wgs->backend->vt->close_warn_text) {
             additional = wgs->backend->vt->close_warn_text(wgs->backend);
         }
-        msg = dupprintf("Are you sure you want to close this session?%s%s",
+        msg = dupprintf("您确定要关闭此会话吗？%s%s",
                         additional ? "\n" : "",
                         additional ? additional : "");
         if (wgs->session_closed ||
@@ -2384,7 +2384,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT message,
           }
           case IDM_RESTART:
             if (!wgs->backend) {
-                lp_eventlog(&wgs->logpolicy, "----- Session restarted -----");
+                lp_eventlog(&wgs->logpolicy, "----- 会话重新启动 -----");
                 term_pwron(wgs->term, false);
                 start_backend(wgs);
             }
@@ -5546,7 +5546,7 @@ void modalfatalbox(const char *fmt, ...)
     message = dupvprintf(fmt, ap);
     va_end(ap);
     show_mouseptr(NULL, true);
-    title = dupprintf("%s Fatal Error", appname);
+    title = dupprintf("cn%s致命错误", appname);
     MessageBox(find_window_for_msgbox(), message, title,
                MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
     sfree(message);
@@ -5566,7 +5566,7 @@ void nonfatal(const char *fmt, ...)
     message = dupvprintf(fmt, ap);
     va_end(ap);
     show_mouseptr(NULL, true);
-    title = dupprintf("%s Error", appname);
+    title = dupprintf("cn%s错误", appname);
     MessageBox(find_window_for_msgbox(), message, title, MB_ICONERROR | MB_OK);
     sfree(message);
     sfree(title);
@@ -5683,9 +5683,9 @@ static void wintw_bell(TermWin *tw, int mode)
             char *buf, *otherbuf;
             show_mouseptr(wgs, true);
             buf = dupprintf(
-                "Unable to play sound file\n%s\nUsing default sound instead",
+                "无法播放声音文件\n%s\n改用默认提示音",
                 bell_wavefile->utf8path);
-            otherbuf = dupprintf("%s Sound Error", appname);
+            otherbuf = dupprintf("cn%s提示音错误", appname);
             message_box(wgs->term_hwnd, buf, otherbuf,
                         MB_OK | MB_ICONEXCLAMATION, true, 0);
             sfree(buf);

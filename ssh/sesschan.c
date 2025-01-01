@@ -346,7 +346,7 @@ bool sesschan_run_command(Channel *chan, ptrlen command)
     if ((sess->scpsrv = scp_recognise_exec(sess->c, sess->sftpserver_vt,
                                            command)) != NULL) {
         sess->chan.vt = &scp_channelvt;
-        logevent(sess->parent_logctx, "Starting built-in SCP server");
+        logevent(sess->parent_logctx, "启动内置 SCP 服务器");
         return true;
     }
 
@@ -364,7 +364,7 @@ bool sesschan_run_subsystem(Channel *chan, ptrlen subsys)
     if (ptrlen_eq_string(subsys, "sftp") && sess->sftpserver_vt) {
         sess->sftpsrv = sftpsrv_new(sess->sftpserver_vt);
         sess->chan.vt = &sftp_channelvt;
-        logevent(sess->parent_logctx, "Starting built-in SFTP subsystem");
+        logevent(sess->parent_logctx, "启动内置 SFTP 子系统");
         return true;
     }
 
@@ -478,7 +478,7 @@ agentfwd *agentfwd_new(ConnectionLayer *cl, char **socketname_out)
     agent->cl = cl;
     agent->plug.vt = &agentfwd_plugvt;
 
-    char *dir_prefix = dupprintf("/tmp/%s-agentfwd", appname);
+    char *dir_prefix = dupprintf("/tmp/%s-代理转发", appname);
     char *error = NULL, *socketname = NULL;
     agent->socket = platform_make_agent_socket(
         &agent->plug, dir_prefix, &error, &socketname);

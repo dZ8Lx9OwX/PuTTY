@@ -111,9 +111,9 @@ static bool uxpgnt_ask_passphrase(
     assert(!upc->dlgid); /* Pageant core should be serialising requests */
 
     char *msg = dupprintf(
-        "A client of Pageant wants to use the following encrypted key:\n"
+        "Pageant 的客户端想要使用以下加密密钥：\n"
         "%s\n"
-        "If you intended this, enter the passphrase to decrypt the key.",
+        "如果您同意这样做，请输入密码以解密密钥.",
         comment);
 
     switch (upc->prompt_type) {
@@ -181,43 +181,43 @@ char *x_get_default(const char *key) { return NULL; }
  */
 static void usage(void)
 {
-    printf("Pageant: SSH agent\n");
+    printf("Pageant：SSH代理程序\n");
     printf("%s\n", ver);
-    printf("Usage: pageant <lifetime> [[--encrypted] key files]\n");
-    printf("       pageant [[--encrypted] key files] --exec <command> [args]\n");
-    printf("       pageant -a [--encrypted] [key files]\n");
-    printf("       pageant -d [key identifiers]\n");
+    printf("用法： pageant <lifetime> [[--encrypted] 密钥文件]\n");
+    printf("       pageant [[--encrypted] 密钥文件] --exec <命令> [args]\n");
+    printf("       pageant -a [--encrypted] [密钥文件]\n");
+    printf("       pageant -d [密钥标识符]\n");
     printf("       pageant -D\n");
-    printf("       pageant -r [key identifiers]\n");
+    printf("       pageant -r [密钥标识符]\n");
     printf("       pageant -R\n");
-    printf("       pageant --public [key identifiers]\n");
-    printf("       pageant ( --public-openssh | -L ) [key identifiers]\n");
+    printf("       pageant --public [密钥标识符]\n");
+    printf("       pageant ( --public-openssh | -L ) [密钥标识符]\n");
     printf("       pageant -l [-E fptype]\n");
-    printf("Lifetime options, for running Pageant as an agent:\n");
-    printf("  -X           run with the lifetime of the X server\n");
-    printf("  -T           run with the lifetime of the controlling tty\n");
-    printf("  --permanent  run permanently\n");
-    printf("  --debug      run in debugging mode, without forking\n");
-    printf("  --foreground run permanently, without forking\n");
-    printf("  --exec <command>   run with the lifetime of that command\n");
-    printf("Client options, for talking to an existing agent:\n");
-    printf("  -a           add key(s) to the existing agent\n");
-    printf("  -l           list currently loaded key fingerprints and comments\n");
-    printf("  --public     print public keys in RFC 4716 format\n");
-    printf("  --public-openssh, -L   print public keys in OpenSSH format\n");
-    printf("  -d           delete key(s) from the agent\n");
-    printf("  -D           delete all keys from the agent\n");
-    printf("  -r           re-encrypt keys in the agent (forget cleartext)\n");
-    printf("  -R           re-encrypt all possible keys in the agent\n");
-    printf("Other options:\n");
-    printf("  -v           verbose mode (in agent mode)\n");
-    printf("  -s -c        force POSIX or C shell syntax (in agent mode)\n");
-    printf("  --symlink path   create symlink to socket (in agent mode)\n");
-    printf("  --encrypted  when adding keys, don't decrypt\n");
-    printf("  -E alg, --fptype alg   fingerprint type for -l (sha256, md5)\n");
-    printf("  --tty-prompt force tty-based passphrase prompt\n");
-    printf("  --gui-prompt force GUI-based passphrase prompt\n");
-    printf("  --askpass <prompt>   behave like a standalone askpass program\n");
+    printf("生存期选项, 用于运行Pageant代理：\n");
+    printf("  -X           在X服务器的生存期内运行\n");
+    printf("  -T           在控制TTY的生命周期内运行\n");
+    printf("  --permanent  永久运行\n");
+    printf("  --debug      在调试模式下运行，不分支\n");
+    printf("  --foreground 永久运行，不分支\n");
+    printf("  --exec <command>   在该命令的生存期内运行\n");
+    printf("客户端选项，用于与现有代理进行通信：\n");
+    printf("  -a           将密钥添加到现有代理\n");
+    printf("  -l           列出当前加载的密钥指纹和注释\n");
+    printf("  --public     以RFC 4716格式打印公钥\n");
+    printf("  --public-openssh, -L   以OpenSSH格式打印公钥\n");
+    printf("  -d           从代理中删除密钥\n");
+    printf("  -D           从代理中删除所有密钥\\n");
+    printf("  -r           重新加密代理中的密钥(对已解密的密钥)\n");
+    printf("  -R           重新加密代理中所有可能的密钥\n");
+    printf("其他选项：\n");
+    printf("  -v           详细模式(在代理模式)\n");
+    printf("  -s -c        强制POSIX C shell语法(在代理模式)\n");
+    printf("  --symlink path   创建指向套接字的符号链接(在代理模式)\n");
+    printf("  --encrypted  添加密钥时，忽略解密\n");
+    printf("  -E alg, --fptype alg   指纹类型 -l (sha256, md5)\n");
+    printf("  --tty-prompt 强制基于TTY的密码提示\n");
+    printf("  --gui-prompt 强制基于GUI的密码提示\n");
+    printf("  --askpass <prompt>   表现的像一个独立的问答程序\n");
 }
 
 static void version(void)
@@ -274,8 +274,8 @@ void pageant_print_env(int pid)
 
     switch (shell_type) {
       case SHELL_SH:
-        printf("SSH_AUTH_SOCK=%s; export SSH_AUTH_SOCK;\n"
-               "SSH_AGENT_PID=%d; export SSH_AGENT_PID;\n",
+        printf("SSH_AUTH_SOCK=%s; 出口 SSH_AUTH_SOCK;\n"
+               "SSH_AGENT_PID=%d; 出口 SSH_AGENT_PID;\n",
                socketname, pid);
         break;
       case SHELL_CSH:
@@ -284,7 +284,7 @@ void pageant_print_env(int pid)
                socketname, pid);
         break;
       case SHELL_AUTO:
-        unreachable("SHELL_AUTO should have been eliminated by now");
+        unreachable("SHELL_AUTO 现在应该已经被淘汰了");
         break;
     }
 }
@@ -438,7 +438,7 @@ static char *askpass_tty(const char *prompt)
     prompts_t *p = new_prompts();
     p->to_server = false;
     p->from_server = false;
-    p->name = dupstr("Pageant passphrase prompt");
+    p->name = dupstr("Pageant密码提示");
     add_prompt(p, dupcat(prompt, ": "), false);
     SeatPromptResult spr = console_get_userpass_input(p);
     assert(spr.kind != SPRK_INCOMPLETE);
@@ -449,7 +449,7 @@ static char *askpass_tty(const char *prompt)
     } else if (spr.kind == SPRK_SW_ABORT) {
         free_prompts(p);
         char *err = spr_get_error_message(spr);
-        fprintf(stderr, "pageant: unable to read passphrase: %s", err);
+        fprintf(stderr, "Pageant：无法读取密码：%s", err);
         sfree(err);
         return NULL;
     } else {
@@ -479,8 +479,8 @@ static char *askpass(const char *prompt)
 {
     if (prompt_type == PROMPT_TTY) {
         if (!have_controlling_tty()) {
-            fprintf(stderr, "no controlling terminal available "
-                    "for passphrase prompt\n");
+            fprintf(stderr, "没有可用于密码提示的"
+                    "控制终端\n");
             return NULL;
         }
         return askpass_tty(prompt);
@@ -488,8 +488,8 @@ static char *askpass(const char *prompt)
 
     if (prompt_type == PROMPT_GUI) {
         if (!display) {
-            fprintf(stderr, "no graphical display available "
-                    "for passphrase prompt\n");
+            fprintf(stderr, "没有可用于密码提示的"
+                    "图形显示\n");
             return NULL;
         }
         return askpass_gui(prompt);
@@ -500,8 +500,8 @@ static char *askpass(const char *prompt)
     } else if (display) {
         return askpass_gui(prompt);
     } else {
-        fprintf(stderr, "no way to read a passphrase without tty or "
-                "X display\n");
+        fprintf(stderr, "无法在没有TTY或者X display"
+                "的情况下读取密码\n");
         return NULL;
     }
 }
@@ -532,7 +532,7 @@ static bool unix_add_keyfile(const char *filename_str, bool add_encrypted)
      */
     while (1) {
         char *prompt = dupprintf(
-            "Enter passphrase to load key '%s'", err);
+            "输入密码以加载密钥 '%s'", err);
         char *passphrase = askpass(prompt);
         sfree(err);
         sfree(prompt);
@@ -742,7 +742,7 @@ struct pageant_pubkey *find_key(const char *string, char **retstr)
                 strbuf_free(key_in.blob);
                 key_in.blob = NULL;
                 if (file_errors) {
-                    *retstr = dupprintf("unable to load file '%s': %s",
+                    *retstr = dupprintf("无法加载文件 '%s': %s",
                                         string, error);
                     filename_free(fn);
                     return NULL;
@@ -772,7 +772,7 @@ struct pageant_pubkey *find_key(const char *string, char **retstr)
                 strbuf_free(key_in.blob);
                 key_in.blob = NULL;
                 if (file_errors) {
-                    *retstr = dupprintf("unable to load file '%s': %s",
+                    *retstr = dupprintf("无法加载文件 '%s': %s",
                                         string, error);
                     filename_free(fn);
                     return NULL;
@@ -793,7 +793,7 @@ struct pageant_pubkey *find_key(const char *string, char **retstr)
             }
         } else {
             if (file_errors) {
-                *retstr = dupprintf("unable to load key file '%s': %s",
+                *retstr = dupprintf("无法加载密钥文件 '%s': %s",
                                     string, key_type_to_str(keytype));
                 filename_free(fn);
                 return NULL;
@@ -843,7 +843,7 @@ void run_client(void)
     strbuf *signature = strbuf_new();
 
     if (!agent_exists()) {
-        fprintf(stderr, "pageant: no agent running to talk to\n");
+        fprintf(stderr, "pageant: 没有运行代理与之通信\n");
         exit(1);
     }
 
@@ -858,7 +858,7 @@ void run_client(void)
           case KEYACT_CLIENT_LIST:
             if (pageant_enum_keys(key_list_callback, NULL, &retstr) ==
                 PAGEANT_ACTION_FAILURE) {
-                fprintf(stderr, "pageant: listing keys: %s\n", retstr);
+                fprintf(stderr, "pageant: 列出密钥: %s\n", retstr);
                 sfree(retstr);
                 errors = true;
             }
@@ -867,7 +867,7 @@ void run_client(void)
             key = NULL;
             if (!(key = find_key(act->filename, &retstr)) ||
                 pageant_delete_key(key, &retstr) == PAGEANT_ACTION_FAILURE) {
-                fprintf(stderr, "pageant: deleting key '%s': %s\n",
+                fprintf(stderr, "pageant: 删除密钥 '%s': %s\n",
                         act->filename, retstr);
                 sfree(retstr);
                 errors = true;
@@ -879,7 +879,7 @@ void run_client(void)
             key = NULL;
             if (!(key = find_key(act->filename, &retstr)) ||
                 pageant_reencrypt_key(key, &retstr) == PAGEANT_ACTION_FAILURE) {
-                fprintf(stderr, "pageant: re-encrypting key '%s': %s\n",
+                fprintf(stderr, "pageant: 重新加密密钥 '%s': %s\n",
                         act->filename, retstr);
                 sfree(retstr);
                 errors = true;
@@ -891,7 +891,7 @@ void run_client(void)
           case KEYACT_CLIENT_PUBLIC:
             key = NULL;
             if (!(key = find_key(act->filename, &retstr))) {
-                fprintf(stderr, "pageant: finding key '%s': %s\n",
+                fprintf(stderr, "pageant: 查找密钥 '%s': %s\n",
                         act->filename, retstr);
                 sfree(retstr);
                 errors = true;
@@ -921,7 +921,7 @@ void run_client(void)
             break;
           case KEYACT_CLIENT_DEL_ALL:
             if (pageant_delete_all_keys(&retstr) == PAGEANT_ACTION_FAILURE) {
-                fprintf(stderr, "pageant: deleting all keys: %s\n", retstr);
+                fprintf(stderr, "pageant: 删除所有密钥: %s\n", retstr);
                 sfree(retstr);
                 errors = true;
             }
@@ -929,12 +929,12 @@ void run_client(void)
           case KEYACT_CLIENT_REENCRYPT_ALL: {
             int status = pageant_reencrypt_all_keys(&retstr);
             if (status == PAGEANT_ACTION_FAILURE) {
-                fprintf(stderr, "pageant: re-encrypting all keys: "
+                fprintf(stderr, "pageant: 重新加密所有密钥: "
                         "%s\n", retstr);
                 sfree(retstr);
                 errors = true;
             } else if (status == PAGEANT_ACTION_WARNING) {
-                fprintf(stderr, "pageant: re-encrypting all keys: "
+                fprintf(stderr, "pageant: 重新加密所有密钥: "
                         "warning: %s\n", retstr);
                 sfree(retstr);
             }
@@ -946,11 +946,11 @@ void run_client(void)
                 message_loaded = true;
                 switch(lf_load_fp(message, stdin)) {
                   case LF_TOO_BIG:
-                    fprintf(stderr, "pageant: message to sign is too big\n");
+                    fprintf(stderr, "pageant: 签名信息过大\n");
                     errors = true;
                     break;
                   case LF_ERROR:
-                    fprintf(stderr, "pageant: reading message to sign: %s\n",
+                    fprintf(stderr, "pageant: 阅读签名消息: %s\n",
                             strerror(errno));
                     errors = true;
                     break;
@@ -965,7 +965,7 @@ void run_client(void)
             if (!(key = find_key(act->filename, &retstr)) ||
                 pageant_sign(key, ptrlen_from_lf(message), signature,
                              sign_flags, &retstr) == PAGEANT_ACTION_FAILURE) {
-                fprintf(stderr, "pageant: signing with key '%s': %s\n",
+                fprintf(stderr, "pageant: 使用密钥签名 '%s': %s\n",
                         act->filename, retstr);
                 sfree(retstr);
                 errors = true;
@@ -976,7 +976,7 @@ void run_client(void)
                 pageant_pubkey_free(key);
             break;
           default:
-            unreachable("Invalid client action found");
+            unreachable("发现无效的客户端操作");
         }
     }
 
@@ -1167,7 +1167,7 @@ void run_agent(FILE *logfp, const char *symlink_path)
         if (lstat(symlink_path, &st) == 0 && S_ISLNK(st.st_mode))
             unlink(symlink_path);
         if (symlink(socketname, symlink_path) < 0)
-            fprintf(stderr, "pageant: making symlink %s: %s\n",
+            fprintf(stderr, "pageant: 制作符号链接 %s: %s\n",
                     symlink_path, strerror(errno));
     }
 
@@ -1186,12 +1186,12 @@ void run_agent(FILE *logfp, const char *symlink_path)
         char *x11_setup_err;
 
         if (!display) {
-            fprintf(stderr, "pageant: no DISPLAY for -X mode\n");
+            fprintf(stderr, "pageant: X模式无显示\n");
             exit(1);
         }
         disp = x11_setup_display(display, conf, &x11_setup_err);
         if (!disp) {
-            fprintf(stderr, "pageant: unable to connect to X server: %s\n",
+            fprintf(stderr, "pageant: 无法连接到X服务器: %s\n",
                     x11_setup_err);
             sfree(x11_setup_err);
             exit(1);
@@ -1204,7 +1204,7 @@ void run_agent(FILE *logfp, const char *symlink_path)
                            false, true, false, false, &conn->plug, conf,
                            NULL);
         if ((err = sk_socket_error(s)) != NULL) {
-            fprintf(stderr, "pageant: unable to connect to X server: %s", err);
+            fprintf(stderr, "pageant: 无法连接到X服务器: %s", err);
             exit(1);
         }
         greeting = x11_make_greeting('B', 11, 0, disp->localauthproto,
@@ -1365,8 +1365,8 @@ int main(int argc, char **argv)
                 else if (curr_keyact == KEYACT_CLIENT_ADD)
                     curr_keyact = KEYACT_CLIENT_ADD_ENCRYPTED;
                 else {
-                    fprintf(stderr, "pageant: unexpected %s while not adding "
-                            "keys\n", p);
+                    fprintf(stderr, "pageant: 出现意外 %s ，不会添加"
+                            "密钥\n", p);
                     exit(1);
                 }
             } else if (!strcmp(p, "--debug")) {
@@ -1388,8 +1388,8 @@ int main(int argc, char **argv)
                     exec_args = ++argv;
                     argc = 0;          /* force end of option processing */
                 } else {
-                    fprintf(stderr, "pageant: expected a command "
-                            "after --exec\n");
+                    fprintf(stderr, "pageant: --exec之后需要指定"
+                            "命令\n");
                     exit(1);
                 }
             } else if (!strcmp(p, "--tty-prompt")) {
@@ -1400,16 +1400,16 @@ int main(int argc, char **argv)
                 if (--argc > 0) {
                     standalone_askpass_prompt = *++argv;
                 } else {
-                    fprintf(stderr, "pageant: expected a prompt message "
-                            "after --askpass\n");
+                    fprintf(stderr, "pageant: --askpass之后需要出现"
+                            "提示消息\n");
                     exit(1);
                 }
             } else if (!strcmp(p, "--symlink")) {
                 if (--argc > 0) {
                     symlink_path = *++argv;
                 } else {
-                    fprintf(stderr, "pageant: expected a pathname "
-                            "after --symlink\n");
+                    fprintf(stderr, "pageant:  --symlink之后需要"
+                            "路径名\n");
                     exit(1);
                 }
             } else if (!strcmp(p, "-E") || !strcmp(p, "--fptype")) {
@@ -1417,8 +1417,8 @@ int main(int argc, char **argv)
                 if (--argc > 0) {
                     keyword = *++argv;
                 } else {
-                    fprintf(stderr, "pageant: expected a type string "
-                            "after %s\n", p);
+                    fprintf(stderr, "pageant: %s之后需要类型"
+                            "字符串\n", p);
                     exit(1);
                 }
                 if (!strcmp(keyword, "md5"))
@@ -1430,14 +1430,14 @@ int main(int argc, char **argv)
                 else if (!strcmp(keyword, "sha256-cert"))
                     key_list_fptype = SSH_FPTYPE_SHA256_CERT;
                 else {
-                    fprintf(stderr, "pageant: unknown fingerprint type `%s'\n",
+                    fprintf(stderr, "pageant: 未知指纹类型 `%s'\n",
                             keyword);
                     exit(1);
                 }
             } else if (!strcmp(p, "--")) {
                 doing_opts = false;
             } else {
-                fprintf(stderr, "pageant: unrecognised option '%s'\n", p);
+                fprintf(stderr, "pageant: 无法识别的选项 '%s'\n", p);
                 exit(1);
             }
         } else {
@@ -1452,7 +1452,7 @@ int main(int argc, char **argv)
     }
 
     if (life == LIFE_EXEC && !exec_args) {
-        fprintf(stderr, "pageant: expected a command with --exec\n");
+        fprintf(stderr, "pageant: --exec需要明确指令\n");
         exit(1);
     }
 
@@ -1512,18 +1512,18 @@ int main(int argc, char **argv)
             has_lifetime = true;
 
         if (has_lifetime && has_client_actions) {
-            fprintf(stderr, "pageant: client key actions (-a, -d, -D, -r, -R, "
-                    "-l, -L) do not go with an agent lifetime option\n");
+            fprintf(stderr, "pageant: 客户端密钥操作 (-a, -d, -D, -r, -R, "
+                    "-l, -L) 不要使用代理终身选项\n");
             exit(1);
         }
         if (!has_lifetime && has_agent_actions) {
-            fprintf(stderr, "pageant: expected an agent lifetime option with"
-                    " bare key file arguments\n");
+            fprintf(stderr, "pageant: 期待具有裸密钥文件参数的"
+                    "代理生存期选项\n");
             exit(1);
         }
         if (!has_lifetime && !has_client_actions) {
-            fprintf(stderr, "pageant: expected an agent lifetime option"
-                    " or a client key action\n");
+            fprintf(stderr, "pageant: 需要代理生存期选项或"
+                    "客户端密钥操作\n");
             exit(1);
         }
 

@@ -124,7 +124,7 @@ void ssh2_bpp_new_outgoing_crypto(
             (ssh_cipher_alg(s->out.cipher)->flags & SSH_CIPHER_IS_CBC) &&
             !(s->bpp.remote_bugs & BUG_CHOKES_ON_SSH2_IGNORE));
 
-        bpp_logevent("Initialised %s outbound encryption",
+        bpp_logevent("已初始化 %s 出站加密",
                      ssh_cipher_alg(s->out.cipher)->text_name);
     } else {
         s->out.cipher = NULL;
@@ -141,12 +141,12 @@ void ssh2_bpp_new_outgoing_crypto(
          */
         ssh2_mac_setkey(s->out.mac, make_ptrlen(mac_key, mac->keylen));
 
-        bpp_logevent("Initialised %s outbound MAC algorithm%s%s",
+        bpp_logevent("已初始化 %s 出站MAC算法%s%s",
                      ssh2_mac_text_name(s->out.mac),
-                     etm_mode ? " (in ETM mode)" : "",
+                     etm_mode ? "(在ETM模式)" : "",
                      (s->out.cipher &&
                       ssh_cipher_alg(s->out.cipher)->required_mac ?
-                      " (required by cipher)" : ""));
+                      "(加密要求)" : ""));
     } else {
         s->out.mac = NULL;
     }
@@ -158,7 +158,7 @@ void ssh2_bpp_new_outgoing_crypto(
         s->out.pending_compression = compression;
         s->out_comp = NULL;
 
-        bpp_logevent("Will enable %s compression after user authentication",
+        bpp_logevent("用户认证后将启用 %s 压缩",
                      s->out.pending_compression->text_name);
     } else {
         s->out.pending_compression = NULL;
@@ -169,7 +169,7 @@ void ssh2_bpp_new_outgoing_crypto(
         s->out_comp = ssh_compressor_new(compression);
 
         if (s->out_comp)
-            bpp_logevent("Initialised %s compression",
+            bpp_logevent("初始化 %s 压缩",
                          ssh_compressor_alg(s->out_comp)->text_name);
     }
 }
@@ -192,7 +192,7 @@ void ssh2_bpp_new_incoming_crypto(
         ssh_cipher_setkey(s->in.cipher, ckey);
         ssh_cipher_setiv(s->in.cipher, iv);
 
-        bpp_logevent("Initialised %s inbound encryption",
+        bpp_logevent("已初始化 %s 入站加密",
                      ssh_cipher_alg(s->in.cipher)->text_name);
     } else {
         s->in.cipher = NULL;
@@ -203,12 +203,12 @@ void ssh2_bpp_new_incoming_crypto(
         /* MAC setkey has to follow cipher, just as in outgoing_crypto above */
         ssh2_mac_setkey(s->in.mac, make_ptrlen(mac_key, mac->keylen));
 
-        bpp_logevent("Initialised %s inbound MAC algorithm%s%s",
+        bpp_logevent("已初始化 %s 入站MAC算法%s%s",
                      ssh2_mac_text_name(s->in.mac),
-                     etm_mode ? " (in ETM mode)" : "",
+                     etm_mode ? "(在ETM模式)" : "",
                      (s->in.cipher &&
                       ssh_cipher_alg(s->in.cipher)->required_mac ?
-                      " (required by cipher)" : ""));
+                      "(加密要求)" : ""));
     } else {
         s->in.mac = NULL;
     }
@@ -217,7 +217,7 @@ void ssh2_bpp_new_incoming_crypto(
         s->in.pending_compression = compression;
         s->in_decomp = NULL;
 
-        bpp_logevent("Will enable %s decompression after user authentication",
+        bpp_logevent("用户认证后将启用 %s 解压",
                      s->in.pending_compression->text_name);
     } else {
         s->in.pending_compression = NULL;
@@ -228,7 +228,7 @@ void ssh2_bpp_new_incoming_crypto(
         s->in_decomp = ssh_decompressor_new(compression);
 
         if (s->in_decomp)
-            bpp_logevent("Initialised %s decompression",
+            bpp_logevent("初始化 %s 解压",
                          ssh_decompressor_alg(s->in_decomp)->text_name);
     }
 
@@ -259,13 +259,13 @@ static void ssh2_bpp_enable_pending_compression(struct ssh2_bpp_state *s)
 
     if (s->in.pending_compression) {
         s->in_decomp = ssh_decompressor_new(s->in.pending_compression);
-        bpp_logevent("Initialised delayed %s decompression",
+        bpp_logevent("初始化延迟 %s 解压",
                      ssh_decompressor_alg(s->in_decomp)->text_name);
         s->in.pending_compression = NULL;
     }
     if (s->out.pending_compression) {
         s->out_comp = ssh_compressor_new(s->out.pending_compression);
-        bpp_logevent("Initialised delayed %s compression",
+        bpp_logevent("初始化延迟 %s 压缩",
                      ssh_compressor_alg(s->out_comp)->text_name);
         s->out.pending_compression = NULL;
     }
@@ -359,7 +359,7 @@ static void ssh2_bpp_handle_input(BinaryPacketProtocol *bpp)
                     break;
                 if (s->packetlen >= (long)OUR_V2_PACKETLIMIT) {
                     ssh_sw_abort(s->bpp.ssh,
-                                 "No valid incoming packet found");
+                                 "未找到有效的传入数据包");
                     crStopV;
                 }
             }
@@ -406,7 +406,7 @@ static void ssh2_bpp_handle_input(BinaryPacketProtocol *bpp)
             if (s->len < 0 || s->len > (long)OUR_V2_PACKETLIMIT ||
                 s->len % s->cipherblk != 0) {
                 ssh_sw_abort(s->bpp.ssh,
-                             "Incoming packet length field was garbled");
+                             "传入数据包长度字段乱码");
                 crStopV;
             }
 
@@ -435,7 +435,7 @@ static void ssh2_bpp_handle_input(BinaryPacketProtocol *bpp)
              */
             if (s->in.mac && !ssh2_mac_verify(
                     s->in.mac, s->data, s->len + 4, s->in.sequence)) {
-                ssh_sw_abort(s->bpp.ssh, "Incorrect MAC received on packet");
+                ssh_sw_abort(s->bpp.ssh, "数据包上收到的MAC不正确");
                 crStopV;
             }
 
@@ -470,7 +470,7 @@ static void ssh2_bpp_handle_input(BinaryPacketProtocol *bpp)
             if (s->len < 0 || s->len > (long)OUR_V2_PACKETLIMIT ||
                 (s->len + 4) % s->cipherblk != 0) {
                 ssh_sw_abort(s->bpp.ssh,
-                             "Incoming packet was garbled on decryption");
+                             "传入数据包在解密时出现乱码");
                 crStopV;
             }
 
@@ -507,7 +507,7 @@ static void ssh2_bpp_handle_input(BinaryPacketProtocol *bpp)
              */
             if (s->in.mac && !ssh2_mac_verify(
                     s->in.mac, s->data, s->len + 4, s->in.sequence)) {
-                ssh_sw_abort(s->bpp.ssh, "Incorrect MAC received on packet");
+                ssh_sw_abort(s->bpp.ssh, "数据包上收到的MAC不正确");
                 crStopV;
             }
         }
@@ -515,7 +515,7 @@ static void ssh2_bpp_handle_input(BinaryPacketProtocol *bpp)
         s->pad = s->data[4];
         if (s->pad < 4 || s->len - s->pad < 1) {
             ssh_sw_abort(s->bpp.ssh,
-                         "Invalid padding length on received packet");
+                         "数据包上收到的MAC不正确");
             crStopV;
         }
         /*
@@ -615,9 +615,9 @@ static void ssh2_bpp_handle_input(BinaryPacketProtocol *bpp)
                 /* See EXT_INFO handler below */
                 if (type != SSH2_MSG_USERAUTH_SUCCESS) {
                     ssh_proto_error(s->bpp.ssh,
-                                    "Remote side sent SSH2_MSG_EXT_INFO "
-                                    "not either preceded by NEWKEYS or "
-                                    "followed by USERAUTH_SUCCESS");
+                                    "远端发送 SSH2_MSG_EXT_INFO "
+                                    "前面没有 NEWKEYS 或者 "
+                                    "随后是 USERAUTH_SUCCESS");
                     return;
                 }
                 s->enforce_next_packet_is_userauth_success = false;
@@ -670,9 +670,9 @@ static void ssh2_bpp_handle_input(BinaryPacketProtocol *bpp)
                      * Clients may not send EXT_INFO at _any_ other
                      * time. */
                     ssh_proto_error(s->bpp.ssh,
-                                    "Remote side sent SSH2_MSG_EXT_INFO "
-                                    "that was not immediately after the "
-                                    "initial NEWKEYS");
+                                    "远端发送的 SSH2_MSG_EXT_INFO "
+                                    "不是在初始 NEWKEYS "
+                                    "之后发送的");
                     return;
                 } else if (s->nnewkeys > 0 && s->seen_userauth_success) {
                     /* We're the client, so they're the server. In
@@ -683,8 +683,8 @@ static void ssh2_bpp_handle_input(BinaryPacketProtocol *bpp)
                      * yet, or because we've already seen
                      * USERAUTH_SUCCESS). */
                     ssh_proto_error(s->bpp.ssh,
-                                    "Remote side sent SSH2_MSG_EXT_INFO "
-                                    "after USERAUTH_SUCCESS");
+                                    "远程端在 USERAUTH_SUCCESS "
+                                    "之后发送 SSH2_MSG_EXT_INFO");
                     return;
                 } else {
                     /* This _could_ be OK, provided the next packet is
@@ -723,9 +723,9 @@ static void ssh2_bpp_handle_input(BinaryPacketProtocol *bpp)
     crMaybeWaitUntilV(!pq_peek(&s->bpp.in_pq));
     if (!s->bpp.expect_close) {
         ssh_remote_error(s->bpp.ssh,
-                         "Remote side unexpectedly closed network connection");
+                         "远程端意外关闭网络连接");
     } else {
-        ssh_remote_eof(s->bpp.ssh, "Remote side closed network connection");
+        ssh_remote_eof(s->bpp.ssh, "远程端关闭网络连接");
     }
     return;  /* avoid touching s now it's been freed */
 

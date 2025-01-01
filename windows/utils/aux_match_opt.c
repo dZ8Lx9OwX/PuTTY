@@ -71,14 +71,14 @@ bool aux_match_opt(AuxMatchOpt *amo, CmdlineArg **val,
     /* Check for a value */
     if (opt[argopt.len]) {
         if (!val)
-            amo->error("option '%s' does not expect a value", opt);
+            amo->error("选项 '%s' 不需要指定一个值", opt);
         *val = cmdline_arg_from_utf8(optarg->list, opt + argopt.len + 1);
         amo->index++;
     } else if (!val) {
         amo->index++;
     } else {
         if (!amo->arglist->args[amo->index + 1])
-            amo->error("option '%s' expects a value", opt);
+            amo->error("选项 '%s' 需要一个值", opt);
         *val = amo->arglist->args[amo->index + 1];
         amo->index += 2;
     }

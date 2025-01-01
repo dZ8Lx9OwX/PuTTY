@@ -1839,17 +1839,17 @@ int main(int argc, char **argv)
             } else if (!strcmp(p, "--")) {
                 doing_opts = false;
             } else if (!strcmp(p, "--help")) {
-                printf("  usage: drrun -c test/sclog/libsclog.so -- "
+                printf("用法： drrun -c test/sclog/libsclog.so -- "
                        "%s -O <outdir>\n", pname);
-                printf("options: -O <outdir>           "
-                       "put log files in the specified directory\n");
+                printf("选项： -O <outdir>           "
+                       "将日志文件放在指定目录中\n");
                 printf("         -k, --keep            "
-                       "do not delete log files for tests that passed\n");
-                printf("   also: --help                "
-                       "display this text\n");
+                       "不要删除通过的测试的日志文件\n");
+                printf("其他： --help                "
+                       "显示帮助信息\n");
                 return 0;
             } else {
-                fprintf(stderr, "unknown command line option '%s'\n", p);
+                fprintf(stderr, "未知命令行选项'%s'\n", p);
                 return 1;
             }
         } else {

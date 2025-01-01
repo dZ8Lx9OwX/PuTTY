@@ -3620,7 +3620,7 @@ unifontsel *unifontsel_new(const char *wintitle)
      */
     fs->n_filter_buttons = 0;
 #ifndef NOT_X_WINDOWS
-    w = gtk_check_button_new_with_label("Show client-side fonts");
+    w = gtk_check_button_new_with_label("显示客户端字体");
     g_object_set_data(G_OBJECT(w), "user-data",
                       GINT_TO_POINTER(FONTFLAG_CLIENTSIDE));
     g_signal_connect(G_OBJECT(w), "toggled",
@@ -3633,7 +3633,7 @@ unifontsel *unifontsel_new(const char *wintitle)
 #else
     gtk_table_attach(GTK_TABLE(table), w, 0, 3, 4, 5, GTK_FILL, 0, 0, 0);
 #endif
-    w = gtk_check_button_new_with_label("Show server-side fonts");
+    w = gtk_check_button_new_with_label("显示服务器端字体");
     g_object_set_data(G_OBJECT(w), "user-data",
                       GINT_TO_POINTER(FONTFLAG_SERVERSIDE));
     g_signal_connect(G_OBJECT(w), "toggled",
@@ -3646,7 +3646,7 @@ unifontsel *unifontsel_new(const char *wintitle)
 #else
     gtk_table_attach(GTK_TABLE(table), w, 0, 3, 5, 6, GTK_FILL, 0, 0, 0);
 #endif
-    w = gtk_check_button_new_with_label("Show server-side font aliases");
+    w = gtk_check_button_new_with_label("显示服务器端字体别名");
     g_object_set_data(G_OBJECT(w), "user-data",
                       GINT_TO_POINTER(FONTFLAG_SERVERALIAS));
     g_signal_connect(G_OBJECT(w), "toggled",
@@ -3660,7 +3660,7 @@ unifontsel *unifontsel_new(const char *wintitle)
     gtk_table_attach(GTK_TABLE(table), w, 0, 3, 6, 7, GTK_FILL, 0, 0, 0);
 #endif
 #endif /* NOT_X_WINDOWS */
-    w = gtk_check_button_new_with_label("Show non-monospaced fonts");
+    w = gtk_check_button_new_with_label("显示非等宽字体");
     g_object_set_data(G_OBJECT(w), "user-data",
                       GINT_TO_POINTER(FONTFLAG_NONMONOSPACED));
     g_signal_connect(G_OBJECT(w), "toggled",

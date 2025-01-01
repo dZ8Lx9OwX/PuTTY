@@ -270,7 +270,7 @@ void sk_init(void)
         winsock_module = load_system32_dll("wsock32.dll");
     }
     if (!winsock_module)
-        modalfatalbox("Unable to load any WinSock library");
+        modalfatalbox("无法加载任何WinSock库");
 
 #ifndef NO_IPV6
     /* Check if we have getaddrinfo in Winsock */
@@ -342,7 +342,7 @@ void sk_init(void)
     if (!sk_startup(2,2) &&
         !sk_startup(2,0) &&
         !sk_startup(1,1)) {
-        modalfatalbox("Unable to initialise WinSock");
+        modalfatalbox("无法初始化WinSock");
     }
 
     sktree = newtree234(cmpfortree);
@@ -379,76 +379,76 @@ const char *winsock_error_string(int error)
      */
     switch (error) {
       case WSAEACCES:
-        return "Network error: Permission denied";
+        return "网络错误: 无访问权限";
       case WSAEADDRINUSE:
-        return "Network error: Address already in use";
+        return "网络错误: 地址已被使用";
       case WSAEADDRNOTAVAIL:
-        return "Network error: Cannot assign requested address";
+        return "网络错误: 无法分配请求的地址";
       case WSAEAFNOSUPPORT:
         return
-            "Network error: Address family not supported by protocol family";
+            "网络错误: 协议族不支持的地址族";
       case WSAEALREADY:
-        return "Network error: Operation already in progress";
+        return "网络错误: 操作已在进行中";
       case WSAECONNABORTED:
-        return "Network error: Software caused connection abort";
+        return "网络错误: 软件导致连接中止";
       case WSAECONNREFUSED:
-        return "Network error: Connection refused";
+        return "网络错误: 拒绝连接";
       case WSAECONNRESET:
-        return "Network error: Connection reset by peer";
+        return "网络错误: 对方重置连接";
       case WSAEDESTADDRREQ:
-        return "Network error: Destination address required";
+        return "网络错误: 需要目标地址";
       case WSAEFAULT:
-        return "Network error: Bad address";
+        return "网络错误: 错误地址";
       case WSAEHOSTDOWN:
-        return "Network error: Host is down";
+        return "网络错误: 主机已关闭";
       case WSAEHOSTUNREACH:
-        return "Network error: No route to host";
+        return "网络错误: 没有到主机的路由";
       case WSAEINPROGRESS:
-        return "Network error: Operation now in progress";
+        return "网络错误: 操作正在进行中";
       case WSAEINTR:
-        return "Network error: Interrupted function call";
+        return "网络错误: 中断函数调用";
       case WSAEINVAL:
-        return "Network error: Invalid argument";
+        return "网络错误: 目标无效";
       case WSAEISCONN:
-        return "Network error: Socket is already connected";
+        return "网络错误: 套接字已连接";
       case WSAEMFILE:
-        return "Network error: Too many open files";
+        return "网络错误: 打开的文件过多";
       case WSAEMSGSIZE:
-        return "Network error: Message too long";
+        return "网络错误: 信息太长";
       case WSAENETDOWN:
-        return "Network error: Network is down";
+        return "网络错误: 网络已关闭";
       case WSAENETRESET:
-        return "Network error: Network dropped connection on reset";
+        return "网络错误: 重置时网络断开连接";
       case WSAENETUNREACH:
-        return "Network error: Network is unreachable";
+        return "网络错误: 网络不可达";
       case WSAENOBUFS:
-        return "Network error: No buffer space available";
+        return "网络错误: 没有可用的缓冲空间";
       case WSAENOPROTOOPT:
-        return "Network error: Bad protocol option";
+        return "网络错误: 错误的协议选项";
       case WSAENOTCONN:
-        return "Network error: Socket is not connected";
+        return "网络错误: 套接字未连接";
       case WSAENOTSOCK:
-        return "Network error: Socket operation on non-socket";
+        return "网络错误: 非套接字上的套接字操作";
       case WSAEOPNOTSUPP:
-        return "Network error: Operation not supported";
+        return "网络错误: 不支持操作";
       case WSAEPFNOSUPPORT:
-        return "Network error: Protocol family not supported";
+        return "网络错误: 不支持的协议族";
       case WSAEPROCLIM:
-        return "Network error: Too many processes";
+        return "网络错误: 进程太多";
       case WSAEPROTONOSUPPORT:
-        return "Network error: Protocol not supported";
+        return "网络错误: 不支持的协议";
       case WSAEPROTOTYPE:
-        return "Network error: Protocol wrong type for socket";
+        return "网络错误: 套接字的协议类型错误";
       case WSAESHUTDOWN:
-        return "Network error: Cannot send after socket shutdown";
+        return "网络错误: 套接字关闭后无法发送";
       case WSAESOCKTNOSUPPORT:
-        return "Network error: Socket type not supported";
+        return "网络错误: 不支持的套接字类型";
       case WSAETIMEDOUT:
-        return "Network error: Connection timed out";
+        return "网络错误: 连接超时";
       case WSAEWOULDBLOCK:
-        return "Network error: Resource temporarily unavailable";
+        return "网络错误: 资源暂时不可用";
       case WSAEDISCON:
-        return "Network error: Graceful shutdown in progress";
+        return "网络错误: 正常关机正在进行中";
     }
 
     /*
@@ -461,9 +461,9 @@ static inline const char *namelookup_strerror(DWORD err)
 {
     /* PuTTY has traditionally translated a few of the likely error
      * messages into more concise strings than the standard Windows ones */
-    return (err == WSAENETDOWN ? "Network is down" :
-            err == WSAHOST_NOT_FOUND ? "Host does not exist" :
-            err == WSATRY_AGAIN ? "Host not found" :
+    return (err == WSAENETDOWN ? "网络已关闭" :
+            err == WSAHOST_NOT_FOUND ? "主机不存在" :
+            err == WSATRY_AGAIN ? "未找到主机" :
             win_strerror(err));
 }
 
@@ -617,7 +617,7 @@ void sk_getaddr(SockAddr *addr, char *buf, int buflen)
         if (err) {
             strncpy(buf, addr->hostname, buflen);
             if (!buf[0])
-                strncpy(buf, "<unknown>", buflen);
+                strncpy(buf, "<未知>", buflen);
             buf[buflen-1] = '\0';
         }
     } else
@@ -779,7 +779,7 @@ void sk_addrcopy(SockAddr *addr, char *buf)
             memcpy(buf, &((struct sockaddr_in6 *)step.ai->ai_addr)->sin6_addr,
                    sizeof(struct in6_addr));
         else
-            unreachable("bad address family in sk_addrcopy");
+            unreachable("sk_addrcopy中的地址错误");
     } else
 #endif
     if (family == AF_INET) {
@@ -1880,7 +1880,7 @@ SockAddr *platform_get_x11_unix_address(const char *display, int displaynum)
 {
     SockAddr *addr = snew(SockAddr);
     memset(addr, 0, sizeof(SockAddr));
-    addr->error = "unix sockets for X11 not supported on this platform";
+    addr->error = "此平台不支持 X11 的 unix 套接字";
     addr->refcount = 1;
     return addr;
 }

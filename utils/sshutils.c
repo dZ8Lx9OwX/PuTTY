@@ -17,12 +17,12 @@
 
 void chan_remotely_opened_confirmation(Channel *chan)
 {
-    unreachable("this channel type should never receive OPEN_CONFIRMATION");
+    unreachable("此连接类型不应该收到OPEN_CONFIRMATION");
 }
 
 void chan_remotely_opened_failure(Channel *chan, const char *errtext)
 {
-    unreachable("this channel type should never receive OPEN_FAILURE");
+    unreachable("此连接类型不应该收到OPEN_FAILURE");
 }
 
 bool chan_default_want_close(
@@ -110,7 +110,7 @@ bool chan_no_change_window_size(
 
 void chan_no_request_response(Channel *chan, bool success)
 {
-    unreachable("this channel type should never send a want-reply request");
+    unreachable("此连接类型不应该发送想要的回复请求");
 }
 
 /* ----------------------------------------------------------------------

@@ -475,7 +475,7 @@ struct ssh_ttymodes get_ttymodes_from_conf(Seat *seat, Conf *conf)
                     ival = (atoi(sval) != 0);
                 break;
               default:
-                unreachable("Bad mode->type");
+                unreachable("错误模式->类型");
             }
 
             modes.have_mode[mode->opcode] = true;
@@ -914,7 +914,7 @@ SeatPromptResult verify_ssh_host_key(
             sfree(base64blob);
         }
 
-        return SPR_SW_ABORT("Host key not in manually configured list");
+        return SPR_SW_ABORT("主机密钥不在手动配置的列表中。");
     }
 
     /*
@@ -936,82 +936,82 @@ SeatPromptResult verify_ssh_host_key(
         ssh2_pick_default_fingerprint(fingerprints);
 
     seat_dialog_text_append(
-        text, SDT_TITLE, "%s Security Alert", appname);
+        text, SDT_TITLE, "cn%s 安全报警！！！", appname);
 
     HelpCtx helpctx;
 
     if (key && ssh_key_alg(key)->is_certificate) {
         seat_dialog_text_append(
-            text, SDT_SCARY_HEADING, "WARNING - POTENTIAL SECURITY BREACH!");
+            text, SDT_SCARY_HEADING, "警告 —— 潜在安全漏洞！！！");
         seat_dialog_text_append(
-            text, SDT_PARA, "This server presented a certified host key:");
+            text, SDT_PARA, "此服务器提供了经CA认证的主机密钥：");
         seat_dialog_text_append(
-            text, SDT_DISPLAY, "%s (port %d)", host, port);
+            text, SDT_DISPLAY, "%s (端口号 %d)", host, port);
         if (ca_count) {
             seat_dialog_text_append(
-                text, SDT_PARA, "which was signed by a different "
-                "certification authority from the %s %s is configured to "
-                "trust for this server.", ca_count > 1 ? "ones" : "one",
+                text, SDT_PARA, "由来自不相同"
+                "%scn%s证书颁发机构配置"
+                "为信任此服务器。", ca_count > 1 ? "的" : "的一个",
                 appname);
             if (storage_status == 2) {
                 seat_dialog_text_append(
-                    text, SDT_PARA, "ALSO, that key does not match the key "
-                    "%s had previously cached for this server.", appname);
+                    text, SDT_PARA, "此外，该密钥与cn%s"
+                    "以前为此服务器缓存的密钥不匹配", appname);
                 seat_dialog_text_append(
-                    text, SDT_PARA, "This means that either another "
-                    "certification authority is operating in this realm AND "
-                    "the server administrator has changed the host key, or "
-                    "you have actually connected to another computer "
-                    "pretending to be the server.");
+                    text, SDT_PARA, "这意味着有别的证书颁发机构"
+                    "在这个域中运行，并且服务器管理员已经更"
+                    "改了主机密钥，或者您实际上"
+                    "已经连接到另外一台计算机"
+                    "伪装成的服务器。");
             } else {
                 seat_dialog_text_append(
-                    text, SDT_PARA, "This means that either another "
-                    "certification authority is operating in this realm, or "
-                    "you have actually connected to another computer "
-                    "pretending to be the server.");
+                    text, SDT_PARA, "这意味着有别的证书颁发机构"
+                    "在这个域中运行，或者您实际上"
+                    "已经连接到另外一台计算机"
+                    "伪装成的服务器。");
             }
         } else {
             assert(storage_status == 2);
             seat_dialog_text_append(
-                text, SDT_PARA, "which does not match the certified key %s "
-                "had previously cached for this server.", appname);
+                text, SDT_PARA, "认证密钥与cn%s"
+                "以前为此服务器缓存的不匹配", appname);
             seat_dialog_text_append(
-                text, SDT_PARA, "This means that either the server "
-                "administrator has changed the host key, or you have actually "
-                "connected to another computer pretending to be the server.");
+                text, SDT_PARA, "这意味着服务器管理员"
+            "已更改主机密钥，或者您实际已连接到"
+            "另一台计算机伪装成的服务器。");
         }
         seat_dialog_text_append(
-            text, SDT_PARA, "The new %s key fingerprint is:", keytype);
+            text, SDT_PARA, "新的 %s 密钥指纹是：", keytype);
         seat_dialog_text_append(
             text, SDT_DISPLAY, "%s", fingerprints[fptype_default]);
         helpctx = HELPCTX(errors_cert_mismatch);
     } else if (storage_status == 1) {
         seat_dialog_text_append(
-            text, SDT_PARA, "The host key is not cached for this server:");
+            text, SDT_PARA, "未缓存此服务器主机密钥：");
         seat_dialog_text_append(
-            text, SDT_DISPLAY, "%s (port %d)", host, port);
+            text, SDT_DISPLAY, "%s (端口号 %d)", host, port);
         seat_dialog_text_append(
-            text, SDT_PARA, "You have no guarantee that the server is the "
-            "computer you think it is.");
+            text, SDT_PARA, "不能为您保证当前服务器就是"
+            "您要连接的主机。");
         seat_dialog_text_append(
-            text, SDT_PARA, "The server's %s key fingerprint is:", keytype);
+            text, SDT_PARA, "当前服务器的 %s 密钥指纹是：", keytype);
         seat_dialog_text_append(
             text, SDT_DISPLAY, "%s", fingerprints[fptype_default]);
         helpctx = HELPCTX(errors_hostkey_absent);
     } else {
         seat_dialog_text_append(
-            text, SDT_SCARY_HEADING, "WARNING - POTENTIAL SECURITY BREACH!");
+            text, SDT_SCARY_HEADING, "警告 —— 潜在安全漏洞！！！");
         seat_dialog_text_append(
-            text, SDT_PARA, "The host key does not match the one %s has "
-            "cached for this server:", appname);
+            text, SDT_PARA, "主机密钥与cn%s为此服务器缓存的"
+            "主机密钥不匹配：", appname);
         seat_dialog_text_append(
-            text, SDT_DISPLAY, "%s (port %d)", host, port);
+            text, SDT_DISPLAY, "%s (端口号 %d)", host, port);
         seat_dialog_text_append(
-            text, SDT_PARA, "This means that either the server administrator "
-            "has changed the host key, or you have actually connected to "
-            "another computer pretending to be the server.");
+            text, SDT_PARA, "这意味着服务器管理员"
+            "已更改主机密钥，或者您实际已连接到"
+            "另一台计算机伪装成的服务器。");
         seat_dialog_text_append(
-            text, SDT_PARA, "The new %s key fingerprint is:", keytype);
+            text, SDT_PARA, "新的 %s 密钥指纹是：", keytype);
         seat_dialog_text_append(
             text, SDT_DISPLAY, "%s", fingerprints[fptype_default]);
         helpctx = HELPCTX(errors_hostkey_changed);
@@ -1020,61 +1020,61 @@ SeatPromptResult verify_ssh_host_key(
     /* The above text is printed even in batch mode. Here's where we stop if
      * we can't present interactive prompts. */
     seat_dialog_text_append(
-        text, SDT_BATCH_ABORT, "Connection abandoned.");
+        text, SDT_BATCH_ABORT, "连接已放弃。");
 
     if (storage_status == 1) {
         seat_dialog_text_append(
-            text, SDT_PARA, "If you trust this host, %s to add the key to "
-            "%s's cache and carry on connecting.",
+            text, SDT_PARA, "如果您信任此主机，请%s 将密钥添加到"
+            "cn%s的缓存并继续连接。",
             pds->hk_accept_action, appname);
         if (key && ssh_key_alg(key)->is_certificate) {
             seat_dialog_text_append(
-                text, SDT_PARA, "(Storing this certified key in the cache "
-                "will NOT cause its certification authority to be trusted "
-                "for any other key or host.)");
+                text, SDT_PARA, "(将此认证过的密钥存储"
+                "在缓存当中，不会导致其它任何密钥或主机"
+                "信任此证书的颁发机构。)");
         }
         seat_dialog_text_append(
-            text, SDT_PARA, "If you want to carry on connecting just once, "
-            "without adding the key to the cache, %s.",
+            text, SDT_PARA, "如果您只想进行一次连接，"
+            "而不想将密钥添加到缓存中，请%s。",
             pds->hk_connect_once_action);
         seat_dialog_text_append(
-            text, SDT_PARA, "If you do not trust this host, %s to abandon the "
-            "connection.", pds->hk_cancel_action);
+            text, SDT_PARA, "如果您不信任此主机，请%s "
+            "将放弃连接。", pds->hk_cancel_action);
         seat_dialog_text_append(
-            text, SDT_PROMPT, "Store key in cache?");
+            text, SDT_PROMPT, "是否将密钥存储在缓存中？");
     } else {
         seat_dialog_text_append(
-            text, SDT_PARA, "If you were expecting this change and trust the "
-            "new key, %s to update %s's cache and carry on connecting.",
+            text, SDT_PARA, "如果您期待这一变化，并信任"
+            "新的密钥，请%s 用于更新cn%s的密钥缓存并继续连接。",
             pds->hk_accept_action, appname);
         if (key && ssh_key_alg(key)->is_certificate) {
             seat_dialog_text_append(
-                text, SDT_PARA, "(Storing this certified key in the cache "
-                "will NOT cause its certification authority to be trusted "
-                "for any other key or host.)");
+                text, SDT_PARA, "(将此认证密钥存储在缓存中"
+                "不会使其证书颁发机构受到信任，"
+                "用于任何其他密钥或者主机。)");
         }
         seat_dialog_text_append(
-            text, SDT_PARA, "If you want to carry on connecting but without "
-            "updating the cache, %s.", pds->hk_connect_once_action);
+            text, SDT_PARA, "如果您想要继续连接但不"
+            "更新密钥缓存，请%s。", pds->hk_connect_once_action);
         seat_dialog_text_append(
-            text, SDT_PARA, "If you want to abandon the connection "
-            "completely, %s to cancel. %s is the ONLY guaranteed safe choice.",
+            text, SDT_PARA, "如果您想要完全放弃"
+            "连接，请%s。 %s 是唯一保证安全的选项。",
             pds->hk_cancel_action, pds->hk_cancel_action_Participle);
         seat_dialog_text_append(
-            text, SDT_PROMPT, "Update cached key?");
+            text, SDT_PROMPT, "是否更新缓存密钥？");
     }
 
     seat_dialog_text_append(text, SDT_MORE_INFO_KEY,
-                            "Full text of host's public key");
+                            "主机公钥全文：");
     seat_dialog_text_append(text, SDT_MORE_INFO_VALUE_BLOB, "%s", keydisp);
 
     if (fingerprints[SSH_FPTYPE_SHA256]) {
-        seat_dialog_text_append(text, SDT_MORE_INFO_KEY, "SHA256 fingerprint");
+        seat_dialog_text_append(text, SDT_MORE_INFO_KEY, "SHA256 指纹：");
         seat_dialog_text_append(text, SDT_MORE_INFO_VALUE_SHORT, "%s",
                                 fingerprints[SSH_FPTYPE_SHA256]);
     }
     if (fingerprints[SSH_FPTYPE_MD5]) {
-        seat_dialog_text_append(text, SDT_MORE_INFO_KEY, "MD5 fingerprint");
+        seat_dialog_text_append(text, SDT_MORE_INFO_KEY, "MD5 指纹：");
         seat_dialog_text_append(text, SDT_MORE_INFO_VALUE_SHORT, "%s",
                                 fingerprints[SSH_FPTYPE_MD5]);
     }
@@ -1094,54 +1094,54 @@ SeatPromptResult confirm_weak_crypto_primitive(
     const SeatDialogPromptDescriptions *pds =
         seat_prompt_descriptions(iseat.seat);
 
-    seat_dialog_text_append(text, SDT_TITLE, "%s Security Alert", appname);
+    seat_dialog_text_append(text, SDT_TITLE, "cn%s 安全报警！！！", appname);
 
     switch (wcr) {
       case WCR_BELOW_THRESHOLD:
         seat_dialog_text_append(
             text, SDT_PARA,
-            "The first %s supported by the server is %s, "
-            "which is below the configured warning threshold.",
+            "服务器支持的第一个%s是 %s，"
+            "它低于配置的警告阈值。",
             algtype, algname);
         break;
       case WCR_TERRAPIN:
       case WCR_TERRAPIN_AVOIDABLE:
         seat_dialog_text_append(
             text, SDT_PARA,
-            "The %s selected for this session is %s, "
-            "which, with this server, is vulnerable to the 'Terrapin' attack "
-            "CVE-2023-48795, potentially allowing an attacker to modify "
-            "the encrypted session.",
+            "为此会话选择的 %s是 %s，"
+            "在使用此服务器时容易受到'Terrapin'攻击"
+            "(别名CVE-2023-48795)，可能允许攻击者"
+            "修改加密会话。",
             algtype, algname);
         seat_dialog_text_append(
             text, SDT_PARA,
-            "Upgrading, patching, or reconfiguring this SSH server is the "
-            "best way to avoid this vulnerability, if possible.");
+            "如果可能的话，建议升级、修补或重新配置"
+            "此SSH服务器是避免此漏洞的最佳方法。");
         if (wcr == WCR_TERRAPIN_AVOIDABLE) {
             seat_dialog_text_append(
                 text, SDT_PARA,
-                "You can also avoid this vulnerability by abandoning "
-                "this connection, moving ChaCha20 to below the "
-                "'warn below here' line in PuTTY's SSH cipher "
-                "configuration (so that an algorithm without the "
-                "vulnerability will be selected), and starting a new "
-                "connection.");
+                "您还可以通过放弃本次连接，"
+                "然后在cnPuTTY的SSH加密"
+                "设置中，将加密策略ChaCha20 移动到"
+                "'-- 以下为警告选项 --'行下方"
+                "(以便选择不受该漏洞影响的加密算法)，"
+                "并启动新连接来避免此漏洞。");
         }
         break;
       default:
-        unreachable("bad WeakCryptoReason");
+        unreachable("严重的弱加密原因");
     }
 
     /* In batch mode, we print the above information and then this
      * abort message, and stop. */
-    seat_dialog_text_append(text, SDT_BATCH_ABORT, "Connection abandoned.");
+    seat_dialog_text_append(text, SDT_BATCH_ABORT, "连接已放弃。");
 
     seat_dialog_text_append(
-        text, SDT_PARA, "To accept the risk and continue, %s. "
-        "To abandon the connection, %s.",
+        text, SDT_PARA, "接受风险并继续, %s。"
+        "放弃连接, %s。",
         pds->weak_accept_action, pds->weak_cancel_action);
 
-    seat_dialog_text_append(text, SDT_PROMPT, "Continue with connection?");
+    seat_dialog_text_append(text, SDT_PROMPT, "确定继续连接？");
 
     SeatPromptResult toret = seat_confirm_weak_crypto_primitive(
         iseat, text, callback, ctx);
@@ -1157,31 +1157,31 @@ SeatPromptResult confirm_weak_cached_hostkey(
     const SeatDialogPromptDescriptions *pds =
         seat_prompt_descriptions(iseat.seat);
 
-    seat_dialog_text_append(text, SDT_TITLE, "%s Security Alert", appname);
+    seat_dialog_text_append(text, SDT_TITLE, "cn%s 安全报警！！！", appname);
 
     seat_dialog_text_append(
         text, SDT_PARA,
-        "The first host key type we have stored for this server "
-        "is %s, which is below the configured warning threshold.", algname);
+        "我们为此服务器存储的第一个主机密钥"
+        "类型是%s，它低于配置的警告阈值。", algname);
 
     seat_dialog_text_append(
         text, SDT_PARA,
-        "The server also provides the following types of host key "
-        "above the threshold, which we do not have stored:");
+        "服务器还提供以下类型的主机密钥，这些密钥"
+        "高于阈值，我们没有存储这些密钥：");
 
     for (const char **p = betteralgs; *p; p++)
         seat_dialog_text_append(text, SDT_DISPLAY, "%s", *p);
 
     /* In batch mode, we print the above information and then this
      * abort message, and stop. */
-    seat_dialog_text_append(text, SDT_BATCH_ABORT, "Connection abandoned.");
+    seat_dialog_text_append(text, SDT_BATCH_ABORT, "连接已放弃。");
 
     seat_dialog_text_append(
-        text, SDT_PARA, "To accept the risk and continue, %s. "
-        "To abandon the connection, %s.",
+        text, SDT_PARA, "接受风险并继续，%s。"
+        "放弃连接, %s。",
         pds->weak_accept_action, pds->weak_cancel_action);
 
-    seat_dialog_text_append(text, SDT_PROMPT, "Continue with connection?");
+    seat_dialog_text_append(text, SDT_PROMPT, "确定继续连接？");
 
     SeatPromptResult toret = seat_confirm_weak_cached_hostkey(
         iseat, text, callback, ctx);
@@ -1202,7 +1202,7 @@ bool ssh1_common_get_specials(
      * asked anyway.
      */
     if (!(ppl->remote_bugs & BUG_CHOKES_ON_SSH1_IGNORE)) {
-        add_special(ctx, "IGNORE message", SS_NOP, 0);
+        add_special(ctx, "IGNORE 信息", SS_NOP, 0);
         return true;
     }
 
@@ -1219,14 +1219,14 @@ bool ssh1_common_filter_queue(PacketProtocolLayer *ppl)
           case SSH1_MSG_DISCONNECT:
             msg = get_string(pktin);
             ssh_remote_error(ppl->ssh,
-                             "Remote side sent disconnect message:\n\"%.*s\"",
+                             "远端发送断开消息：\n\"%.*s\"",
                              PTRLEN_PRINTF(msg));
             /* don't try to pop the queue, because we've been freed! */
             return true;               /* indicate that we've been freed */
 
           case SSH1_MSG_DEBUG:
             msg = get_string(pktin);
-            ppl_logevent("Remote debug message: %.*s", PTRLEN_PRINTF(msg));
+            ppl_logevent("远程调试消息：%.*s", PTRLEN_PRINTF(msg));
             pq_pop(ppl->in_pq);
             break;
 
@@ -1267,7 +1267,7 @@ void ssh1_compute_session_id(
 void ssh_spr_close(Ssh *ssh, SeatPromptResult spr, const char *context)
 {
     if (spr.kind == SPRK_USER_ABORT) {
-        ssh_user_close(ssh, "User aborted at %s", context);
+        ssh_user_close(ssh, "用户中止于 %s", context);
     } else {
         assert(spr.kind == SPRK_SW_ABORT);
         char *err = spr_get_error_message(spr);

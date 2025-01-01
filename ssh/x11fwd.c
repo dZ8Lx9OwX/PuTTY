@@ -291,7 +291,7 @@ static void x11_closing(Plug *plug, PlugCloseType type, const char *error_msg)
          * construct an X11 error packet passing on the problem.
          */
         if (xconn->no_data_sent_to_x_client) {
-            char *err_message = dupprintf("unable to connect to forwarded "
+            char *err_message = dupprintf("无法连接到转发 "
                                           "X server: %s", error_msg);
             x11_send_init_error(xconn, err_message);
             sfree(err_message);
@@ -448,7 +448,7 @@ static void x11_send_init_error(struct X11Connection *xconn,
     int msglen, msgsize;
     unsigned char *reply;
 
-    full_message = dupprintf("%s X11 proxy: %s\n", appname, err_message);
+    full_message = dupprintf("%s X11 代理：%s\n", appname, err_message);
 
     msglen = strlen(full_message);
     reply = snewn(8 + msglen+1 + 4, unsigned char); /* include zero */
@@ -580,8 +580,8 @@ static size_t x11_send(
                                   false, true, false, false, &xconn->plug,
                                   sshfwd_get_conf(xconn->c), NULL);
         if ((err = sk_socket_error(xconn->s)) != NULL) {
-            char *err_message = dupprintf("unable to connect to"
-                                          " forwarded X server: %s", err);
+            char *err_message = dupprintf("无法连接"
+                                          " 转发 X server: %s", err);
             x11_send_init_error(xconn, err_message);
             sfree(err_message);
             return 0;

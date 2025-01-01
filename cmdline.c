@@ -102,7 +102,7 @@ SeatPromptResult cmdline_get_passwd_input(
      * to try).
      */
     if (state->tried)
-        return SPR_SW_ABORT("Configured password was not accepted");
+        return SPR_SW_ABORT("不接受配置的密码");
 
     /*
      * If we never had a password available in the first place, we
@@ -313,7 +313,7 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
                             set_protocol(conf, vt->protocol);
                             port_override = vt->default_port;
                         } else {
-                            cmdline_error("unrecognised protocol prefix '%s'",
+                            cmdline_error("无法识别的协议前缀 '%s'",
                                           prefix);
                         }
 
@@ -478,8 +478,8 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
         SAVEABLE(0);
         dup = dupstr(value);
         if (!validate_manual_hostkey(dup)) {
-            cmdline_error("'%s' is not a valid format for a manual host "
-                          "key specification", value);
+            cmdline_error("'%s' 不是手动设置主机密钥规范"
+                          "的有效格式", value);
             sfree(dup);
             return ret;
         }
@@ -520,8 +520,8 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
             }
 
             if (!q) {
-                cmdline_error("-%c expects at least two colons in its"
-                              " argument", type);
+                cmdline_error("-%c 预期在其参数中至少有"
+                              "两个冒号", type);
                 return ret;
             }
 
@@ -553,7 +553,7 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
 
         portp = host_strchr(value, ':');
         if (!portp) {
-            cmdline_error("-nc expects argument of form 'host:port'");
+            cmdline_error("-nc 预期的参数形式 'host:port'");
             return ret;
         }
 
@@ -574,7 +574,7 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
 
         fp = f_open(filename, "r", false);
         if (!fp) {
-            cmdline_error("unable to open command file \"%s\"",
+            cmdline_error("无法打开命令文件 \"%s\"",
                           filename_to_str(filename));
             filename_free(filename);
             return ret;
@@ -607,8 +607,8 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
         /* We delay evaluating this until after the protocol is decided,
          * so that we can warn if it's of no use with the selected protocol */
         if (conf_get_int(conf, CONF_protocol) != PROT_SSH)
-            cmdline_error("the -pw option can only be used with the "
-                          "SSH protocol");
+            cmdline_error("-pw 参数只能与SSH协议"
+                          "一起使用");
         else {
             if (cmdline_password) {
                 smemclr(cmdline_password, strlen(cmdline_password));
@@ -628,13 +628,13 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
         /* We delay evaluating this until after the protocol is decided,
          * so that we can warn if it's of no use with the selected protocol */
         if (conf_get_int(conf, CONF_protocol) != PROT_SSH)
-            cmdline_error("the -pwfile option can only be used with the "
-                          "SSH protocol");
+            cmdline_error("-pwfile 参数只能与SSH协议"
+                          "一起使用");
         else {
             Filename *fn = cmdline_arg_to_filename(nextarg);
             FILE *fp = f_open(fn, "r", false);
             if (!fp) {
-                cmdline_error("unable to open password file '%s'", value);
+                cmdline_error("无法打开密码文件 '%s'", value);
             } else {
                 if (cmdline_password) {
                     smemclr(cmdline_password, strlen(cmdline_password));
@@ -643,7 +643,7 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
 
                 cmdline_password = chomp(fgetline(fp));
                 if (!cmdline_password) {
-                    cmdline_error("unable to read a password from file '%s'",
+                    cmdline_error("无法读取密码文件 '%s'",
                                   value);
                 }
                 fclose(fp);
@@ -788,8 +788,8 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
         UNAVAILABLE_IN(TOOLTYPE_FILETRANSFER | TOOLTYPE_NONNETWORK);
         SAVEABLE(1);
         if (conf_get_int(conf, CONF_protocol) != PROT_SERIAL)
-            cmdline_error("the -sercfg option can only be used with the "
-                          "serial protocol");
+            cmdline_error("-sercfg 参数只能与串口协议"
+                          "一起使用");
         /* Value[0] contains one or more , separated values, like 19200,8,n,1,X */
         nextitem = value;
         while (nextitem[0] != '\0') {
@@ -847,7 +847,7 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
                     break;
 
                   default:
-                    cmdline_error("Unrecognised suboption \"-sercfg %c\"",
+                    cmdline_error("无法识别的子选项 \"-sercfg %c\"",
                                   *nextitem);
                 }
             } else if (length == 3 && !strncmp(nextitem,"1.5",3)) {
@@ -860,7 +860,7 @@ int cmdline_process_param(CmdlineArg *arg, CmdlineArg *nextarg,
                 if (serspeed != 0) {
                     conf_set_int(conf, CONF_serspeed, serspeed);
                 } else {
-                    cmdline_error("Unrecognised suboption \"-sercfg %s\"",
+                    cmdline_error("无法识别的子选项 \"-sercfg %s\"",
                                   nextitem);
                 }
             }

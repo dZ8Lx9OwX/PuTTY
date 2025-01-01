@@ -29,8 +29,8 @@
 #define DLGWIDTH 168
 #define STATICHEIGHT 8
 #define TITLEHEIGHT 12
-#define CHECKBOXHEIGHT 8
-#define RADIOHEIGHT 8
+#define CHECKBOXHEIGHT 9    //original=8
+#define RADIOHEIGHT 9       //original=8
 #define EDITHEIGHT 12
 #define LISTHEIGHT 11
 #define LISTINCREMENT 8
@@ -949,7 +949,7 @@ void prefslist(struct prefslist *hdl, struct ctlpos *cp, int lines,
             doctl(cp, r, "BUTTON",
                   BS_NOTIFY | WS_CHILD | WS_VISIBLE |
                   WS_TABSTOP | BS_PUSHBUTTON,
-                  0, "&Up", upbid);
+                  0, "上移", upbid);
 
             r.left = left; r.right = wid;
             r.top = cp->ypos + buttonpos + PUSHBTNHEIGHT + GAPBETWEEN;
@@ -957,7 +957,7 @@ void prefslist(struct prefslist *hdl, struct ctlpos *cp, int lines,
             doctl(cp, r, "BUTTON",
                   BS_NOTIFY | WS_CHILD | WS_VISIBLE |
                   WS_TABSTOP | BS_PUSHBUTTON,
-                  0, "&Down", dnbid);
+                  0, "下移", dnbid);
 
             break;
 
@@ -1670,7 +1670,7 @@ void winctrl_layout(struct dlgparam *dp, struct winctrls *wc,
             num_ids = 3;
             if (!ctrl->fileselect.just_button) {
                 editbutton(&pos, escaped, base_id, base_id+1,
-                           "Browse...", base_id+2);
+                           "浏览...", base_id+2);
             } else {
                 button(&pos, escaped, base_id+2, false);
             }
@@ -1682,12 +1682,12 @@ void winctrl_layout(struct dlgparam *dp, struct winctrls *wc,
                                       ctrl->fontselect.shortcut);
             shortcuts[nshortcuts++] = ctrl->fontselect.shortcut;
             statictext(&pos, escaped, 1, base_id);
-            staticbtn(&pos, "", base_id+1, "Change...", base_id+2);
+            staticbtn(&pos, "", base_id+1, "修改...", base_id+2);
             data = fontspec_new_default();
             sfree(escaped);
             break;
           default:
-            unreachable("bad control type in winctrl_layout");
+            unreachable("winctrl_layout中的控件类型错误");
         }
 
         /* Translate the original align_id_relative of -1 into n-1 */
@@ -1998,7 +1998,7 @@ bool winctrl_handle_command(struct dlgparam *dp, UINT msg,
             if (ctrl->fileselect.filter)
                 of.lpstrFilter = ctrl->fileselect.filter;
             else
-                of.lpstrFilter = L"All Files (*.*)\0*\0\0\0";
+                of.lpstrFilter = L"所有文件(*.*)\0*\0\0\0";
             of.lpstrCustomFilter = NULL;
             of.nFilterIndex = 1;
             of.lpstrFile = filename;
@@ -2186,7 +2186,7 @@ int dlg_radiobutton_get(dlgcontrol *ctrl, dlgparam *dp)
     for (i = 0; i < c->ctrl->radio.nbuttons; i++)
         if (IsDlgButtonChecked(dp->hwnd, c->base_id + 1 + i))
             return i;
-    unreachable("no radio button was checked");
+    unreachable("没有选中单选按钮");
 }
 
 void dlg_checkbox_set(dlgcontrol *ctrl, dlgparam *dp, bool checked)
@@ -2405,7 +2405,7 @@ void dlg_label_change(dlgcontrol *ctrl, dlgparam *dp, char const *text)
         id = c->base_id;
         break;
       default:
-        unreachable("bad control type in label_change");
+        unreachable("label_change中的控件类型错误");
     }
     if (escaped) {
         SetDlgItemText(dp->hwnd, id, escaped);
@@ -2446,13 +2446,13 @@ void dlg_fontsel_set(dlgcontrol *ctrl, dlgparam *dp, FontSpec *fs)
     fontspec_free((FontSpec *)c->data);
     c->data = fontspec_copy(fs);
 
-    boldstr = (fs->isbold ? "bold, " : "");
+    boldstr = (fs->isbold ? "粗体, " : "");
     if (fs->height == 0)
-        buf = dupprintf("Font: %s, %sdefault height", fs->name, boldstr);
+        buf = dupprintf("字体：%s, %默认高度", fs->name, boldstr);
     else
-        buf = dupprintf("Font: %s, %s%d-%s", fs->name, boldstr,
+        buf = dupprintf("字体：%s, %s%d %s", fs->name, boldstr,
                         (fs->height < 0 ? -fs->height : fs->height),
-                        (fs->height < 0 ? "pixel" : "point"));
+                        (fs->height < 0 ? "像素" : "点"));
     SetDlgItemText(dp->hwnd, c->base_id+1, buf);
     sfree(buf);
 

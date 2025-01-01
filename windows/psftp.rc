@@ -1,7 +1,7 @@
 #include "rcstuff.h"
 
 #define APPNAME "PSFTP"
-#define APPDESC "Command-line interactive SFTP client"
+#define APPDESC "SFTP交互式命令行客户端"
 
 200 ICON "pscp.ico"
 

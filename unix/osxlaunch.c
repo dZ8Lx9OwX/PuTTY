@@ -54,7 +54,7 @@
  * is to remove it in the makefile edifice. */
 int main(int argc, char **argv)
 {
-    fprintf(stderr, "launcher does nothing on non-OSX platforms\n");
+    fprintf(stderr, "启动器在非OSX平台上不执行任何操作\n");
     return 1;
 }
 #else /* __APPLE__ */
@@ -129,7 +129,7 @@ struct node *new_node(struct node *prev_head, const char *string, int len)
     struct node *ret = (struct node *)malloc(sizeof(struct node));
 
     if (!ret) {
-        fprintf(stderr, "out of memory\n");
+        fprintf(stderr, "内存不足\n");
         exit(1);
     }
 
@@ -148,7 +148,7 @@ char *get_unused_env_prefix(void)
 
     qhead = (struct bucket *)malloc(sizeof(struct bucket));
     if (!qhead) {
-        fprintf(stderr, "out of memory\n");
+        fprintf(stderr, "内存不足\n");
         exit(1);
     }
     qhead->prefixlen = 0;
@@ -166,7 +166,7 @@ char *get_unused_env_prefix(void)
         for (i = 0; i < FANOUT; i++) {
             buckets[i] = (struct bucket *)malloc(sizeof(struct bucket));
             if (!buckets[i]) {
-                fprintf(stderr, "out of memory\n");
+                fprintf(stderr, "内存不足\n");
                 exit(1);
             }
             buckets[i]->prefixlen = qhead->prefixlen + 1;
@@ -195,7 +195,7 @@ char *get_unused_env_prefix(void)
             if (!buckets[i]->first_node) {
                 char *ret = malloc(qhead->prefixlen + 2);
                 if (!ret) {
-                    fprintf(stderr, "out of memory\n");
+                    fprintf(stderr, "内存不足\n");
                     exit(1);
                 }
                 memcpy(ret, qhead->first_node->string, qhead->prefixlen);
@@ -291,18 +291,18 @@ char *get_program_path(void)
     _NSGetExecutablePath(NULL, &pathlen);
     our_path = malloc(pathlen);
     if (!our_path) {
-        fprintf(stderr, "out of memory\n");
+        fprintf(stderr, "内存不足\n");
         exit(1);
     }
     if (_NSGetExecutablePath(our_path, &pathlen)) {
-        fprintf(stderr, "unable to get launcher executable path\n");
+        fprintf(stderr, "启动器无法获取可执行文件路径\n");
         exit(1);
     }
 
     /* OS X guarantees to malloc the return value if we pass NULL */
     char *our_real_path = realpath(our_path, NULL);
     if (!our_real_path) {
-        fprintf(stderr, "realpath failed\n");
+        fprintf(stderr, "指定路径失败\n");
         exit(1);
     }
 
@@ -319,14 +319,14 @@ char *dirname_wrapper(const char *path)
 {
     char *path_copy = malloc(strlen(path) + 1);
     if (!path_copy) {
-        fprintf(stderr, "out of memory\n");
+        fprintf(stderr, "内存不足\n");
         exit(1);
     }
     strcpy(path_copy, path);
     char *ret_orig = dirname(path_copy);
     char *ret = malloc(strlen(ret_orig) + 1);
     if (!ret) {
-        fprintf(stderr, "out of memory\n");
+        fprintf(stderr, "内存不足\n");
         exit(1);
     }
     strcpy(ret, ret_orig);
@@ -343,7 +343,7 @@ char *alloc_cat(const char *str1, const char *str2)
     int len1 = strlen(str1), len2 = strlen(str2);
     char *ret = malloc(len1 + len2 + 1);
     if (!ret) {
-        fprintf(stderr, "out of memory\n");
+        fprintf(stderr, "内存不足\n");
         exit(1);
     }
     strcpy(ret, str1);
@@ -431,7 +431,7 @@ int main(int argc, char **argv)
 
     char **new_argv = malloc((argc + 16) * sizeof(const char *));
     if (!new_argv) {
-        fprintf(stderr, "out of memory\n");
+        fprintf(stderr, "内存不足\n");
         exit(1);
     }
     int j = 0;

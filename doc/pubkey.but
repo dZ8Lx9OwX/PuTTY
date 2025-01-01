@@ -1,6 +1,6 @@
-\C{pubkey} Using public keys for SSH authentication
+\C{pubkey} 使用公钥进行 SSH 身份验证
 
-\H{pubkey-intro} \ii{Public key authentication} - an introduction
+\H{pubkey-intro} \ii{公钥认证}简介
 
 Public key authentication is an alternative means of identifying
 yourself to a login server, instead of typing a password. It is more
@@ -59,604 +59,604 @@ common are \i{RSA} and \i{ECDSA}, but others exist, notably \i{DSA}
 (otherwise known as \i{DSS}), the USA's federal Digital Signature Standard.
 The key types supported by PuTTY are described in \k{puttygen-keytype}.
 
-\H{pubkey-puttygen} Using \i{PuTTYgen}, the PuTTY key generator
+\H{pubkey-puttygen} 使用\i{PuTTYgen}，PuTTY密钥生成器
 
-PuTTYgen is a key generator. It \I{generating keys}generates pairs of
-public and private keys to be used with PuTTY, PSCP, PSFTP, and Plink,
-as well as the PuTTY authentication agent, Pageant (see \k{pageant}).
-PuTTYgen generates RSA, DSA, ECDSA, and EdDSA keys.
+PuTTYgen 是一个密钥生成器。它\I{generating keys}生成
+用于PuTTY、PSCP 和 Plink 以及 PuTTY身份验证
+代理 Pageant(请参阅 \k{pageant})使用的公钥和私钥对。
+PuTTYgen 生成 RSA、DSA、ECDSA 和 EdDSA 密钥。
 
-When you run PuTTYgen you will see a window where you have two main
-choices: \q{Generate}, to generate a new public/private key pair, or
-\q{Load} to load in an existing private key.
+当您运行 PuTTYgen 时，您将看到一个窗口，
+您有两个主要选择：\q{生成}，
+以生成新的公钥/私钥对，或\q{加载}以加载现有的私钥。
 
-\S{puttygen-generating} Generating a new key
+\S{puttygen-generating} 生成新密钥
 
-This is a general outline of the procedure for generating a new key
-pair. The following sections describe the process in more detail.
+这是生成新密钥对过程的概要。
+以下部分更详细地描述了该过程。
 
-\b First, you need to select which type of key you want to generate,
-and also select the strength of the key. This is described in more
-detail in \k{puttygen-keytype} and
-\k{puttygen-strength}.
+\b 首先，您需要选择要生成的密钥类型，
+还要选择密钥的强度。
+这在 \k{puttygen-keytype}
+和 \k{puttygen-strength} 中有更详细地描述。
 
-\b Then press the \q{Generate} button, to actually generate the key.
-\K{puttygen-generate} describes this step.
+\b 然后按\q{生成}按钮，实际生成密钥。
+\K{puttygen-generate} 描述了这个步骤。
 
-\b Once you have generated the key, select a comment field
-(\k{puttygen-comment}) and a passphrase (\k{puttygen-passphrase}).
+\b 生成密钥后，选择注释
+字段(\k{puttygen-comment}) 和密码(\k{puttygen-passphrase})。
 
-\b Now you're ready to save the private key to disk; press the
-\q{Save private key} button. (See \k{puttygen-savepriv}).
+\b 现在您已准备好将私钥保存到磁盘；
+按\q{保存私钥}按钮。(请参阅 \k{puttygen-savepriv}).
 
-Your key pair is now ready for use. You may also want to copy the
-public key to your server, either by copying it out of the \q{Public
-key for pasting into OpenSSH authorized_keys file} box (see
-\k{puttygen-pastekey}), or by using the \q{Save public key} button
-(\k{puttygen-savepub}). However, you don't need to do this
-immediately; if you want, you can load the private key back into
-PuTTYgen later (see \k{puttygen-load}) and the public key will be
-available for copying and pasting again.
+您的密钥对现在可以使用了。
+您可能还想将公钥复制到您的服务器，
+方法是从\q{用于粘贴到authorized_keys文件的OpenSSH公钥}框中
+复制它 (请参阅 \k{puttygen-pastekey})，或使用\q{保存公钥}
+按钮(\k{puttygen-savepub})。
+但是，您不需要立即执行此操作；如果需要，
+您可以稍后将私钥加载回PuTTYgen（参见\k{puttygen-load}），
+然后公钥将可用于再次复制和粘贴。
 
-\K{pubkey-gettingready} describes the typical process of configuring
-PuTTY to attempt public-key authentication, and configuring your SSH
-server to accept it.
+\K{pubkey-gettingready} 描述了配置
+PuTTY 以尝试公钥身份验证以及配置
+SSH 服务器以接受它的典型过程。
 
-\S{puttygen-keytype} Selecting the type of key
+\S{puttygen-keytype} 选择密钥类型
 
-Before generating a key pair using PuTTYgen, you need to select
-which type of key you need.
+在使用 PuTTYgen 生成密钥对之前，
+您需要选择所需的密钥类型。
 
-The current version of the SSH protocol, SSH-2, supports several
-different key types, although specific servers may not support all of
-them. PuTTYgen can generate:
+当前版本的 SSH 协议 SSH-2 支持几种不同的密钥类型，
+尽管特定的服务器可能不支持所有这些类型。
+PuTTYgen 可以生成：
 
-\b An \i{RSA} key for use with the SSH-2 protocol.
+\b 用于 SSH-2 协议的 \i{RSA} 密钥。
 
-\b A \i{DSA} key for use with the SSH-2 protocol.
+\b 用于 SSH-2 协议的 \i{DSA} 密钥。
 
-\b An \i{ECDSA} (\i{elliptic curve} DSA) key for use with the
-SSH-2 protocol.
+\b 用于 SSH-2 协议的 \i{ECDSA}密钥
+（\i{Elliptic Curve} DSA）。
 
-\b An \i{EdDSA} key (Edwards-curve DSA, another elliptic curve
-algorithm) for use with the SSH-2 protocol.
-
-PuTTYgen can also generate an RSA key suitable for use with the old
-SSH-1 protocol (which only supports RSA); for this, you need to select
-the \q{SSH-1 (RSA)} option. Since the SSH-1 protocol is no longer
-considered secure, it's rare to need this option.
-
-\S{puttygen-strength} Selecting the size (strength) of the key
-
-The \q{Number of bits} input box allows you to choose the strength
-of the key PuTTYgen will generate.
+\b 用于 SSH-2 协议的 \i{EdDSA}
+密钥（Edwards-curve DSA，另一种椭圆曲线算法）。
+
+PuTTYgen 还可以生成适用于旧 SSH-1
+协议（仅支持 RSA）的 RSA 密钥； 为此，
+您需要选择\q{SSH-1 (RSA)}选项。
+由于 SSH-1 协议不再被认为是安全的，因此很少需要此选项。
+
+\S{puttygen-strength} 选择位的大小（强度）
+
+\q{位数}输入框允许您选择
+PuTTYgen 将生成的密钥的强度。
 
-\b For RSA and DSA, 2048 bits should currently be sufficient for most
-purposes. (Smaller keys of these types are no longer considered
-secure, and PuTTYgen will warn if you try to generate them.)
-
-\b For ECDSA, only 256, 384, and 521 bits are supported, corresponding
-to \i{NIST}-standardised elliptic curves. (Elliptic-curve keys do not
-need as many bits as RSA keys for equivalent security, so these numbers
-are smaller than the RSA recommendations.)
-
-\b For EdDSA, the only valid sizes are 255 bits (these keys are also
-known as \q{\i{Ed25519}} and are commonly used) and 448 bits
-(\q{\i{Ed448}}, which is much less common at the time of writing).
-(256 is also accepted for backward compatibility, but the effect is
-the same as 255.)
-
-\S{puttygen-primes} Selecting the \i{prime generation method}
-
-(This is entirely optional. Unless you know better, it's entirely
-sensible to skip this and use the default settings.)
-
-On the \q{Key} menu, you can also optionally change the method for
-generating the prime numbers used in the generated key. This is used
-for RSA and DSA keys only. (The other key types don't require
-generating prime numbers at all.)
-
-The prime-generation method does not affect compatibility: a key
-generated with any of these methods will still work with all the same
-SSH servers.
-
-The available methods are:
-
-\b Use \i{probable primes} (fast)
-
-\b Use \i{proven primes} (slower)
-
-\b Use proven primes with even distribution (slowest)
-
-The \q{probable primes} method sounds unsafe, but it's the most
-commonly used prime-generation strategy. There is in theory a
-possibility that it might accidentally generate a number that isn't
-prime, but the software does enough checking to make that probability
-vanishingly small (less than 1 in 2^80, or 1 in 10^24). So, in
-practice, nobody worries about it very much.
-
-The other methods cause PuTTYgen to use numbers that it is \e{sure}
-are prime, because it generates the output number together with a
-proof of its primality. This takes more effort, but it eliminates that
-theoretical risk in the probabilistic method.
-
-There in one way in which PuTTYgen's \q{proven primes} method is not
-strictly better than its \q{probable primes} method. If you use
-PuTTYgen to generate an RSA key on a computer that is potentially
-susceptible to timing- or cache-based \i{side-channel attacks}, such
-as a shared computer, the \q{probable primes} method is designed to
-resist such attacks, whereas the \q{proven primes} methods are not.
-(This is only a concern for RSA keys; for other key types, primes
-are either not secret or not involved.)
-
-You might choose to switch from probable to proven primes if you have
-a local security standard that demands it, or if you don't trust the
-probabilistic argument for the safety of the usual method.
-
-For RSA keys, there's also an option on the \q{Key} menu to use
-\i{\q{strong} primes} as the prime factors of the public key. A \q{strong}
-prime is a prime number chosen to have a particular structure that
-makes certain factoring algorithms more difficult to apply, so some
-security standards recommend their use. However, the most modern
-factoring algorithms are unaffected, so this option is probably not
-worth turning on \e{unless} you have a local standard that recommends
-it.
-
-\S{puttygen-generate} The \q{Generate} button
-
-Once you have chosen the type of key you want, and the strength of
-the key, press the \q{Generate} button and PuTTYgen will begin the
-process of actually generating the key.
-
-First, a progress bar will appear and PuTTYgen will ask you to move
-the mouse around to generate randomness. Wave the mouse in circles
-over the blank area in the PuTTYgen window, and the progress bar
-will gradually fill up as PuTTYgen collects enough randomness. You
-don't need to wave the mouse in particularly imaginative patterns
-(although it can't hurt); PuTTYgen will collect enough randomness
-just from the fine detail of \e{exactly} how far the mouse has moved
-each time Windows samples its position.
-
-When the progress bar reaches the end, PuTTYgen will begin creating
-the key. The progress bar will reset to the start, and gradually
-move up again to track the progress of the key generation. It will
-not move evenly, and may occasionally slow down to a stop; this is
-unfortunately unavoidable, because key generation is a random
-process and it is impossible to reliably predict how long it will
-take.
-
-When the key generation is complete, a new set of controls will
-appear in the window to indicate this.
-
-\S{puttygen-fingerprint} The \q{\ii{Key fingerprint}} box
-
-The \q{Key fingerprint} box shows you a fingerprint value for the
-generated key. This is derived cryptographically from the \e{public}
-key value, so it doesn't need to be kept secret; it is supposed to
-be more manageable for human beings than the public key itself.
-
-The fingerprint value is intended to be cryptographically secure, in
-the sense that it is computationally infeasible for someone to
-invent a second key with the same fingerprint, or to find a key with
-a particular fingerprint. So some utilities, such as the Pageant key
-list box (see \k{pageant-mainwin-keylist}) and the Unix \c{ssh-add}
-utility, will list key fingerprints rather than the whole public key.
-
-By default, PuTTYgen will display SSH-2 key fingerprints in the
-\q{SHA256} format. If you need to see the fingerprint in the older
-\q{MD5} format (which looks like \c{aa:bb:cc:...}), you can choose
-\q{Show fingerprint as MD5} from the \q{Key} menu, but bear in mind
-that this is less cryptographically secure; it may be feasible for
-an attacker to create a key with the same fingerprint as yours.
-
-\S{puttygen-comment} Setting a comment for your key
-
-If you have more than one key and use them for different purposes,
-you don't need to memorise the key fingerprints in order to tell
-them apart. PuTTYgen allows you to enter a \e{comment} for your key,
-which will be displayed whenever PuTTY or Pageant asks you for the
-passphrase.
-
-The default comment format, if you don't specify one, contains the
-key type and the date of generation, such as \c{rsa-key-20011212}.
-Another commonly used approach is to use your name and the name of
-the computer the key will be used on, such as \c{simon@simons-pc}.
-
-To alter the key comment, just type your comment text into the
-\q{Key comment} box before saving the private key. If you want to
-change the comment later, you can load the private key back into
-PuTTYgen, change the comment, and save it again.
-
-\S{puttygen-passphrase} Setting a \i{passphrase} for your key
-
-The \q{Key passphrase} and \q{Confirm passphrase} boxes allow you to
-choose a passphrase for your key. The passphrase will be used to
-\i{encrypt} the key on disk, so you will not be able to use the key
-without first entering the passphrase.
-
-When you save the key, PuTTYgen will check that the \q{Key passphrase}
-and \q{Confirm passphrase} boxes both contain exactly the same
-passphrase, and will refuse to save the key otherwise.
-
-If you leave the passphrase fields blank, the key will be saved
-unencrypted. You should \e{not} do this without good reason; if you
-do, your private key file on disk will be all an attacker needs to
-gain access to any machine configured to accept that key. If you
-want to be able to \I{passwordless login}log in without having to
-type a passphrase every time, you should consider using Pageant
-(\k{pageant}) so that your decrypted key is only held in memory
-rather than on disk.
-
-Under special circumstances you may genuinely \e{need} to use a key
-with no passphrase; for example, if you need to run an automated
-batch script that needs to make an SSH connection, you can't be
-there to type the passphrase. In this case we recommend you generate
-a special key for each specific batch script (or whatever) that
-needs one, and on the server side you should arrange that each key
-is \e{restricted} so that it can only be used for that specific
-purpose. The documentation for your SSH server should explain how to
-do this (it will probably vary between servers).
-
-Choosing a good passphrase is difficult. Just as you shouldn't use a
-dictionary word as a password because it's easy for an attacker to
-run through a whole dictionary, you should not use a song lyric,
-quotation or other well-known sentence as a passphrase. \i{DiceWare}
-(\W{http://www.diceware.com/}\cw{www.diceware.com}) recommends using
-at least five words each generated randomly by rolling five dice,
-which gives over 2^64 possible passphrases and is probably not a bad
-scheme. If you want your passphrase to make grammatical sense, this
-cuts down the possibilities a lot and you should use a longer one as
-a result.
-
-\e{Do not forget your passphrase}. There is no way to recover it.
-
-\S{puttygen-cert} Adding a \i{certificate} to your key
-
-In some environments, user authentication keys can be signed in turn
-by a \q{certifying authority} (\q{CA} for short), and user accounts on
-an SSH server can be configured to automatically trust any key that's
-certified by the right signature.
-
-This can be a convenient setup if you have a very large number of
-servers. When you change your key pair, you might otherwise have to
-edit the \cw{authorized_keys} file on every server individually, to
-make them all accept the new key. But if instead you configure all
-those servers \e{once} to accept keys signed as yours by a CA, then
-when you change your public key, all you have to do is to get the new
-key certified by the same CA as before, and then all your servers will
-automatically accept it without needing individual reconfiguration.
-
-To get your key signed by a CA, you'll probably send the CA the new
-\e{public} key (not the private half), and get back a modified version
-of the public key with the certificate included.
-
-If you want to incorporate the certificate into your PPK file for
-convenience, you can use the \q{Add certificate to key} menu option in
-PuTTYgen's \q{Key} menu. This will give you a single file containing
-your private key and the certificate, which is everything you need to
-authenticate to a server prepared to accept that certificate. 
-
-To remove the certificate again and restore the uncertified PPK file,
-there's also a \q{Remove certificate from key} option.
-
-(However, you don't \e{have} to incorporate the certificate into your
-PPK file. You can equally well use it separately, via the
-\q{Certificate to use with the private key} option in PuTTY itself.
-See \k{config-ssh-cert}. It's up to you which you find more
-convenient.)
-
-When the currently loaded key in PuTTYgen contains a certificate, the
-large \q{Public key for pasting} edit box (see \k{puttygen-pastekey})
-is replaced by a button that brings up an information box telling you
-about the certificate, such as who it certifies your key as belonging
-to, when it expires (if ever), and the fingerprint of the CA key that
-signed it in turn.
-
-\S{puttygen-savepriv} Saving your private key to a disk file
-
-Once you have generated a key, set a comment field and set a
-passphrase, you are ready to save your private key to disk.
-
-Press the \q{Save private key} button. PuTTYgen will put up a dialog
-box asking you where to save the file. Select a directory, type in a
-file name, and press \q{Save}.
-
-This file is in PuTTY's native format (\c{*.\i{PPK}}); it is the one you
-will need to tell PuTTY to use for authentication (see
-\k{config-ssh-privkey}) or tell Pageant to load (see
-\k{pageant-mainwin-addkey}).
-
-(You can optionally change some details of the PPK format for your saved
-key files; see \k{puttygen-save-params}. But the defaults should be
-fine for most purposes.)
-
-\S{puttygen-savepub} Saving your public key to a disk file
-
-RFC 4716 specifies a \I{SSH-2 public key format}standard format for
-storing SSH-2 public keys on disk. Some SSH servers (such as
-\i\cw{ssh.com}'s) require a public key in this format in order to accept
-authentication with the corresponding private key. (Others, such as
-OpenSSH, use a different format; see \k{puttygen-pastekey}.)
-
-To save your public key in the SSH-2 standard format, press the
-\q{Save public key} button in PuTTYgen. PuTTYgen will put up a
-dialog box asking you where to save the file. Select a directory,
-type in a file name, and press \q{Save}.
-
-You will then probably want to copy the public key file to your SSH
-server machine. See \k{pubkey-gettingready} for general instructions
-on configuring public-key authentication once you have generated a
-key.
-
-If you use this option with an SSH-1 key, the file PuTTYgen saves
-will contain exactly the same text that appears in the \q{Public key
-for pasting} box. This is the only existing standard for SSH-1
-public keys.
-
-\S{puttygen-pastekey} \q{Public key for pasting into OpenSSH
-\i{authorized_keys file}}
-
-The \i{OpenSSH} server, among others, requires your public key to be
-given to it in a one-line format before it will accept authentication
-with your private key. (SSH-1 servers also used this method.)
-
-The \q{Public key for pasting into OpenSSH authorized_keys file} gives the
-public-key data in the correct one-line format. Typically you will
-want to select the entire contents of the box using the mouse, press
-Ctrl+C to copy it to the clipboard, and then paste the data into a
-PuTTY session which is already connected to the server.
-
-See \k{pubkey-gettingready} for general instructions on configuring
-public-key authentication once you have generated a key.
-
-\S{puttygen-save-params} Parameters for saving key files
-
-Selecting \q{Parameters for saving key files...} from the \q{Key} menu
-lets you adjust some aspects of PPK-format private key files stored on
-disk. None of these options affect compatibility with SSH servers.
-
-In most cases, it's entirely sensible to leave all of these at their
-default settings.
-
-\S2{puttygen-save-ppk-version} PPK file version
-
-This defaults to version 3, which is fine for most uses.
-
-You might need to select PPK version 2 if you need your private key
-file to be loadable in older versions of PuTTY (0.74 and older), or in
-other tools which do not yet support the version 3 format (which was
-introduced in 2021).
-
-The version 2 format is less resistant to brute-force decryption, and
-doesn't support any of the following options to control that.
-
-\S2{puttygen-save-passphrase-hashing} Options affecting \i{passphrase hashing}
-
-All of the following options only affect keys saved with passphrases.
-They control how much work is required to decrypt the key (which
-happens every time you type its passphrase). This allows you to trade
-off the cost of legitimate use of the key against the resistance of
-the encrypted key to password-guessing attacks.
-
-These options only affect PPK version 3.
-
-\dt Key derivation function
-
-\dd The variant of the \i{Argon2} key derivation function to use.
-You might change this if you consider your exposure to \i{side-channel
-attacks} to be different to the norm.
-
-\dt Memory to use for passphrase hash
-
-\dd The amount of memory needed to decrypt the key, in Kbyte.
-
-\dt Time to use for passphrase hash
-
-\dd Controls how much time is required to attempt decrypting the key.
-You can either specify an approximate time in milliseconds (on this
-machine), or explicitly specify a number of hash passes (which is what
-the time is turned into during encryption).
-
-\dt Parallelism for passphrase hash
-
-\dd Number of parallelisable threads that can be used to decrypt the
-key. The default, 1, forces the process to run single-threaded, even
-on machines with multiple cores.
-
-\S{puttygen-load} Reloading a private key
-
-PuTTYgen allows you to load an existing private key file into
-memory. If you do this, you can then change the passphrase and
-comment before saving it again; you can also make extra copies of
-the public key.
-
-To load an existing key, press the \q{Load} button. PuTTYgen will
-put up a dialog box where you can browse around the file system and
-find your key file. Once you select the file, PuTTYgen will ask you
-for a passphrase (if necessary) and will then display the key
-details in the same way as if it had just generated the key.
-
-If you use the Load command to load a foreign key format, it will
-work, but you will see a message box warning you that the key you
-have loaded is not a PuTTY native key. See \k{puttygen-conversions}
-for information about importing foreign key formats.
-
-\S{puttygen-conversions} Dealing with private keys in other formats
-
-SSH-2 private keys have no standard format. \I{OpenSSH private
-key format}OpenSSH and \I{ssh.com private key format}\cw{ssh.com} have
-different formats, and PuTTY's is different again.
-So a key generated with one client cannot immediately be used with
-another.
-
-Using the \I{importing keys}\q{Import} command from the \q{Conversions}
-menu, PuTTYgen can load SSH-2 private keys in OpenSSH's format and
-\cw{ssh.com}'s format. Once you have loaded one of these key types, you
-can then save it back out as a PuTTY-format key (\c{*.\i{PPK}}) so that
-you can use it with the PuTTY suite. The passphrase will be unchanged by this
-process (unless you deliberately change it). You may want to change
-the key comment before you save the key, since some OpenSSH key
-formats contained no space for a comment, and \cw{ssh.com}'s default
-comment format is long and verbose.
-
-PuTTYgen can also \i{export private keys} in OpenSSH format and in
-\cw{ssh.com} format. To do so, select one of the \q{Export} options
-from the \q{Conversions} menu. Exporting a key works exactly like
-saving it (see \k{puttygen-savepriv}) - you need to have typed your
-passphrase in beforehand, and you will be warned if you are about to
-save a key without a passphrase.
-
-For OpenSSH there are two options. Modern OpenSSH actually has two
-formats it uses for storing private keys: an older (\q{\i{PEM-style}})
-format, and a newer \q{native} format with better resistance to
-passphrase guessing and support for comments. \q{Export OpenSSH key}
-will automatically choose the oldest format supported for the key
-type, for maximum backward compatibility with older versions of
-OpenSSH; for newer key types like Ed25519, it will use the newer
-format as that is the only legal option. If you have some specific
-reason for wanting to use OpenSSH's newer format even for RSA, DSA,
-or ECDSA keys \dash for instance, you know your file will only be
-used by OpenSSH 6.5 or newer (released in 2014), and want the extra
-security \dash you can choose \q{Export OpenSSH key (force new file
+\b 对于RSA和DSA，目前2048位能满足大多数用途。
+(不建议考虑使用这些类型的较小位数的密钥，
+如果您尝试生成它们PuTTYgen将发出警告。)
+
+\b 对于 ECDSA，仅支持 256、384 和 521 位。符合
+\i{NIST}-standardised elliptic curves。 (Elliptic-curve 密钥
+不需要与RSA密钥一样多的位,就可以实现同等的安全
+性，因此这些数字比RSA建议的要小。)
+
+\b 对于 EdDSA，
+唯一有效的大小是 255 位
+（这些密钥也称为\q{\i{Ed25519}}，常用）
+和 448 位（\q{\i{Ed448}}，在撰写本文时不太常见）。
+（向后兼容也接受 256，但效果与 255 相同。）
+
+\S{puttygen-primes} 选择\i{素数生成方法}
+
+(这些是完全可选的。除非你非常清楚，
+否则跳过此操作并使用默认设置也是非常明智的。)
+
+在\q{密钥}菜单上
+您还可以选择更改生成密钥中使用素数的方法。
+这仅用于 RSA 和 DSA 密钥。
+（其他键类型根本不需要生成素数。）
+
+指定使用素数的方式不会影响兼容性：
+使用这些方法中的任何一种生成的密钥
+仍然适用于所有相同的 SSH 服务器。
+
+可用的方法有：
+
+\b 使用\i{常规概率的素数}(快速)
+
+\b 使用\i{经过验证的素数}(较慢)
+
+\b 使用经过验证且均匀分布的素数(最慢)
+
+\q{常规概率的素数}方法听起来不安全，
+但它是最常用的素数生成策略。 从理论上讲，
+它可能会意外生成一个非素数，
+但该软件会进行足够的检查以使该概率非常
+小（小于 2 ^ 80 分之1 或 10 ^ 24 分之 1）。
+因此，在实践中，没有人非常担心它。
+
+其他方法导致PuTTYgen使用数字前验证它确定为素数，
+因此会生成输出数字以及进行素数证明。
+这需要更多的时间，
+但它消除了概率方法中的理论风险。
+
+从某种意义上说，PuTTYgen 的\q{经过验证的素数}
+方法并不严格优于其\q{常规概率的素数}方法。
+如果您使用PuTTYgen在可能容易受到基于时间
+或基于缓存的\i{侧通道攻击}的计算
+机（例如共享计算机）上生成 RSA 密钥，
+则\q{常规概率的素数}方法旨在抵抗此类
+攻击，而\q{经过验证的素数}的方法不是。（这只是RSA
+密钥的问题；对于其他密钥类型，素数要么不是秘密的，要么不涉及。）
+
+如果您有一个需要它的本地安全标准，
+或者如果您不相信概率论的常规方法的安全性，
+您可能会选择从常规概率的素数切换到经过验证的素数。
+
+对于 RSA 密钥，\q{密钥}菜单上还有一个选项，
+可以使用\i{\q{强} 素数}作为密钥的要素。
+\q{强}素数是选择具有特定结构的素数，
+这使得某些因式分解算法更难应用，
+因此一些安全标准推荐使用它们。
+但是，最现代的因式分解算法不受影响，
+因此\e{除非}您有推荐的本地标准，
+否则此选项可能不值得打开。
+
+\S{puttygen-generate} \q{生成}按钮
+
+选择所需的密钥类型和密钥强度后，
+按\q{生成}按钮，PuTTYgen
+将开始实际生成密钥的过程。
+
+首先，会出现一个进度条，
+PuTTYgen 会要求您移动鼠标以产生随机性。
+在 PuTTYgen 窗口的空白区域上画圈，
+随着 PuTTYgen 收集到足够的随机性，进度条会逐渐填满。
+您不需要以特别富有想象力的模式挥动
+鼠标（尽管它不会造成伤害）； PuTTYgen 将
+仅从每次 Windows 对其位置采样时鼠标移动了
+多远的\e{精确细节}中收集足够的随机性。
+
+当进度条到达末尾时，PuTTYgen
+将开始创建密钥。进度条将重置为开始，
+然后逐渐向上移动以跟踪密钥生成的进度。
+它不会均匀移动，有时可能会减速停止；
+不幸的是，这是不可避免的，因为密钥生
+成是一个随机过程，
+无法可靠地预测需要多长时间。
+
+密钥生成完成后，窗口
+中将出现一组新的控件来指示这一点。
+
+\S{puttygen-fingerprint} \q{\ii{密钥指纹}}框
+
+\q{密钥指纹}框会显示生成密钥的指纹值。
+ 这是从\e{公钥}值以密码方式派生的，
+ 因此不需要保密； 它应该
+ 比公钥本身更易于人类管理。
+
+指纹值旨在加密安全，
+因为某人发明具有相同指纹的第二个密钥
+或找到具有特定指纹的密钥在计算上是不可行的。
+所以一些实用程序，例如 Pageant密钥列
+表框(请参阅 \k{pageant-mainwin-keylist})
+和 Unix \c{ssh-add} 实用程序将列出密钥指纹而不是整个公钥。
+
+默认情况下，PuTTYgen 在显示 SSH-2 密钥指纹时使用
+\q{SHA256}格式。 如果你想查看\q{MD5}旧格式的密钥指纹
+（看起来像 \c{aa:bb:cc:...}），您可以从\q{密钥}菜
+单中选择\q{显示指纹为 MD5}，但请记住这在密码学上不太安全
+但请记住这在密码学上不太安全，攻击者有可能
+去创建与您的指纹相同的密钥，这是可行的。
+
+\S{puttygen-comment} 为您的密钥设置注释
+
+如果您有多个钥匙并将它们用于不同目的，
+则无需记住钥匙指纹来区分它们。
+PuTTYgen 允许您为密钥输入\e{注释}，
+每当 PuTTY 或 Pageant 要求您输入密码时，
+就会显示该注释。
+
+默认注释格式，如果不指定，包含密钥类型和生成日期，
+如\c{rsa-key-20011212}。 另一种常用的方
+法是使用您的姓名
+和将在其上使用密钥的计算机的名称，例如 \c{simon@simons-pc}。
+
+要更改密钥注释，只需在保存私钥之
+前在\q{密钥注释}框中输入您的注释文本。
+如果您想稍后更改注释，您可以将私钥
+加载回 PuTTYgen，更改注释并再次保存。
+
+\S{puttygen-passphrase} 为您的密钥设置\i{密码}
+
+\q{密钥密码}和\q{确认密码}框允许您为您的密
+钥选择一个密码。 密码将用于\i{加密}磁盘上的
+密钥，因此如果不先输入密码，
+您将无法使用密钥。
+
+当您保存密钥时，PuTTYgen 将检查\q{密钥
+密码}和\q{确认密码}框是否包含完全相同的密码，
+否则将拒绝保存密钥。
+
+如果您将密码字段留空，
+则密钥将\e{不}加密保存。
+你不应该没有充分的理由这样做； 如果你这样做了，
+你磁盘上的私钥文件将是攻击者获得访问
+配置为接受该密钥的任何机器所需的全部内容。
+如果您希望无需每次都\I{passwordless login}输入密码即可登录，
+您应该考虑使用 Pageant（\k{pageant}），
+以便您的解密密钥仅保存在内存中而不是磁盘中。
+
+在特殊情况下，您可能确实\e{需要}使用没
+有密码的密钥； 例如，如果您需要运行
+需要建立 SSH 连接的自动批
+处理脚本，您就不能在那里输入密码。 在这种情况下，
+我们建议您为每个需要的特定批处理脚本（或其他）
+生成一个特殊密钥，并且在服务器端，您应该安排每
+个密钥都受到\e{限制}，以便它只能用于该特定目的。
+您的 SSH 服务器的文档应该解释如何执行此
+操作（可能会因服务器而异）。
+
+选择一个好的密码短语是困难的。 正如你不
+应该使用字典单词作为密码，因为攻击者很
+容易遍历整个字典，你也不应该使用歌词、
+引用或其他知名句子作为密码。 \i{DiceWare}
+(\W{http://www.diceware.com/}\cw{www.diceware.com})
+建议使用至少五个单词，每个单词通
+过掷五个骰子随机生成，这提供了超
+过 2^64 个可能的密码短语，这可能
+是一个不错的方案。 如果您希望您的密码具有语法意义，这
+会大大减少可能性，因此您应该使用更长的密码。
+
+\e{不要忘记您的密码}。 没有办法恢复它。
+
+\S{puttygen-cert} 将\i{证书}添加到密钥
+
+在某些环境中，用户身份验证密钥可以依次
+由\q{证书颁发机构}（简称\q{CA}）进行签名，
+并且 SSH 服务器上的用户帐户可以
+配置为自动信任由正确签名认证的任何密钥。
+
+如果您有大量服务器，这可能是一个方便的设置。
+更改密钥对时，您可能必须分别编辑每台服
+务器上的\cw{authorized_keys}文件，
+以使它们全部接受新密钥。
+但是，如果您将所有这些服务器配置为\e{认可}接受由CA签名的密钥，
+那么当您更改公钥时，您所要做的就是获得与以前相同的CA认证的新密钥，
+然后所有服务器都将自动接受它，
+而无需单独重新配置。
+
+要获得由 CA 签名的密钥，您可能会向 CA 发
+送新的\e{公钥}（而不是私有的一半），
+并取回包含证书的公钥的修改版本。
+
+为了方便起见，如果要将证书合并到 PPK 文件中，
+可以使用 PuTTYgen 的\q{密钥}菜单中
+的\q{将证书添加到密钥}菜单选项。
+这将为您提供一个包含私钥和证书的文件，
+这是向准备接受该证书的服务器进行身份验证所需的一切。
+
+要再次删除证书并还原未经认证的 PPK 文件，
+还有一个\q{从密钥中删除证书}选项。
+
+（但是，您不必\e{将}证书合并到 PPK 文件中。
+同样，您可以通过PuTTY本身中
+的\q{与私钥一起使用的证书}选项单独使用它。
+请参见 \k{config-ssh-cert}。
+这取决于你觉得哪个更方便。）
+
+当PuTTYgen中当前加载的密钥包含证书时，
+\q{用于粘贴的公钥}编辑框
+（请参阅 \k{puttygen-pastekey}）将被一个按钮替换，
+该按钮会打开一个信息框，告诉您有关证书的信息，
+例如说明您密钥的证书属于谁，何时过期（如果有的话），
+以及依次签署它的CA密钥的指纹。
+
+\S{puttygen-savepriv} 将您的私钥保存到磁盘文件
+
+生成密钥、设置注释字段并设置密码后，
+您就可以将私钥保存到磁盘了
+
+按\q{保存私钥}按钮。 PuTTYgen 会弹出一
+个对话框，询问您将文件保存在哪里。
+ 选择一个目录，输入文件名，然后按\q{保存}。
+
+该文件是 PuTTY 的原生格式 (\c{*.\i{PPK}})；
+它是您需要告诉 PuTTY 用于身份验
+证（参见 \k{config-ssh-privkey}）或告诉
+Pageant 加载（参见\k{pageant-mainwin-addkey}）的那个。
+
+（您可以选择更改已保存密钥文件的 PPK 格式
+的一些详细信息；请参阅\k{puttygen-save-params}。
+但对于大多数用途来说，默认值应该没问题。）
+
+\S{puttygen-savepub} 将公钥保存到磁盘文件
+
+RFC 4716 指定了在磁盘上存储 \I{SSH-2 public key format}
+SSH-2 公钥的标准格式。 一些 SSH 服务器（例如 \i\cw{ssh.com} 的）
+需要这种格式的公钥才能接受使用相应私钥的身份验证。
+（其他的，例如 OpenSSH，使用不同的格式；
+参见\k{puttygen-pastekey}。）
+
+要以 SSH-2 标准格式保存您的公钥，请按 PuTTYgen
+中的\q{保存公钥}按钮。PuTTYgen 会弹出一个对话框，
+询问您将文件保存在哪里。 选择一个目录，
+输入文件名，然后按\q{保存}。
+
+然后您可能希望将公钥文件复制到
+您的 SSH 服务器机器上。 生成密钥后，
+请参阅 \k{pubkey-gettingready}了解有
+关配置公钥身份验证的一般说明。
+
+如果将此选项与 SSH-1 密钥一起使用，
+PuTTYgen 保存的文件将包含与\q{用于
+粘贴的公钥}框中显示的完全相同的文本。
+这是 SSH-1 公钥的唯一现有标准。
+
+\S{puttygen-pastekey} \q{用于粘贴到
+OpenSSH \i{authorized_keys 文件}中的公钥}
+
+\i{OpenSSH} 服务器，除其他外，要求您的公钥以单
+行格式提供给它，然后它将接受使用您的私
+钥进行身份验证。（SSH-1 服务器也使用了这种方法。）
+
+\q{用于粘贴到 OpenSSH authorized_keys 文件中的公钥}
+以正确的单行格式提供公钥数据。
+通常，您需要使用鼠标选择框的全部内容，
+按 Ctrl+C 将其复制到剪贴板，
+然后将数据粘贴到已连接到服务器的 PuTTY 会话中。
+
+生成密钥后，请参阅\k{pubkey-gettingready}了
+解有关配置公钥身份验证的一般说明。
+
+\S{puttygen-save-params} 保存密钥文件的参数
+
+从\q{密钥}菜单中选择\q{置保存密钥文件的参数}
+可让您调整存储在磁盘上的 PPK 格式私钥文件
+的某些方面。 这些选项都不会影响与 SSH 服务器的兼容性。
+
+在大多数情况下，将所有这些都
+保留为默认设置是完全明智的。
+
+\S2{puttygen-save-ppk-version} PPK 文件版本
+
+这默认为版本 3，适用于大多数用途。
+
+如果您需要在旧版本的 PuTTY（0.74 及更早版本）
+或尚不支持版本 3 格式（于 2021 年推出）
+的其他工具中加载您的私钥文件，
+您可能需要选择 PPK 版本 2。
+
+版本 2 格式对暴力解密的抵抗力较差，
+并且不支持以下任何选项来控制它。
+
+\S2{puttygen-save-passphrase-hashing} 影响\i{密钥散列}的选项
+
+以下所有选项仅影响使用密码保存的密钥。
+它们控制解密密钥所需的工作量（每次输
+入密码时都会发生这种情况）。这使您可以
+在合法使用密钥的成本与加密密钥对密码猜
+测攻击的抵抗力之间进行权衡。
+
+这些选项仅影响 PPK 版本 3。
+
+\dt 密钥导出函数
+
+\dd 要使用的 \i{Argon2} 密钥派生函数的变体。
+如果您认为您面临的\i{侧信道攻击}与正常情况不同，
+您可能会更改此设置。
+
+\dt 用于密码哈希的内存
+
+\dd 解密密钥所需的内存量，以千字节为单位。
+
+\dt 密码哈希时间/散列通道数
+
+\dd  控制尝试解密密钥所需的时间。
+您可以指定一个以毫秒为单位的近
+似时间（在这台机器上），或者明确
+指定散列通道数量（这是加密期间转换的时间）。
+
+\dt 密码哈希的并行线程数
+
+\dd 可用于解密密钥的可并行线程数。
+默认值 1 强制进程运行单线程，
+即使在具有多个内核的机器上也是如此。
+
+\S{puttygen-load} 重新加载私钥
+
+PuTTYgen 允许您将现有的私钥文件
+加载到内存中。 如果您这样做，您
+可以在保存之前再次更改密码和注
+释； 您还可以制作额外的公钥副本。
+
+要加载现有密钥，请按\q{加载}按钮。
+PuTTYgen 将弹出一个对话框，您可以
+在其中浏览文件系统并找到您的密钥文件。
+ 选择文件后，PuTTYgen 将要求您输入密码（如有必要），
+ 然后以与刚刚生成密钥相同的方式显示密钥详细信息。
+
+如果您使用加载外其他格式的密钥，
+它将起作用，但您会看到一个消息框，
+警告您已加载的密钥不是 PuTTY自己
+格式的密钥。 有关导入外键格式的信息，请参阅 \k{puttygen-conversions}。
+
+\S{puttygen-conversions} 处理其他格式的私钥
+
+SSH-2 私钥没有标准格式。\I{OpenSSH private
+key format}OpenSSH 和 \I{ssh.com private key
+format}\cw{ssh.com} 有不同的格式，
+而 PuTTY 的又不同了。因此，一个客户
+端生成的密钥不能立即用于另一个客户端。
+
+使用\I{importing keys}\q{转换}菜单中的\q{导入}
+命令，PuTTYgen 可以加载 OpenSSH 格式和 \cw{ssh.com} 格
+式的 SSH-2 私钥。加载其中一种密钥类型后，
+您可以将其保存为 PuTTY 格式的密钥 (\c{*.\i{PPK}})，
+以便您可以将其与 PuTTY 套件一起使用。此过程将
+不会更改密码（除非您故意更改它）。
+您可能希望在保存密钥之前更改密钥注释，
+因为某些 OpenSSH 密钥格式不包含注
+释空间，而且 \cw{ssh.com} 的默认注释格式又长又冗长。
+
+PuTTYgen 还可以以 OpenSSH 格式和 \cw{ssh.com}
+格式\i{导出私钥}。为此，请从\q{转换}菜单中选
+择\q{导出}选项之一。导出密钥的工作方式与保
+存密钥完全相同（参见 \k{puttygen-savepriv}）——您
+需要事先输入密码，如果您要保存没有密码的密钥，
+您会收到警告。
+
+对于OpenSSH，有两个选项。现代OpenSSH实际上有两个
+用于存储私钥的格式：较旧的(\q{\i{PEM-style}})
+格式，以及较新的 \q{native} 格式，具有更好的抵抗力
+密码短语猜测和支持注释。 \q{Export OpenSSH key}
+默认自动选择密钥支持最早的格式
+类型，以实现与旧版本OpenSSH的最大
+向后兼容性;对于较新的密钥类型如 Ed25519,，它将使用较新的
+格式，因为这是唯一的合法选择。如果你有一些特定的
+想要使用OpenSSH的较新格式的原因，例如即使是 RSA, DSA,
+或者 ECDSA 密钥 \dash，您知道您的文件只会
+由OpenSSH 6.5或更高版本（2014年发布）使用，并希望获得额外的
+安全 dash 您可以选择\q{Export OpenSSH key (force new file
 format)}.
 
-Most clients for the older SSH-1 protocol use a standard format for
-storing private keys on disk. PuTTY uses this format as well; so if
-you have generated an SSH-1 private key using OpenSSH or
-\cw{ssh.com}'s client, you can use it with PuTTY, and vice versa.
-Hence, the export options are not available if you have generated an
-SSH-1 key.
+大多数旧 SSH-1 协议的客户端使用标准格
+式将私钥存储在磁盘上。 PuTTY 也使用这
+种格式；因此，如果您使用 OpenSSH 或
+\cw{ssh.com} 的客户端生成了 SSH-1 私钥，
+则可以将其与 PuTTY 一??起使用，反之亦然。
+因此，如果您已生成 SSH-1 密钥，则导出选项不可用。
 
-\S{puttygen-cli} PuTTYgen command-line configuration
+\S{puttygen-cli} PuTTYgen 命令行配置
 
-PuTTYgen supports a set of command-line options to configure many of
-the same settings you can select in the GUI. This allows you to start
-it up with your own preferences ready-selected, which might be useful
-if you generate a lot of keys. (For example, you could make a Windows
-shortcut that runs PuTTYgen with some command line options, or a batch
-file or Powershell script that you could distribute to a whole
-organisation containing your local standards.)
+PuTTYgen 支持一组命令行选项来配置您可
+以在 GUI 中选择的许多相同设置。 这使您可以
+使用已选择的自己的偏好来启动它，如果您生成
+大量密钥，这可能会很有用。 （例如，您可以
+创建一个 Windows 快捷方式来运行带有一些命
+令行选项的 PuTTYgen，或者一个批处理文件或
+Powershell 脚本，您可以将其分发给包含本地标准的整个组织。）
 
-The options supported on the command line are:
+命令行支持的选项有：
 
 \dt \cw{\-t} \e{keytype}
 
-\dd Type of key to generate. You can select \c{rsa}, \c{dsa},
-\c{ecdsa}, \c{eddsa}, \c{ed25519}, \c{ed448}, or \c{rsa1}.
-See \k{puttygen-keytype}.
+\dd 要生成的密钥类型。 您可以选择 \c{rsa}, \c{dsa},\c{ecdsa}, \c{eddsa},
+\c{ed25519}, \c{ed448}, 或者 \c{rsa1}。
+请参阅 \k{puttygen-keytype}。
 
 \dt \cw{\-b} \e{bits}
 
-\dd Size of the key to generate, in bits. See \k{puttygen-strength}.
+\dd 要生成的密钥的大小，以位为单位。请参阅 \k{puttygen-strength}.
 
 \dt \cw{\-\-primes} \e{method}
 
-\dd Method for generating prime numbers. You can select \c{probable},
-\c{proven}, and \c{proven-even}. See \k{puttygen-primes}.
+\dd 生成素数的方法。 您可以选择 \c{probable},
+\c{proven}, 和 \c{proven-even}。请参阅 \k{puttygen-primes}.
 
 \dt \cw{\-\-strong-rsa}
 
-\dd When generating an RSA key, make sure the prime factors of the key
-modulus are \q{strong primes}. See \k{puttygen-primes}.
+\dd 生成 RSA 密钥时，确保密钥模数的
+素数是\q{强素数}。请参阅 \k{puttygen-primes}.
 
 \dt \cw{\-\-ppk-param} \e{key}\cw{=}\e{value}\cw{,}...
 
-\dd Allows setting all the same details of the PPK save file format
-described in \k{puttygen-save-params}.
+\dd 允许设置所描述的 PPK 保存文件格
+式的所有相同细节，请参阅 \k{puttygen-save-params}.
 
 \lcont{
 
-Aspects to change are specified as a series of \e{key}\cw{=}\e{value} pairs
-separated by commas. The \e{key}s are:
+要更改的方面被指定为一系列 \e{key}\cw{=}\e{value}
+以逗号分隔的对。 keys 可以是：
 
 \dt \cw{version}
 
-\dd The PPK format version: either \cw{3} or \cw{2}.
+\dd PPK 格式版本：\cw{3} 或 \cw{2}.
 
 \dt \cw{kdf}
 
-\dd The variant of Argon2 to use: \cw{argon2id}, \cw{argon2i}, and
+\dd 要使用的 Argon2 变体：\cw{argon2id}, \cw{argon2i}, 和
 \cw{argon2d}.
 
 \dt \cw{memory}
 
-\dd The amount of memory needed to decrypt the key, in Kbyte.
+\dd 解密密钥所需的内存量，以千字节为单位。
 
 \dt \cw{time}
 
-\dd Specifies how much time is required to attempt decrypting the key,
-in milliseconds.
+\dd 指定尝试解密密钥所需的
+时间，以毫秒为单位。
 
 \dt \cw{passes}
 
-\dd Alternative to \cw{time}: specifies the number of hash passes
-required to attempt decrypting the key.
+\dd 替代\cw{时间}：指定尝试
+解密密钥所需的哈希传递次数。
 
 \dt \cw{parallelism}
 
-\dd Number of parallelisable threads that can be used to decrypt the
-key.
+\dd 可用于解密密钥的
+可并行线程数。
 
 }
 
 \dt \cw{\-E} \e{fptype}
 
-\dd Algorithm to use when displaying key fingerprints. You can
-select \c{sha256} or \c{md5}. See \k{puttygen-fingerprint}.
+\dd 显示关键指纹时使用的算法。你可以
+选择\c{sha256} 或者 \c{md5}。请参见 \k{puttygen-fingerprint}。
 
-\H{pubkey-gettingready} Getting ready for public key authentication
+\H{pubkey-gettingready} 准备公钥认证
 
-Connect to your SSH server using PuTTY with the SSH protocol. When the
-connection succeeds you will be prompted for your user name and
-password to login. Once logged in, you must configure the server to
-accept your public key for authentication:
+使用带有 SSH 协议的 PuTTY 连接到您的 SSH 服务器。
+连接成功后，系统将提示您输入用户名和密码以登录。
+登录后，您必须将服务器配置为接
+受您的公钥进行身份验证：
 
-\b If your server is \i{OpenSSH}, you should change into the
-\i\c{.ssh} directory under your home directory, and open the file
-\i\c{authorized_keys} with your favourite editor. (You may have to
-create this file, if this is the first key you have put in it.) Then
-switch to the PuTTYgen window, select all of the text in the \q{Public
-key for pasting into OpenSSH authorized_keys file} box (see
-\k{puttygen-pastekey}), and copy it to the clipboard (\c{Ctrl+C}).
-Then, switch back to the PuTTY window and insert the data into the
-open file, making sure it ends up all on one line. Save the file.
+\b 如果您的服务器是 \i{OpenSSH}，您应该切
+换到主目录下的 \i\c{.ssh} 目录，并使用您
+喜欢的编辑器打开文件 \i\c{authorized_keys}。（如果这是
+您放入其中的第一个密钥，您可能必须创建此文件。）
+然后切换到 PuTTYgen 窗口，选择\q{用于粘贴到authorized_keys
+文件的OpenSSH公钥}框中的所有文本（请参阅section 8.2.11)，
+然后将其复制到剪贴板 (\c{Ctrl+C})。
+然后，切换回 PuTTY 窗口并将数据插入到
+打开的文件中，确保它全部在一行中结束。
 
 \lcont{
-(In very old versions of OpenSSH, SSH-2 keys had to be put in a
-separate file called \c{authorized_keys2}. In all current versions,
-the same \c{authorized_keys} file is used for both SSH-1 and SSH-2 keys.)
+（在非常旧的 OpenSSH 版本中，SSH-2 密钥必须放在一个名
+为 \c{authorized_keys2} 的单独文件中。在所有当前版本中，
+相同的 \c{authorized_keys} 文件用于 SSH-1 和 SSH-2 密钥。）
 }
 
-\b If your server is \i\cw{ssh.com}'s product and is using SSH-2, you
-need to save a \e{public} key file from PuTTYgen (see
-\k{puttygen-savepub}), and copy that into the \i\c{.ssh2} directory on
-the server. Then you should go into that \c{.ssh2} directory, and edit
-(or create) a file called \c{authorization}. In this file you should
-put a line like \c{Key mykey.pub}, with \c{mykey.pub} replaced by the
-name of your key file.
+\b 如果您的服务器是 \i\cw{ssh.com} 的产品并且使用 SSH-2，
+您需要从 PuTTYgen 保存一个\e{公钥}文件（参见\k{puttygen-savepub}），
+并将其复制到服务器上的 \i\c{.ssh2} 目录中。 然后你应该进
+入那个 \c{.ssh2} 目录，并编辑（或创建）一个名为\c{authorization}
+的文件。 在这个文件中，您应该放置一个类似于
+ \c{Key mykey.pub} 的行，并将 \c{mykey.pub}
+ 替换为您的密钥文件的名称。
 
-\b For other SSH server software, you should refer to the manual for
-that server.
+\b 对于其他 SSH 服务器软件，
+您应该参考该服务器的手册。
 
-You may also need to ensure that your home directory, your \c{.ssh}
-directory, and any other files involved (such as
-\c{authorized_keys}, \c{authorized_keys2} or \c{authorization}) are
-not group-writable or world-writable; servers will typically ignore
-the keys unless this is done. You can typically do this by using a
-command such as
+您可能还需要确保您的主目录、您的 \c{.ssh}
+目录以及涉及的任何其他文件（例如
+\c{authorized_keys}、\c{authorized_keys2}
+或\c{authorization}）是否是可写或全局可写
+的组权限； 除非这样做，否则服务器通常
+会忽略密钥。 您通常可以使用以下命令来执行此操作
 
 \c chmod go-w $HOME $HOME/.ssh $HOME/.ssh/authorized_keys
 
-Your server should now be configured to accept authentication using
-your private key. Now you need to configure PuTTY to \e{attempt}
-authentication using your private key. You can do this in any of
-three ways:
+您的服务器现在应该配置为使用您的私钥
+接受身份验证。现在您需要配置 PuTTY
+以尝试使用您的私钥进行身份验证。
+您可以通过以下三种方式中的任何一种来执行此操作：
 
-\b Select the private key in PuTTY's configuration. See
-\k{config-ssh-privkey} for details.
+\b 在 PuTTY 的配置中选择私钥。
+有关详细信息，请参阅 \k{config-ssh-privkey} 。
 
-\b Specify the key file on the command line with the \c{-i} option.
-See \k{using-cmdline-identity} for details.
+\b 使用 \c{-i} 选项在命令行上指定密钥文件。
+请参阅 \k{using-cmdline-identity} 。
 
-\b Load the private key into Pageant (see \k{pageant}). In this case
-PuTTY will automatically try to use it for authentication if it can.
+\b 将私钥加载到 Pageant 中（参见\k{pageant}）。
+ 在这种情况下，如果可以，PuTTY 将自动尝试使用它进行身份验证。

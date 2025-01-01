@@ -193,7 +193,7 @@ static char *raw_init(const BackendVtable *vt, Seat *seat,
      * Try to find host.
      */
     addr = name_lookup(host, port, realhost, conf, addressfamily,
-                       raw->logctx, "main connection");
+                       raw->logctx, "主要连接");
     if ((err = sk_addr_error(addr)) != NULL) {
         sk_addr_free(addr);
         return dupstr(err);

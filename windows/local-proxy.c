@@ -29,14 +29,14 @@ char *platform_setup_local_proxy(Socket *socket, const char *cmd)
     sa.lpSecurityDescriptor = NULL;    /* default */
     sa.bInheritHandle = true;
     if (!CreatePipe(&us_from_cmd, &cmd_to_us, &sa, 0)) {
-        return dupprintf("Unable to create pipes for proxy command: %s",
+        return dupprintf("无法为代理命令创建管道：%s",
                          win_strerror(GetLastError()));
     }
 
     if (!CreatePipe(&cmd_from_us, &us_to_cmd, &sa, 0)) {
         CloseHandle(us_from_cmd);
         CloseHandle(cmd_to_us);
-        return dupprintf("Unable to create pipes for proxy command: %s",
+        return dupprintf("无法为代理命令创建管道： %s",
                          win_strerror(GetLastError()));
     }
 
@@ -45,7 +45,7 @@ char *platform_setup_local_proxy(Socket *socket, const char *cmd)
         CloseHandle(cmd_to_us);
         CloseHandle(us_to_cmd);
         CloseHandle(cmd_from_us);
-        return dupprintf("Unable to create pipes for proxy command: %s",
+        return dupprintf("无法为代理命令创建管道： %s",
                          win_strerror(GetLastError()));
     }
 

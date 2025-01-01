@@ -31,8 +31,8 @@ char *get_random_data(int len, const char *device)
 
         if (!device) {
             sfree(buf);
-            fprintf(stderr, "puttygen: cannot find a readable "
-                    "random number source; use --random-device\n");
+            fprintf(stderr, "puttygen：找不到可读的随机数来源，"
+                            "使用 --random-device\n");
             return NULL;
         }
     }
@@ -40,7 +40,7 @@ char *get_random_data(int len, const char *device)
     fd = open(device, O_RDONLY);
     if (fd < 0) {
         sfree(buf);
-        fprintf(stderr, "puttygen: %s: open: %s\n",
+        fprintf(stderr, "puttygen：%s: 打开：%s\n",
                 device, strerror(errno));
         return NULL;
     }
@@ -51,7 +51,7 @@ char *get_random_data(int len, const char *device)
         if (ret < 0) {
             close(fd);
             sfree(buf);
-            fprintf(stderr, "puttygen: %s: read: %s\n",
+            fprintf(stderr, "puttygen：%s: 读取：%s\n",
                     device, strerror(errno));
             return NULL;
         }

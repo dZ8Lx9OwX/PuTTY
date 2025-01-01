@@ -128,7 +128,7 @@ static void mainchan_open_confirmation(Channel *chan)
     PacketProtocolLayer *ppl = mc->ppl; /* for ppl_logevent */
 
     seat_update_specials_menu(mc->ppl->seat);
-    ppl_logevent("Opened main channel");
+    ppl_logevent("已开通主通道");
     seat_notify_session_started(mc->ppl->seat);
 
     if (mc->is_simple)
@@ -148,8 +148,8 @@ static void mainchan_open_confirmation(Channel *chan)
             if ((x11disp = x11_setup_display(
                      conf_get_str(mc->conf, CONF_x11_display),
                      mc->conf, &x11_setup_err)) == NULL) {
-                ppl_logevent("X11 forwarding not enabled: unable to"
-                             " initialise X display: %s", x11_setup_err);
+                ppl_logevent("X11 转发未启用：无法"
+                             "初始化 X 显示：%s", x11_setup_err);
                 sfree(x11_setup_err);
             } else {
                 x11auth = ssh_add_x11_display(
@@ -180,7 +180,7 @@ static void mainchan_open_confirmation(Channel *chan)
             mc->n_req_env++;
         }
         if (mc->n_req_env)
-            ppl_logevent("Sent %d environment variables", mc->n_req_env);
+            ppl_logevent("已发送 %d 环境变量", mc->n_req_env);
 
         /* Ignore encoding of CONF_remote_cmd so as not to disturb
          * legacy handling of non-UTF-8 commands */
@@ -228,10 +228,10 @@ static void mainchan_request_response(Channel *chan, bool success)
         mc->req_x11 = false;
 
         if (success) {
-            ppl_logevent("X11 forwarding enabled");
+            ppl_logevent("启用 X11 转发");
             ssh_enable_x_fwd(mc->cl);
         } else {
-            ppl_logevent("X11 forwarding refused");
+            ppl_logevent("X11 转发被拒绝");
         }
         return;
     }
@@ -240,9 +240,9 @@ static void mainchan_request_response(Channel *chan, bool success)
         mc->req_agent = false;
 
         if (success) {
-            ppl_logevent("Agent forwarding enabled");
+            ppl_logevent("已启用代理转发");
         } else {
-            ppl_logevent("Agent forwarding refused");
+            ppl_logevent("代理转发被拒绝");
         }
         return;
     }
@@ -251,10 +251,10 @@ static void mainchan_request_response(Channel *chan, bool success)
         mc->req_pty = false;
 
         if (success) {
-            ppl_logevent("Allocated pty");
+            ppl_logevent("已分配 pty");
             mc->got_pty = true;
         } else {
-            ppl_logevent("Server refused to allocate pty");
+            ppl_logevent("服务器拒绝分配 pty");
             ppl_printf("Server refused to allocate pty\r\n");
             ssh_set_ldisc_option(mc->cl, LD_ECHO, true);
             ssh_set_ldisc_option(mc->cl, LD_EDIT, true);
@@ -265,7 +265,7 @@ static void mainchan_request_response(Channel *chan, bool success)
     if (mc->n_env_replies < mc->n_req_env) {
         int j = mc->n_env_replies++;
         if (!success) {
-            ppl_logevent("Server refused to set environment variable %s",
+            ppl_logevent("服务器拒绝设置环境变量 %s",
                          conf_get_str_nthstrkey(mc->conf,
                                                 CONF_environmt, j));
             mc->n_env_fails++;
@@ -273,9 +273,9 @@ static void mainchan_request_response(Channel *chan, bool success)
 
         if (mc->n_env_replies == mc->n_req_env) {
             if (mc->n_env_fails == 0) {
-                ppl_logevent("All environment variables successfully set");
+                ppl_logevent("所有环境变量设置成功");
             } else if (mc->n_env_fails == mc->n_req_env) {
-                ppl_logevent("All environment variables refused");
+                ppl_logevent("拒绝所有环境变量");
                 ppl_printf("Server refused to set environment "
                            "variables\r\n");
             } else {
@@ -290,18 +290,18 @@ static void mainchan_request_response(Channel *chan, bool success)
         mc->req_cmd_primary = false;
 
         if (success) {
-            ppl_logevent("Started a shell/command");
+            ppl_logevent("已启动 shell/command");
             mainchan_ready(mc);
         } else if (*conf_get_str_ambi(mc->conf, CONF_remote_cmd2, NULL)) {
-            ppl_logevent("Primary command failed; attempting fallback");
+            ppl_logevent("主命令失败；尝试回退");
             mainchan_try_fallback_command(mc);
         } else {
             /*
              * If there's no remote_cmd2 configured, then we have no
              * fallback command, so we've run out of options.
              */
-            ssh_sw_abort_deferred(mc->ppl->ssh,
-                                  "Server refused to start a shell/command");
+            ssh_sw_abort(mc->ppl->ssh,
+                         "服务器拒接启动shell或者命令");
         }
         return;
     }
@@ -310,12 +310,12 @@ static void mainchan_request_response(Channel *chan, bool success)
         mc->req_cmd_fallback = false;
 
         if (success) {
-            ppl_logevent("Started a shell/command");
+            ppl_logevent("已启动 shell/command");
             ssh_got_fallback_cmd(mc->ppl->ssh);
             mainchan_ready(mc);
         } else {
-            ssh_sw_abort_deferred(mc->ppl->ssh,
-                                  "Server refused to start a shell/command");
+            ssh_sw_abort(mc->ppl->ssh,
+                         "服务器拒接启动shell或者命令");
         }
         return;
     }
@@ -344,7 +344,7 @@ static void mainchan_open_failure(Channel *chan, const char *errtext)
     mainchan *mc = container_of(chan, mainchan, chan);
 
     ssh_sw_abort_deferred(mc->ppl->ssh,
-                          "Server refused to open main channel: %s", errtext);
+                          "服务器拒接打开主通道：%s", errtext);
 }
 
 static size_t mainchan_send(Channel *chan, bool is_stderr,
@@ -370,7 +370,7 @@ static void mainchan_send_eof(Channel *chan)
          * isn't a particularly meaningful concept.
          */
         sshfwd_write_eof(mc->sc);
-        ppl_logevent("Sent EOF message");
+        ppl_logevent("发送 EOF 消息");
         mc->eof_sent = true;
         ssh_set_wants_user_input(mc->cl, false); /* stop reading from stdin */
     }
@@ -392,7 +392,7 @@ static void mainchan_set_input_wanted(Channel *chan, bool wanted)
 
 static char *mainchan_log_close_msg(Channel *chan)
 {
-    return dupstr("Main session channel closed");
+    return dupstr("主会话通道关闭");
 }
 
 static bool mainchan_rcvd_exit_status(Channel *chan, int status)
@@ -402,7 +402,7 @@ static bool mainchan_rcvd_exit_status(Channel *chan, int status)
     PacketProtocolLayer *ppl = mc->ppl; /* for ppl_logevent */
 
     ssh_got_exitcode(mc->ppl->ssh, status);
-    ppl_logevent("Session sent command exit status %d", status);
+    ppl_logevent("会话发送命令退出状态 %d", status);
     return true;
 }
 
@@ -415,7 +415,7 @@ static void mainchan_log_exit_signal_common(
     const char *core_msg = core_dumped ? " (core dumped)" : "";
     const char *msg_pre = (msg.len ? " (" : "");
     const char *msg_post = (msg.len ? ")" : "");
-    ppl_logevent("Session exited on %s%s%s%.*s%s",
+    ppl_logevent("会话退出时间 %s%s%s%.*s%s",
                  sigdesc, core_msg, msg_pre, PTRLEN_PRINTF(msg), msg_post);
 }
 
@@ -445,10 +445,10 @@ static bool mainchan_rcvd_exit_signal(
 
     ssh_got_exitcode(mc->ppl->ssh, exitcode);
     if (exitcode == 128)
-        signame_str = dupprintf("unrecognised signal \"%.*s\"",
+        signame_str = dupprintf("无法识别的信号 \"%.*s\"",
                                 PTRLEN_PRINTF(signame));
     else
-        signame_str = dupprintf("signal SIG%.*s", PTRLEN_PRINTF(signame));
+        signame_str = dupprintf("信号 SIG%.*s", PTRLEN_PRINTF(signame));
     mainchan_log_exit_signal_common(mc, signame_str, core_dumped, msg);
     sfree(signame_str);
     return true;
@@ -462,7 +462,7 @@ static bool mainchan_rcvd_exit_signal_numeric(
     char *signum_str;
 
     ssh_got_exitcode(mc->ppl->ssh, 128 + signum);
-    signum_str = dupprintf("signal %d", signum);
+    signum_str = dupprintf("信号 %d", signum);
     mainchan_log_exit_signal_common(mc, signum_str, core_dumped, msg);
     sfree(signum_str);
     return true;
@@ -473,7 +473,7 @@ void mainchan_get_specials(
 {
     /* FIXME: this _does_ depend on whether these services are supported */
 
-    add_special(ctx, "Break", SS_BRK, 0);
+    add_special(ctx, "Break (中断)", SS_BRK, 0);
 
     #define SIGNAL_MAIN(name, desc) \
     add_special(ctx, "SIG" #name " (" desc ")", SS_SIG ## name, 0);
@@ -482,7 +482,7 @@ void mainchan_get_specials(
     #undef SIGNAL_MAIN
     #undef SIGNAL_SUB
 
-    add_special(ctx, "More signals", SS_SUBMENU, 0);
+    add_special(ctx, "更多信号", SS_SUBMENU, 0);
 
     #define SIGNAL_MAIN(name, desc)
     #define SIGNAL_SUB(name) \
@@ -529,7 +529,7 @@ void mainchan_special_cmd(mainchan *mc, SessionSpecialCode code, int arg)
     } else if ((signame = ssh_signal_lookup(code)) != NULL) {
         /* It's a signal. */
         sshfwd_send_signal(mc->sc, false, signame);
-        ppl_logevent("Sent signal SIG%s", signame);
+        ppl_logevent("发送信号：SIG%s", signame);
     }
 }
 

@@ -1645,24 +1645,24 @@ int main(int argc, char **argv)
         if (p[0] == '-' && doing_opts) {
             if (!strcmp(p, "-o")) {
                 if (--argc <= 0) {
-                    fprintf(stderr, "'-o' expects a filename\n");
+                    fprintf(stderr, "'-o' 需要一个文件名\n");
                     return 1;
                 }
                 outfile = *++argv;
             } else if (!strcmp(p, "--")) {
                 doing_opts = false;
             } else if (!strcmp(p, "--help")) {
-                printf("usage: testcrypt [INFILE] [-o OUTFILE]\n");
-                printf(" also: testcrypt --help       display this text\n");
+                printf("用法: testcrypt [INFILE] [-o OUTFILE]\n");
+                printf("例如: testcrypt --help     显示此文本\n");
                 return 0;
             } else {
-                fprintf(stderr, "unknown command line option '%s'\n", p);
+                fprintf(stderr, "未知的命令行选项：'%s'\n", p);
                 return 1;
             }
         } else if (!infile) {
             infile = p;
         } else {
-            fprintf(stderr, "can only handle one input file name\n");
+            fprintf(stderr, "只能处理一个输入文件名\n");
             return 1;
         }
     }
@@ -1671,7 +1671,7 @@ int main(int argc, char **argv)
     if (infile) {
         infp = fopen(infile, "r");
         if (!infp) {
-            fprintf(stderr, "%s: open: %s\n", infile, strerror(errno));
+            fprintf(stderr, "%s: 打开: %s\n", infile, strerror(errno));
             return 1;
         }
     }
@@ -1680,7 +1680,7 @@ int main(int argc, char **argv)
     if (outfile) {
         outfp = fopen(outfile, "w");
         if (!outfp) {
-            fprintf(stderr, "%s: open: %s\n", outfile, strerror(errno));
+            fprintf(stderr, "%s: 打开: %s\n", outfile, strerror(errno));
             return 1;
         }
     }

@@ -146,7 +146,7 @@ static SshChannel *wrap_lportfwd_open(
 
     pi = sk_peer_info(s);
     if (pi && pi->log_text) {
-        description = dupprintf("forwarding from %s", pi->log_text);
+        description = dupprintf("转发自 %s", pi->log_text);
     } else {
         description = dupstr("forwarding");
     }
@@ -671,7 +671,7 @@ static void pfd_open_failure(Channel *chan, const char *errtext)
     PortForwarding *pf = container_of(chan, PortForwarding, chan);
 
     logeventf(pf->cl->logctx,
-              "Forwarded connection refused by remote%s%s",
+              "远程拒绝转发连接%s%s",
               errtext ? ": " : "", errtext ? errtext : "");
 }
 
@@ -832,8 +832,8 @@ void portfwdmgr_config(PortFwdManager *mgr, Conf *conf)
             sserv = 1;
             sport = net_service_lookup(sports);
             if (!sport) {
-                logeventf(mgr->cl->logctx, "Service lookup failed for source"
-                          " port \"%s\"", sports);
+                logeventf(mgr->cl->logctx, "服务器查找源端口"
+                          "失败 \"%s\"", sports);
             }
         }
 
@@ -859,8 +859,8 @@ void portfwdmgr_config(PortFwdManager *mgr, Conf *conf)
                 dport = net_service_lookup(dports);
                 if (!dport) {
                     logeventf(mgr->cl->logctx,
-                              "Service lookup failed for destination"
-                              " port \"%s\"", dports);
+                              "服务器查找目的端口"
+                              "失败 \"%s\"", dports);
                 }
             }
         }
@@ -914,7 +914,7 @@ void portfwdmgr_config(PortFwdManager *mgr, Conf *conf)
         if (pfr->status == DESTROY) {
             char *message;
 
-            message = dupprintf("%s port forwarding from %s%s%d",
+            message = dupprintf("%s 从端口转发 %s%s%d",
                                 pfr->type == 'L' ? "local" :
                                 pfr->type == 'R' ? "remote" : "dynamic",
                                 pfr->saddr ? pfr->saddr : "",
@@ -922,13 +922,13 @@ void portfwdmgr_config(PortFwdManager *mgr, Conf *conf)
                                 pfr->sport);
 
             if (pfr->type != 'D') {
-                char *msg2 = dupprintf("%s to %s:%d", message,
+                char *msg2 = dupprintf("%s 到 %s:%d", message,
                                        pfr->daddr, pfr->dport);
                 sfree(message);
                 message = msg2;
             }
 
-            logeventf(mgr->cl->logctx, "Cancelling %s", message);
+            logeventf(mgr->cl->logctx, "取消 %s", message);
             sfree(message);
 
             /* pfr->remote or pfr->local may be NULL if setting up a
@@ -991,11 +991,11 @@ void portfwdmgr_config(PortFwdManager *mgr, Conf *conf)
                                        pfr->addressfamily);
 
                 logeventf(mgr->cl->logctx,
-                          "Local %sport %s forwarding to %s%s%s",
+                          "本地 %sport %s 转发到 %s%s%s",
                           pfr->addressfamily == ADDRTYPE_IPV4 ? "IPv4 " :
                           pfr->addressfamily == ADDRTYPE_IPV6 ? "IPv6 " : "",
                           sportdesc, dportdesc,
-                          err ? " failed: " : "", err ? err : "");
+                          err ? " 失败: " : "", err ? err : "");
                 if (err)
                     sfree(err);
             } else if (pfr->type == 'D') {
@@ -1004,11 +1004,11 @@ void portfwdmgr_config(PortFwdManager *mgr, Conf *conf)
                                        pfr->addressfamily);
 
                 logeventf(mgr->cl->logctx,
-                          "Local %sport %s SOCKS dynamic forwarding%s%s",
+                          "本地 %sport %s SOCKS动态转发%s%s",
                           pfr->addressfamily == ADDRTYPE_IPV4 ? "IPv4 " :
                           pfr->addressfamily == ADDRTYPE_IPV6 ? "IPv6 " : "",
                           sportdesc,
-                          err ? " failed: " : "", err ? err : "");
+                          err ? " 失败: " : "", err ? err : "");
 
                 if (err)
                     sfree(err);
@@ -1029,12 +1029,12 @@ void portfwdmgr_config(PortFwdManager *mgr, Conf *conf)
 
                 if (!pfr->remote) {
                     logeventf(mgr->cl->logctx,
-                              "Duplicate remote port forwarding to %s:%d",
+                              "复制远程端口转发到 %s:%d",
                               pfr->daddr, pfr->dport);
                     pfr_free(pfr);
                 } else {
-                    logeventf(mgr->cl->logctx, "Requesting remote port %s"
-                              " forward to %s", sportdesc, dportdesc);
+                    logeventf(mgr->cl->logctx, "请求远程端口 %s"
+                              " 转发到 %s", sportdesc, dportdesc);
                 }
             }
             sfree(sportdesc);
@@ -1071,8 +1071,8 @@ bool portfwdmgr_listen(PortFwdManager *mgr, const char *host, int port,
     char *err = pfl_listen(keyhost, keyport, host, port,
                            mgr->cl, conf, &pfr->local, pfr->addressfamily);
     logeventf(mgr->cl->logctx,
-              "%s on port %s:%d to forward to client%s%s",
-              err ? "Failed to listen" : "Listening", host, port,
+              "%s 在端口 %s:%d 上转发到客户端%s%s",
+              err ? "无法监听" : "监听", host, port,
               err ? ": " : "", err ? err : "");
     if (err) {
         sfree(err);
@@ -1103,7 +1103,7 @@ bool portfwdmgr_unlisten(PortFwdManager *mgr, const char *host, int port)
     if (!pfr)
         return false;
 
-    logeventf(mgr->cl->logctx, "Closing listening port %s:%d", host, port);
+    logeventf(mgr->cl->logctx, "关闭监听端口 %s:%d", host, port);
 
     pfr_free(pfr);
     return true;

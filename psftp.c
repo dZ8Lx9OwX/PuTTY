@@ -97,13 +97,13 @@ struct sftp_packet *sftp_wait_for_reply(struct sftp_request *req)
     pktin = sftp_recv();
     if (pktin == NULL) {
         seat_connection_fatal(
-            psftp_seat, "did not receive SFTP response packet from server");
+            psftp_seat, "未收到来自服务器的SFTP响应数据包");
     }
     rreq = sftp_find_request(pktin);
     if (rreq != req) {
         seat_connection_fatal(
             psftp_seat,
-            "unable to understand SFTP response packet from server: %s",
+            "无法解析来自服务器的SFTP响应数据包: %s",
             fxp_error());
     }
     return pktin;
@@ -228,7 +228,7 @@ static int bare_name_compare(const void *av, const void *bv)
 
 static void not_connected(void)
 {
-    printf("psftp: not connected to a host; use \"open host.name\"\n");
+    printf("psftp: 未连接到主机; 使用 \"open 主机名\"\n");
 }
 
 /* ----------------------------------------------------------------------
@@ -274,7 +274,7 @@ bool sftp_get_file(char *fname, char *outfname, bool recurse, bool restart)
             if (file_type(outfname) != FILE_TYPE_DIRECTORY &&
                 !create_directory(outfname)) {
                 with_stripctrl(san, outfname)
-                    printf("%s: Cannot create directory\n", san);
+                    printf("%s: 无法创建目录\n", san);
                 return false;
             }
 
@@ -288,7 +288,7 @@ bool sftp_get_file(char *fname, char *outfname, bool recurse, bool restart)
 
             if (!dirhandle) {
                 with_stripctrl(san, fname)
-                    printf("%s: unable to open directory: %s\n",
+                    printf("%s: 无法打开目录: %s\n",
                            san, fxp_error());
                 return false;
             }
@@ -305,7 +305,7 @@ bool sftp_get_file(char *fname, char *outfname, bool recurse, bool restart)
                     if (fxp_error_type() == SSH_FX_EOF)
                         break;
                     with_stripctrl(san, fname)
-                        printf("%s: reading directory: %s\n",
+                        printf("%s: 读取目录: %s\n",
                                san, fxp_error());
 
                     req = fxp_close_send(dirhandle);
@@ -325,8 +325,8 @@ bool sftp_get_file(char *fname, char *outfname, bool recurse, bool restart)
                         strcmp(names->names[i].filename, "..")) {
                         if (!vet_filename(names->names[i].filename)) {
                             with_stripctrl(san, names->names[i].filename)
-                                printf("ignoring potentially dangerous server-"
-                                       "supplied filename '%s'\n", san);
+                                printf("忽略服务器提供的潜在危险"
+                                       "文件名 '%s'\n", san);
                         } else {
                             ournames[nnames++] =
                                 fxp_dup_name(&names->names[i]);
@@ -423,7 +423,7 @@ bool sftp_get_file(char *fname, char *outfname, bool recurse, bool restart)
 
     if (!fh) {
         with_stripctrl(san, fname)
-            printf("%s: open for read: %s\n", san, fxp_error());
+            printf("%s: 打开读取: %s\n", san, fxp_error());
         return false;
     }
 
@@ -435,7 +435,7 @@ bool sftp_get_file(char *fname, char *outfname, bool recurse, bool restart)
 
     if (!file) {
         with_stripctrl(san, outfname)
-            printf("local: unable to open %s\n", san);
+            printf("本地: 无法打开 %s\n", san);
 
         req = fxp_close_send(fh);
         pktin = sftp_wait_for_reply(req);
@@ -448,7 +448,7 @@ bool sftp_get_file(char *fname, char *outfname, bool recurse, bool restart)
         if (seek_file(file, 0, FROM_END) == -1) {
             close_wfile(file);
             with_stripctrl(san, outfname)
-                printf("reget: cannot restart %s - file too large\n", san);
+                printf("提示: 无法重新启动，%s文件太大\n", san);
             req = fxp_close_send(fh);
             pktin = sftp_wait_for_reply(req);
             fxp_close_recv(pktin, req);
@@ -457,14 +457,14 @@ bool sftp_get_file(char *fname, char *outfname, bool recurse, bool restart)
         }
 
         offset = get_file_posn(file);
-        printf("reget: restarting at file position %"PRIu64"\n", offset);
+        printf("提示: 在文件位置重新启动%"PRIu64"\n", offset);
     } else {
         offset = 0;
     }
 
     with_stripctrl(san, fname) {
         with_stripctrl(sano, outfname)
-            printf("remote:%s => local:%s\n", san, sano);
+            printf("远程:%s => 本地:%s\n", san, sano);
     }
 
     /*
@@ -483,7 +483,7 @@ bool sftp_get_file(char *fname, char *outfname, bool recurse, bool restart)
         retd = xfer_download_gotpkt(xfer, pktin);
         if (retd <= 0) {
             if (!shown_err) {
-                printf("error while reading: %s\n", fxp_error());
+                printf("读取出错: %s\n", fxp_error());
                 shown_err = true;
             }
             if (retd == INT_MIN)        /* pktin not even freed */
@@ -498,7 +498,7 @@ bool sftp_get_file(char *fname, char *outfname, bool recurse, bool restart)
             while (wpos < len) {
                 wlen = write_to_file(file, buf + wpos, len - wpos);
                 if (wlen <= 0) {
-                    printf("error while writing local file\n");
+                    printf("写入本地文件时出错\n");
                     toret = false;
                     xfer_set_error(xfer);
                     break;
@@ -565,7 +565,7 @@ bool sftp_put_file(char *fname, char *outfname, bool recurse, bool restart)
             result = fxp_mkdir_recv(pktin, req);
 
             if (!result) {
-                printf("%s: create directory: %s\n",
+                printf("%s: 创建目录: %s\n",
                        outfname, fxp_error());
                 return false;
             }
@@ -579,7 +579,7 @@ bool sftp_put_file(char *fname, char *outfname, bool recurse, bool restart)
 
         dh = open_directory(fname, &opendir_err);
         if (!dh) {
-            printf("%s: unable to open directory: %s\n", fname, opendir_err);
+            printf("%s: 无法打开目录: %s\n", fname, opendir_err);
             return false;
         }
         while ((name = read_filename(dh)) != NULL) {
@@ -660,7 +660,7 @@ bool sftp_put_file(char *fname, char *outfname, bool recurse, bool restart)
 
     file = open_existing_file(fname, NULL, NULL, NULL, &permissions);
     if (!file) {
-        printf("local: unable to open %s\n", fname);
+        printf("本地: 无法打开 %s\n", fname);
         return false;
     }
     attrs.flags = 0;
@@ -677,7 +677,7 @@ bool sftp_put_file(char *fname, char *outfname, bool recurse, bool restart)
 
     if (!fh) {
         close_rfile(file);
-        printf("%s: open for write: %s\n", outfname, fxp_error());
+        printf("%s: 打开写入: %s\n", outfname, fxp_error());
         return false;
     }
 
@@ -690,17 +690,17 @@ bool sftp_put_file(char *fname, char *outfname, bool recurse, bool restart)
         retd = fxp_fstat_recv(pktin, req, &attrs);
 
         if (!retd) {
-            printf("read size of %s: %s\n", outfname, fxp_error());
+            printf("读取%s大小: %s\n", outfname, fxp_error());
             err = true;
             goto cleanup;
         }
         if (!(attrs.flags & SSH_FILEXFER_ATTR_SIZE)) {
-            printf("read size of %s: size was not given\n", outfname);
+            printf("读取%s大小: 未给出数据\n", outfname);
             err = true;
             goto cleanup;
         }
         offset = attrs.size;
-        printf("reput: restarting at file position %"PRIu64"\n", offset);
+        printf("提示: 在文件位置重新启动 %"PRIu64"\n", offset);
 
         if (seek_file((WFile *)file, offset, FROM_START) != 0)
             seek_file((WFile *)file, 0, FROM_END);    /* *shrug* */
@@ -708,7 +708,7 @@ bool sftp_put_file(char *fname, char *outfname, bool recurse, bool restart)
         offset = 0;
     }
 
-    printf("local:%s => remote:%s\n", fname, outfname);
+    printf("本地:%s => 远程:%s\n", fname, outfname);
 
     /*
      * FIXME: we can use FXP_FSTAT here to get the file size, and
@@ -723,7 +723,7 @@ bool sftp_put_file(char *fname, char *outfname, bool recurse, bool restart)
         while (xfer_upload_ready(xfer) && !err && !eof) {
             len = read_from_file(file, buffer, sizeof(buffer));
             if (len == -1) {
-                printf("error while reading local file\n");
+                printf("读取本地文件时出错\n");
                 err = true;
             } else if (len == 0) {
                 eof = true;
@@ -749,7 +749,7 @@ bool sftp_put_file(char *fname, char *outfname, bool recurse, bool restart)
                 if (ret == INT_MIN)        /* pktin not even freed */
                     sfree(pktin);
                 if (!err) {
-                    printf("error while writing: %s\n", fxp_error());
+                    printf("写入时出错: %s\n", fxp_error());
                     err = true;
                 }
             }
@@ -763,7 +763,7 @@ bool sftp_put_file(char *fname, char *outfname, bool recurse, bool restart)
     pktin = sftp_wait_for_reply(req);
     if (!fxp_close_recv(pktin, req)) {
         if (!err) {
-            printf("error while closing: %s", fxp_error());
+            printf("关闭时出错: %s", fxp_error());
             err = true;
         }
     }
@@ -813,7 +813,7 @@ SftpWildcardMatcher *sftp_begin_wildcard_matching(char *name)
     sfree(tmpdir);
 
     if (!check) {
-        printf("Multiple-level wildcards are not supported\n");
+        printf("不支持多级通配符\n");
         sfree(unwcdir);
         return NULL;
     }
@@ -831,7 +831,7 @@ SftpWildcardMatcher *sftp_begin_wildcard_matching(char *name)
         swcm->wildcard = dupstr(wildcard);
         swcm->prefix = unwcdir;
     } else {
-        printf("Unable to open %s: %s\n", cdir, fxp_error());
+        printf("打不开 %s: %s\n", cdir, fxp_error());
         swcm = NULL;
         sfree(unwcdir);
     }
@@ -861,7 +861,7 @@ char *sftp_wildcard_get_filename(SftpWildcardMatcher *swcm)
             if (!swcm->names) {
                 if (fxp_error_type() != SSH_FX_EOF) {
                     with_stripctrl(san, swcm->prefix)
-                        printf("%s: reading directory: %s\n",
+                        printf("%s: 读取目录: %s\n",
                                san, fxp_error());
                 }
                 return NULL;
@@ -889,8 +889,8 @@ char *sftp_wildcard_get_filename(SftpWildcardMatcher *swcm)
 
         if (!vet_filename(name->filename)) {
             with_stripctrl(san, name->filename)
-                printf("ignoring potentially dangerous server-"
-                       "supplied filename '%s'\n", san);
+                printf("忽略潜在危险的服务器提供的"
+                       "文件名 '%s'\n", san);
             continue;                  /* unexpected bad filename */
         }
 
@@ -960,7 +960,7 @@ bool wildcard_iterate(char *filename, bool (*func)(void *, char *), void *ctx)
 
         if (!matched) {
             /* Politely warn the user that nothing matched. */
-            printf("%s: nothing matched\n", filename);
+            printf("%s: 无匹配的\n", filename);
         }
 
         sftp_finish_wildcard_matching(swcm);
@@ -1001,7 +1001,7 @@ int sftp_cmd_null(struct sftp_command *cmd)
 
 int sftp_cmd_unknown(struct sftp_command *cmd)
 {
-    printf("psftp: unknown command \"%s\"\n", cmd->words[0]);
+    printf("psftp: 未知命令 \"%s\"\n", cmd->words[0]);
     return 0;                          /* failure */
 }
 
@@ -1030,7 +1030,7 @@ int sftp_cmd_close(struct sftp_command *cmd)
 
 void list_directory_from_sftp_warn_unsorted(void)
 {
-    printf("Directory is too large to sort; writing file names unsorted\n");
+    printf("目录太大，无法排序；写入未排序的文件名\n");
 }
 
 void list_directory_from_sftp_print(struct fxp_name *name)
@@ -1082,7 +1082,7 @@ int sftp_cmd_ls(struct sftp_command *cmd)
         check = wc_unescape(tmpdir, unwcdir);
         sfree(tmpdir);
         if (!check) {
-            printf("Multiple-level wildcards are not supported\n");
+            printf("不支持多级通配符\n");
             sfree(unwcdir);
             return 0;
         }
@@ -1092,14 +1092,14 @@ int sftp_cmd_ls(struct sftp_command *cmd)
     cdir = canonify(dir);
 
     with_stripctrl(san, cdir)
-        printf("Listing directory %s\n", san);
+        printf("目录清单 %s\n", san);
 
     req = fxp_opendir_send(cdir);
     pktin = sftp_wait_for_reply(req);
     dirh = fxp_opendir_recv(pktin, req);
 
     if (dirh == NULL) {
-        printf("Unable to open %s: %s\n", dir, fxp_error());
+        printf("无法打开 %s: %s\n", dir, fxp_error());
         sfree(cdir);
         sfree(unwcdir);
         return 0;
@@ -1116,7 +1116,7 @@ int sftp_cmd_ls(struct sftp_command *cmd)
             if (names == NULL) {
                 if (fxp_error_type() == SSH_FX_EOF)
                     break;
-                printf("Reading directory %s: %s\n", dir, fxp_error());
+                printf("读取目录 %s: %s\n", dir, fxp_error());
                 break;
             }
             if (names->nnames == 0) {
@@ -1173,7 +1173,7 @@ int sftp_cmd_cd(struct sftp_command *cmd)
 
     if (!dirh) {
         with_stripctrl(san, dir)
-            printf("Directory %s: %s\n", san, fxp_error());
+            printf("目录 %s: %s\n", san, fxp_error());
         sfree(dir);
         return 0;
     }
@@ -1185,7 +1185,7 @@ int sftp_cmd_cd(struct sftp_command *cmd)
     sfree(pwd);
     pwd = dir;
     with_stripctrl(san, pwd)
-        printf("Remote directory is now %s\n", san);
+        printf("新的远程目录 %s\n", san);
 
     return 1;
 }
@@ -1201,7 +1201,7 @@ int sftp_cmd_pwd(struct sftp_command *cmd)
     }
 
     with_stripctrl(san, pwd)
-        printf("Remote directory is %s\n", san);
+        printf("远程目录是 %s\n", san);
     return 1;
 }
 
@@ -1234,14 +1234,14 @@ int sftp_general_get(struct sftp_command *cmd, bool restart, bool multiple)
         } else if (!strcmp(cmd->words[i], "-r")) {
             recurse = true;
         } else {
-            printf("%s: unrecognised option '%s'\n", cmd->words[0], cmd->words[i]);
+            printf("%s: 无法识别的选项 '%s'\n", cmd->words[0], cmd->words[i]);
             return 0;
         }
         i++;
     }
 
     if (i >= cmd->nwords) {
-        printf("%s: expects a filename\n", cmd->words[0]);
+        printf("%s: 需要一个文件名\n", cmd->words[0]);
         return 0;
     }
 
@@ -1261,7 +1261,7 @@ int sftp_general_get(struct sftp_command *cmd, bool restart, bool multiple)
             origwfname = sftp_wildcard_get_filename(swcm);
             if (!origwfname) {
                 /* Politely warn the user that nothing matched. */
-                printf("%s: nothing matched\n", origfname);
+                printf("%s: 无匹配的\n", origfname);
                 sftp_finish_wildcard_matching(swcm);
                 sfree(unwcfname);
                 continue;
@@ -1343,14 +1343,14 @@ int sftp_general_put(struct sftp_command *cmd, bool restart, bool multiple)
         } else if (!strcmp(cmd->words[i], "-r")) {
             recurse = true;
         } else {
-            printf("%s: unrecognised option '%s'\n", cmd->words[0], cmd->words[i]);
+            printf("%s: 无法识别的选项 '%s'\n", cmd->words[0], cmd->words[i]);
             return 0;
         }
         i++;
     }
 
     if (i >= cmd->nwords) {
-        printf("%s: expects a filename\n", cmd->words[0]);
+        printf("%s: 需要一个文件名\n", cmd->words[0]);
         return 0;
     }
 
@@ -1364,7 +1364,7 @@ int sftp_general_put(struct sftp_command *cmd, bool restart, bool multiple)
             wfname = wildcard_get_filename(wcm);
             if (!wfname) {
                 /* Politely warn the user that nothing matched. */
-                printf("%s: nothing matched\n", fname);
+                printf("%s: 无匹配的\n", fname);
                 finish_wildcard_matching(wcm);
                 continue;
             }
@@ -1428,7 +1428,7 @@ int sftp_cmd_mkdir(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 2) {
-        printf("mkdir: expects a directory\n");
+        printf("mkdir: 需要一个目录\n");
         return 0;
     }
 
@@ -1446,7 +1446,7 @@ int sftp_cmd_mkdir(struct sftp_command *cmd)
             ret = 0;
         } else
             with_stripctrl(san, dir)
-                printf("mkdir %s: OK\n", san);
+                printf("mkdir %s: 确定\n", san);
 
         sfree(dir);
     }
@@ -1469,7 +1469,7 @@ static bool sftp_action_rmdir(void *vctx, char *dir)
         return false;
     }
 
-    printf("rmdir %s: OK\n", dir);
+    printf("rmdir %s: 确定\n", dir);
 
     return true;
 }
@@ -1484,7 +1484,7 @@ int sftp_cmd_rmdir(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 2) {
-        printf("rmdir: expects a directory\n");
+        printf("rmdir: 需要一个目录\n");
         return 0;
     }
 
@@ -1510,7 +1510,7 @@ static bool sftp_action_rm(void *vctx, char *fname)
         return false;
     }
 
-    printf("rm %s: OK\n", fname);
+    printf("rm %s: 确定\n", fname);
 
     return true;
 }
@@ -1525,7 +1525,7 @@ int sftp_cmd_rm(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 2) {
-        printf("rm: expects a filename\n");
+        printf("rm: 需要一个文件名\n");
         return 0;
     }
 
@@ -1615,7 +1615,7 @@ int sftp_cmd_mv(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 3) {
-        printf("mv: expects two filenames\n");
+        printf("mv: 需要两个文件名\n");
         return 0;
     }
 
@@ -1628,8 +1628,8 @@ int sftp_cmd_mv(struct sftp_command *cmd)
      */
     ctx->dest_is_dir = check_is_dir(ctx->dstfname);
     if ((cmd->nwords > 3 || is_wildcard(cmd->words[1])) && !ctx->dest_is_dir) {
-        printf("mv: multiple or wildcard arguments require the destination"
-               " to be a directory\n");
+        printf("mv: 多个或通配符参数要求目标"
+               "是目录\n");
         sfree(ctx->dstfname);
         return 0;
     }
@@ -1663,8 +1663,8 @@ static bool sftp_action_chmod(void *vctx, char *fname)
     result = fxp_stat_recv(pktin, req, &attrs);
 
     if (!result || !(attrs.flags & SSH_FILEXFER_ATTR_PERMISSIONS)) {
-        printf("get attrs for %s: %s\n", fname,
-               result ? "file permissions not provided" : fxp_error());
+        printf("获取属性 %s: %s\n", fname,
+               result ? "未提供文件权限" : fxp_error());
         return false;
     }
 
@@ -1682,7 +1682,7 @@ static bool sftp_action_chmod(void *vctx, char *fname)
     result = fxp_setstat_recv(pktin, req);
 
     if (!result) {
-        printf("set attrs for %s: %s\n", fname, fxp_error());
+        printf("设置属性 %s: %s\n", fname, fxp_error());
         return false;
     }
 
@@ -1703,7 +1703,7 @@ int sftp_cmd_chmod(struct sftp_command *cmd)
     }
 
     if (cmd->nwords < 3) {
-        printf("chmod: expects a mode specifier and a filename\n");
+        printf("chmod: 需要一个模式说明符和一个文件名\n");
         return 0;
     }
 
@@ -1722,8 +1722,8 @@ int sftp_cmd_chmod(struct sftp_command *cmd)
     mode = cmd->words[1];
     if (mode[0] >= '0' && mode[0] <= '9') {
         if (mode[strspn(mode, "01234567")]) {
-            printf("chmod: numeric file modes should"
-                   " contain digits 0-7 only\n");
+            printf("chmod: 数字模式应该是"
+                   " 仅包含数字 0-7\n");
             return 0;
         }
         ctx->attrs_clr = 07777;
@@ -1744,21 +1744,21 @@ int sftp_cmd_chmod(struct sftp_command *cmd)
                   case 'o': subset |= 00007; break; /* just other perms */
                   case 'a': subset |= 06777; break; /* all of the above */
                   default:
-                    printf("chmod: file mode '%.*s' contains unrecognised"
-                           " user/group/other specifier '%c'\n",
+                    printf("chmod: 文件模式 '%.*s' 包含无法识别的"
+                           " 用户/组/其他 说明符 '%c'\n",
                            (int)strcspn(modebegin, ","), modebegin, *mode);
                     return 0;
                 }
                 mode++;
             }
             if (!*mode || *mode == ',') {
-                printf("chmod: file mode '%.*s' is incomplete\n",
+                printf("chmod: 文件模式 '%.*s' 不完整\n",
                        (int)strcspn(modebegin, ","), modebegin);
                 return 0;
             }
             action = *mode++;
             if (!*mode || *mode == ',') {
-                printf("chmod: file mode '%.*s' is incomplete\n",
+                printf("chmod: 文件模式 '%.*s' 不完整\n",
                        (int)strcspn(modebegin, ","), modebegin);
                 return 0;
             }
@@ -1772,24 +1772,24 @@ int sftp_cmd_chmod(struct sftp_command *cmd)
                   case 's':
                     if ((subset & 06777) != 04700 &&
                         (subset & 06777) != 02070) {
-                        printf("chmod: file mode '%.*s': set[ug]id bit should"
-                               " be used with exactly one of u or g only\n",
+                        printf("chmod: 文件模式 '%.*s': 设置[ug]id位只能"
+                               " 与u或g之一一起使用\n",
                                (int)strcspn(modebegin, ","), modebegin);
                         return 0;
                     }
                     perms |= 06000;
                     break;
                   default:
-                    printf("chmod: file mode '%.*s' contains unrecognised"
-                           " permission specifier '%c'\n",
+                    printf("chmod: 文件模式 '%.*s' 包含无法识别的"
+                           " 权限说明符 '%c'\n",
                            (int)strcspn(modebegin, ","), modebegin, *mode);
                     return 0;
                 }
                 mode++;
             }
             if (!(subset & 06777) && (perms &~ subset)) {
-                printf("chmod: file mode '%.*s' contains no user/group/other"
-                       " specifier and permissions other than 't' \n",
+                printf("chmod: 文件模式 '%.*s' 不包含除't'之外的"
+                       "用户/组/其他说明符和权限 \n",
                        (int)strcspn(modebegin, ","), modebegin);
                 return 0;
             }
@@ -1824,19 +1824,19 @@ static int sftp_cmd_open(struct sftp_command *cmd)
     int portnumber;
 
     if (backend) {
-        printf("psftp: already connected\n");
+        printf("psftp: 已连接\n");
         return 0;
     }
 
     if (cmd->nwords < 2) {
-        printf("open: expects a host name\n");
+        printf("open: 需要一个主机名\n");
         return 0;
     }
 
     if (cmd->nwords > 2) {
         portnumber = atoi(cmd->words[2]);
         if (portnumber == 0) {
-            printf("open: invalid port number\n");
+            printf("open: 端口号无效\n");
             return 0;
         }
     } else
@@ -1855,19 +1855,19 @@ static int sftp_cmd_lcd(struct sftp_command *cmd)
     char *currdir, *errmsg;
 
     if (cmd->nwords < 2) {
-        printf("lcd: expects a local directory name\n");
+        printf("lcd: 需要一个本地目录名\n");
         return 0;
     }
 
     errmsg = psftp_lcd(cmd->words[1]);
     if (errmsg) {
-        printf("lcd: unable to change directory: %s\n", errmsg);
+        printf("lcd: 无法更改目录: %s\n", errmsg);
         sfree(errmsg);
         return 0;
     }
 
     currdir = psftp_getcwd();
-    printf("New local directory is %s\n", currdir);
+    printf("新的本地目录是 %s\n", currdir);
     sfree(currdir);
 
     return 1;
@@ -1878,7 +1878,7 @@ static int sftp_cmd_lpwd(struct sftp_command *cmd)
     char *currdir;
 
     currdir = psftp_getcwd();
-    printf("Current local directory is %s\n", currdir);
+    printf("当前本地目录是 %s\n", currdir);
     sfree(currdir);
 
     return 1;
@@ -1918,113 +1918,113 @@ static struct sftp_cmd_lookup {
      * in ASCII order.
      */
     {
-        "!", true, "run a local command",
+        "!", true, "运行本地命令",
             "<command>\n"
             /* FIXME: this example is crap for non-Windows. */
-            "  Runs a local command. For example, \"!del myfile\".\n",
+            "  运行本地命令,例如： \"!del myfile\".\n",
             sftp_cmd_pling
     },
     {
-        "bye", true, "finish your SFTP session",
+        "bye", true, "SFTP会话结束并退出",
             "\n"
-            "  Terminates your SFTP session and quits the PSFTP program.\n",
+            "  终止您的 SFTP 会话并退出 SFTP 程序.\n",
             sftp_cmd_quit
     },
     {
-        "cd", true, "change your remote working directory",
-            " [ <new working directory> ]\n"
-            "  Change the remote working directory for your SFTP session.\n"
-            "  If a new working directory is not supplied, you will be\n"
-            "  returned to your home directory.\n",
+        "cd", true, "更改您的远程工作目录",
+            " [ <新的工作目录> ]\n"
+            "  更改您的 SFTP 会话远程工作目录.\n"
+            "  如果未提供新的工作目录, 您会\n"
+            "  返回到您的主目录.\n",
             sftp_cmd_cd
     },
     {
-        "chmod", true, "change file permissions and modes",
-            " <modes> <filename-or-wildcard> [ <filename-or-wildcard>... ]\n"
-            "  Change the file permissions on one or more remote files or\n"
-            "  directories.\n"
-            "  <modes> can be any octal Unix permission specifier.\n"
-            "  Alternatively, <modes> can include the following modifiers:\n"
-            "    u+r     make file readable by owning user\n"
-            "    u+w     make file writable by owning user\n"
-            "    u+x     make file executable by owning user\n"
-            "    u-r     make file not readable by owning user\n"
-            "    [also u-w, u-x]\n"
-            "    g+r     make file readable by members of owning group\n"
-            "    [also g+w, g+x, g-r, g-w, g-x]\n"
-            "    o+r     make file readable by all other users\n"
-            "    [also o+w, o+x, o-r, o-w, o-x]\n"
-            "    a+r     make file readable by absolutely everybody\n"
-            "    [also a+w, a+x, a-r, a-w, a-x]\n"
-            "    u+s     enable the Unix set-user-ID bit\n"
-            "    u-s     disable the Unix set-user-ID bit\n"
-            "    g+s     enable the Unix set-group-ID bit\n"
-            "    g-s     disable the Unix set-group-ID bit\n"
-            "    +t      enable the Unix \"sticky bit\"\n"
-            "  You can give more than one modifier for the same user (\"g-rwx\"), and\n"
-            "  more than one user for the same modifier (\"ug+w\"). You can\n"
-            "  use commas to separate different modifiers (\"u+rwx,g+s\").\n",
+        "chmod", true, "更改文件权限和模式",
+            " <模式> <文件名或通配符> [ <文件名或通配符>... ]\n"
+            "  更改一个或多个远程文件或者目录权限.\n"
+            "  \n"
+            "  <模式> 可以是任何八进制Unix权限说明符.\n"
+            "  或者, <模式> 可以包含一下参数:\n"
+            "    u+r     为文件拥有者增加可读权限\n"
+            "    u+w     为文件拥有者增加可写权限\n"
+            "    u+x     为文件拥有者增加可执行权限\n"
+            "    u-r     为文件拥有者增加不可读权限\n"
+            "    [类似的 u-w, u-x]\n"
+            "    g+r     为用户组增加可读权限\n"
+            "    [类似的 g+w, g+x, g-r, g-w, g-x]\n"
+            "    o+r     为其他用户增加可读权限\n"
+            "    [类似的 o+w, o+x, o-r, o-w, o-x]\n"
+            "    a+r     为所有用户增加可读权限\n"
+            "    [类似的 a+w, a+x, a-r, a-w, a-x]\n"
+            "    u+s     启用Unix用户ID位设置\n"
+            "    u-s     禁用Unix用户ID位设置\n"
+            "    g+s     启用Unix用户组ID位设置\n"
+            "    g-s     禁用Unix用户组ID位设置\n"
+            "    +t      启用Unix \"sticky bit\"\n"
+            "  您可以为同一个用户提供多个参数 (\"g-rwx\"), 而且\n"
+            "  同一个参数可以有多个用户 (\"ug+w\"). 您可以\n"
+            "  使用逗号分隔不同的参数 (\"u+rwx,g+s\").\n",
             sftp_cmd_chmod
     },
     {
-        "close", true, "finish your SFTP session but do not quit PSFTP",
+        "close", true, "结束您的SFTP会话但不退出PSFTP",
             "\n"
-            "  Terminates your SFTP session, but does not quit the PSFTP\n"
-            "  program. You can then use \"open\" to start another SFTP\n"
-            "  session, to the same server or to a different one.\n",
+            "  终止您的SFTP会话, 但不会退出PSFTP\n"
+            "  程序. 然后您可以继续使用 \"open\" 启动另外一个SFTP\n"
+            "  会话, 到同一个服务器或者不同的服务器.\n",
             sftp_cmd_close
     },
     {
-        "del", true, "delete files on the remote server",
-            " <filename-or-wildcard> [ <filename-or-wildcard>... ]\n"
-            "  Delete a file or files from the server.\n",
+        "del", true, "删除远端服务器上的文件",
+            "  <文件名或者通配符> [ <文件名或者通配符>... ]\n"
+            "  从服务器上删除一个或者多个文件.\n",
             sftp_cmd_rm
     },
     {
         "delete", false, "del", NULL, sftp_cmd_rm
     },
     {
-        "dir", true, "list remote files",
-            " [ <directory-name> ]/[ <wildcard> ]\n"
-            "  List the contents of a specified directory on the server.\n"
-            "  If <directory-name> is not given, the current working directory\n"
-            "  is assumed.\n"
-            "  If <wildcard> is given, it is treated as a set of files to\n"
-            "  list; otherwise, all files are listed.\n",
+        "dir", true, "列出远程文件",
+            "  [ <目录名> ]/[ <通配符> ]\n"
+            "  列出服务器上指定目录的内容.\n"
+            "  假如没有给出<目录名> , 则列出当前工作目录\n"
+            "  \n"
+            "  如果存在<通配符> , 则将列出一组文件\n"
+            "  否则将列出所有文件.\n",
             sftp_cmd_ls
     },
     {
         "exit", true, "bye", NULL, sftp_cmd_quit
     },
     {
-        "get", true, "download a file from the server to your local machine",
-            " [ -r ] [ -- ] <filename> [ <local-filename> ]\n"
-            "  Downloads a file on the server and stores it locally under\n"
-            "  the same name, or under a different one if you supply the\n"
-            "  argument <local-filename>.\n"
-            "  If -r specified, recursively fetch a directory.\n",
+        "get", true, "从服务器下载文件到本地机器",
+            "  [ -r ] [ -- ] <文件名> [ <本地-文件名> ]\n"
+            "  从服务器下载文件并将其存储在本地，使用\n"
+            "  相同的名称，或者使用您提供的本地文件名\n"
+            "  参数： <本地-文件名>.\n"
+            "  如果使用 -r 参数， 则递归获取目录.\n",
             sftp_cmd_get
     },
     {
-        "help", true, "give help",
-            " [ <command> [ <command> ... ] ]\n"
-            "  Give general help if no commands are specified.\n"
-            "  If one or more commands are specified, give specific help on\n"
-            "  those particular commands.\n",
+        "help", true, "提供帮助",
+            "  [ <命令> [ <命令> ... ] ]\n"
+            "  如果未指定命令，则提供一般帮助信息.\n"
+            "  如果指定了一个或者多个命令，则提供那些\n"
+            "  具体命令的帮助信息.\n",
             sftp_cmd_help
     },
     {
-        "lcd", true, "change local working directory",
-            " <local-directory-name>\n"
-            "  Change the local working directory of the PSFTP program (the\n"
-            "  default location where the \"get\" command will save files).\n",
+        "lcd", true, "更改本地工作目录",
+            "  <本地目录名>\n"
+            "  更改PSFTP程序的本地工作目录 \n"
+            "  (\"get\"命令保存文件的默认位置).\n",
             sftp_cmd_lcd
     },
     {
-        "lpwd", true, "print local working directory",
+        "lpwd", true, "显示本地工作目录",
             "\n"
-            "  Print the local working directory of the PSFTP program (the\n"
-            "  default location where the \"get\" command will save files).\n",
+            "  显示PSFTP程序的本地工作目录\n"
+            "  (\"get\"命令保存文件的默认位置).\n",
             sftp_cmd_lpwd
     },
     {
@@ -2032,61 +2032,61 @@ static struct sftp_cmd_lookup {
             sftp_cmd_ls
     },
     {
-        "mget", true, "download multiple files at once",
-            " [ -r ] [ -- ] <filename-or-wildcard> [ <filename-or-wildcard>... ]\n"
-            "  Downloads many files from the server, storing each one under\n"
-            "  the same name it has on the server side. You can use wildcards\n"
-            "  such as \"*.c\" to specify lots of files at once.\n"
-            "  If -r specified, recursively fetch files and directories.\n",
+        "mget", true, "一次下载多个文件",
+            "  [ -r ] [ -- ] <文件或者通配符> [ <文件或者通配符>... ]\n"
+            "  从服务器下载多个文件，将每个文件存储为\n"
+            "  与服务器端文件名相同。您可以使用通配符\n"
+            "  例如\"*.c\"将一次性指定大量文件进行操作.\n"
+            "  如果使用 -r 参数， 则递归获取文件和目录.\n",
             sftp_cmd_mget
     },
     {
-        "mkdir", true, "create directories on the remote server",
-            " <directory-name> [ <directory-name>... ]\n"
-            "  Creates directories with the given names on the server.\n",
+        "mkdir", true, "在远程服务器上创建新目录",
+            "  <目录名> [ <目录名>... ]\n"
+            "  在服务器上创建指定名称的目录.\n",
             sftp_cmd_mkdir
     },
     {
-        "mput", true, "upload multiple files at once",
-            " [ -r ] [ -- ] <filename-or-wildcard> [ <filename-or-wildcard>... ]\n"
-            "  Uploads many files to the server, storing each one under the\n"
-            "  same name it has on the client side. You can use wildcards\n"
-            "  such as \"*.c\" to specify lots of files at once.\n"
-            "  If -r specified, recursively store files and directories.\n",
+        "mput", true, "一次上传多个文件",
+            "  [ -r ] [ -- ] <文件名或者通配符> [ <文件名或者通配符>... ]\n"
+            "  将多个文件上传到服务器，将每个文件存储为\n"
+            "  与客户端具有相同的名称。您可以使用通配符\n"
+            "  例如\"*.c\"将一次性指定大量文件进行操作.\n"
+            "  如果使用 -r 参数， 则递归存储文件和目录.\n",
             sftp_cmd_mput
     },
     {
-        "mv", true, "move or rename file(s) on the remote server",
-            " <source> [ <source>... ] <destination>\n"
-            "  Moves or renames <source>(s) on the server to <destination>,\n"
-            "  also on the server.\n"
-            "  If <destination> specifies an existing directory, then <source>\n"
-            "  may be a wildcard, and multiple <source>s may be given; all\n"
-            "  source files are moved into <destination>.\n"
-            "  Otherwise, <source> must specify a single file, which is moved\n"
-            "  or renamed so that it is accessible under the name <destination>.\n",
+        "mv", true, "移动或重命名远程服务器上的文件",
+            "  <源文件> [ <源文件>... ] <目标文件>\n"
+            "  将服务器上的<源文件>移动或者重命名为<目标文件>,\n"
+            "  \n"
+            "  如果<目标文件>为指定的现有目录, 则<源文件>\n"
+            "  可以使用通配符, 可以给出多个<源文件>;全部\n"
+            "  源文件都被移动到<目标文件>中.\n"
+            "  否则, <源文件>必须指定单个文件, 该文件会被\n"
+            "  移动或重命名，以便以<目标文件>访问.\n",
             sftp_cmd_mv
     },
     {
-        "open", true, "connect to a host",
-            " [<user>@]<hostname> [<port>]\n"
-            "  Establishes an SFTP connection to a given host. Only usable\n"
-            "  when you are not already connected to a server.\n",
+        "open", true, "连接到主机",
+            "  [<用户名>]@<主机名> [<端口号>]\n"
+            "  建立连接到指定主机的SFTP会话.仅可\n"
+            "  用在当您尚未连接到服务器时.\n",
             sftp_cmd_open
     },
     {
-        "put", true, "upload a file from your local machine to the server",
-            " [ -r ] [ -- ] <filename> [ <remote-filename> ]\n"
-            "  Uploads a file to the server and stores it there under\n"
-            "  the same name, or under a different one if you supply the\n"
-            "  argument <remote-filename>.\n"
-            "  If -r specified, recursively store a directory.\n",
+        "put", true, "将文件从本地主机上传到服务器",
+            "  [ -r ] [ -- ] <文件名> [ <远程文件名> ]\n"
+            "  将文件上传到服务器并将其存储为\n"
+            "  相同的名称, 或者您提供的不同名称\n"
+            "  参数 <远程文件名>.\n"
+            "  如果使用 -r 参数，则递归存储一个目录.\n",
             sftp_cmd_put
     },
     {
-        "pwd", true, "print your remote working directory",
+        "pwd", true, "显示您的远程工作目录",
             "\n"
-            "  Print the current remote working directory for your SFTP session.\n",
+            "  显示当前SFTP会话的当前远程工作目录.\n",
             sftp_cmd_pwd
     },
     {
@@ -2094,12 +2094,12 @@ static struct sftp_cmd_lookup {
             sftp_cmd_quit
     },
     {
-        "reget", true, "continue downloading files",
-            " [ -r ] [ -- ] <filename> [ <local-filename> ]\n"
-            "  Works exactly like the \"get\" command, but the local file\n"
-            "  must already exist. The download will begin at the end of the\n"
-            "  file. This is for resuming a download that was interrupted.\n"
-            "  If -r specified, resume interrupted \"get -r\".\n",
+        "reget", true, "继续下载文件",
+            "  [ -r ] [ -- ] <文件名> [ <本地文件名> ]\n"
+            "  工作方式与\"get\"命令完全相同, 但本地文件\n"
+            "  必须已经存在. 将在之前中断的位置开始下载\n"
+            "  文件. 这是为了恢复被中断的下载.\n"
+            "  如果使用 -r 参数，则恢复中断的\"get -r\".\n",
             sftp_cmd_reget
     },
     {
@@ -2111,12 +2111,12 @@ static struct sftp_cmd_lookup {
             sftp_cmd_mv
     },
     {
-        "reput", true, "continue uploading files",
-            " [ -r ] [ -- ] <filename> [ <remote-filename> ]\n"
-            "  Works exactly like the \"put\" command, but the remote file\n"
-            "  must already exist. The upload will begin at the end of the\n"
-            "  file. This is for resuming an upload that was interrupted.\n"
-            "  If -r specified, resume interrupted \"put -r\".\n",
+        "reput", true, "继续上传文件",
+            "  [ -r ] [ -- ] <文件名> [ <远程文件名> ]\n"
+            "  工作方式与\"put\"命令完全相同, 但远程文件\n"
+            "  必须已经存在. 将在之前中断的位置开始上传\n"
+            "  文件. 这是为了恢复被中断的上传.\n"
+            "  如果使用 -r 参数，则恢复中断的\"put -r\".\n",
             sftp_cmd_reput
     },
     {
@@ -2124,11 +2124,11 @@ static struct sftp_cmd_lookup {
             sftp_cmd_rm
     },
     {
-        "rmdir", true, "remove directories on the remote server",
-            " <directory-name> [ <directory-name>... ]\n"
-            "  Removes the directory with the given name on the server.\n"
-            "  The directory will not be removed unless it is empty.\n"
-            "  Wildcards may be used to specify multiple directories.\n",
+        "rmdir", true, "删除远程服务器上的目录",
+            "  <目录名> [ <目录名>... ]\n"
+            "  删除服务器上指定名称的目录.\n"
+            "  如果它是空的，则该目录不会被删除.\n"
+            "  通配符可以指定多个目录.\n",
             sftp_cmd_rmdir
     }
 };
@@ -2188,7 +2188,7 @@ static int sftp_cmd_help(struct sftp_command *cmd)
             const struct sftp_cmd_lookup *lookup;
             lookup = lookup_command(cmd->words[i]);
             if (!lookup) {
-                printf("help: %s: command not found\n", cmd->words[i]);
+                printf("help: %s: 没有找到命令\n", cmd->words[i]);
             } else {
                 printf("%s", lookup->name);
                 if (lookup->longhelp == NULL)
@@ -2228,7 +2228,7 @@ struct sftp_command *sftp_getcmd(FILE *fp, int mode, int modeflags)
     if (!line || !*line) {
         cmd->obey = sftp_cmd_quit;
         if ((mode == 0) || (modeflags & 1))
-            printf("quit\n");
+            printf("退出\n");
         sfree(line);
         return cmd;                    /* eof */
     }
@@ -2344,7 +2344,7 @@ static int do_sftp_init(void)
      */
     if (!fxp_init()) {
         fprintf(stderr,
-                "Fatal: unable to initialise SFTP: %s\n", fxp_error());
+                "致命错误: 无法初始化SFTP: %s\n", fxp_error());
         return 1;                      /* failure */
     }
 
@@ -2357,12 +2357,12 @@ static int do_sftp_init(void)
 
     if (!homedir) {
         fprintf(stderr,
-                "Warning: failed to resolve home directory: %s\n",
+                "警告: 无法解析主目录: %s\n",
                 fxp_error());
         homedir = dupstr(".");
     } else {
         with_stripctrl(san, homedir)
-            printf("Remote working directory is %s\n", san);
+            printf("远程工作目录是 %s\n", san);
     }
     pwd = dupstr(homedir);
     return 0;
@@ -2419,7 +2419,7 @@ int do_sftp(int mode, int modeflags, const char *batchfile)
     } else {
         fp = fopen(batchfile, "r");
         if (!fp) {
-            printf("Fatal: unable to open %s\n", batchfile);
+            printf("致命错误: 无法打开 %s\n", batchfile);
             return 1;
         }
         ret = 0;
@@ -2492,7 +2492,7 @@ static bool psftp_eof(Seat *seat)
      */
     if (!sent_eof) {
         seat_connection_fatal(
-            psftp_seat, "Received unexpected end-of-file from SFTP server");
+            psftp_seat, "从SFTP服务器收到意外的文件结尾");
     }
     return false;
 }
@@ -2528,43 +2528,43 @@ size_t sftp_sendbuffer(void)
  */
 static void usage(void)
 {
-    printf("PuTTY Secure File Transfer (SFTP) client\n");
+    printf("PuTTY安全文件传输(SFTP)客户端\n");
     printf("%s\n", ver);
-    printf("Usage: psftp [options] [user@]host\n");
-    printf("Options:\n");
-    printf("  -V        print version information and exit\n");
-    printf("  -pgpfp    print PGP key fingerprints and exit\n");
-    printf("  -b file   use specified batchfile\n");
-    printf("  -bc       output batchfile commands\n");
-    printf("  -be       don't stop batchfile processing if errors\n");
-    printf("  -v        show verbose messages\n");
-    printf("  -load sessname  Load settings from saved session\n");
-    printf("  -l user   connect with specified username\n");
-    printf("  -P port   connect to specified port\n");
-    printf("  -pwfile file   login with password read from specified file\n");
-    printf("  -1 -2     force use of particular SSH protocol version\n");
+    printf("用法: psftp [选项] [用户@]主机\n");
+    printf("选项:\n");
+    printf("  -V             显示版本信息\n");
+    printf("  -pgpfp         显示PGP密钥指纹\n");
+    printf("  -b 文件        使用指定的批处理文件\n");
+    printf("  -bc            输出批处理文件命令\n");
+    printf("  -be            如果出错，也不要停止批处理文件处理\n");
+    printf("  -v             显示详细消息\n");
+    printf("  -load 会话名   从保存的会话中加载设置\n");
+    printf("  -l 用户名      用指定的用户名连接\n");
+    printf("  -P 端口号      连接到指定的端口号\n");
+    printf("  -pwfile 文件   从指定文件读取登陆密码\n");
+    printf("  -1 -2          强制使用特定的SSH协议版本\n");
     printf("  -ssh -ssh-connection\n");
-    printf("            force use of particular SSH protocol variant\n");
-    printf("  -4 -6     force use of IPv4 or IPv6\n");
-    printf("  -C        enable compression\n");
-    printf("  -i key    private key file for user authentication\n");
-    printf("  -noagent  disable use of Pageant\n");
-    printf("  -agent    enable use of Pageant\n");
+    printf("                 强制使用特定的SSH协议变体\n");
+    printf("  -4 -6          强制使用IPv4或者IPv6\n");
+    printf("  -C             启用压缩\n");
+    printf("  -i 密钥        用于用户认证的私钥文件\n");
+    printf("  -noagent       禁用Pageant身份认证代理\n");
+    printf("  -agent         启用Pageant身份认证代理\n");
     printf("  -no-trivial-auth\n");
-    printf("            disconnect if SSH authentication succeeds trivially\n");
-    printf("  -hostkey keyid\n");
-    printf("            manually specify a host key (may be repeated)\n");
-    printf("  -batch    disable all interactive prompts\n");
-    printf("  -no-sanitise-stderr  don't strip control chars from"
-           " standard error\n");
-    printf("  -proxycmd command\n");
-    printf("            use 'command' as local proxy\n");
-    printf("  -sshlog file\n");
-    printf("  -sshrawlog file\n");
-    printf("            log protocol details to a file\n");
+    printf("                 仅连接无密码或密钥验证，则断开连接\n");
+    printf("  -hostkey 密钥ID\n");
+    printf("                 手动指定主机密钥(可重复)\n");
+    printf("  -batch         禁用所有交互式提示\n");
+    printf("  -no-sanitise-stderr  不要从标准输出/错误中去除"
+           "控制字符\n");
+    printf("  -proxycmd 命令\n");
+    printf("                 使用'命令'作为本地代理\n");
+    printf("  -sshlog 文件\n");
+    printf("  -sshrawlog 文件\n");
+    printf("                 将协议详细信息记录到文件\n");
     printf("  -logoverwrite\n");
     printf("  -logappend\n");
-    printf("            control what happens when a log file already exists\n");
+    printf("                 日志文件已存在时是覆盖还是追加到日志\n");
 }
 
 static void version(void)
@@ -2591,7 +2591,7 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
     } else {
         *host++ = '\0';
         if (user) {
-            printf("psftp: multiple usernames specified; using \"%s\"\n",
+            printf("psftp: 指定了多个用户名; 使用 \"%s\"\n",
                    user);
         } else
             user = userhost;
@@ -2752,19 +2752,19 @@ static int psftp_connect(char *userhost, char *user, int portnumber)
                        &realhost, 0,
                        conf_get_bool(conf, CONF_tcp_keepalives));
     if (err != NULL) {
-        fprintf(stderr, "ssh_init: %s\n", err);
+        fprintf(stderr, "ssh初始化: %s\n", err);
         return 1;
     }
     while (!backend_sendok(backend)) {
         if (backend_exitcode(backend) >= 0)
             return 1;
         if (ssh_sftp_loop_iteration() < 0) {
-            fprintf(stderr, "ssh_init: error during SSH connection setup\n");
+            fprintf(stderr, "ssh初始化: SSH连接设置期间出错\n");
             return 1;
         }
     }
     if (verbose && realhost != NULL)
-        printf("Connected to %s\n", realhost);
+        printf("连接到 %s\n", realhost);
     if (realhost != NULL)
         sfree(realhost);
     return 0;
@@ -2777,7 +2777,7 @@ void cmdline_error(const char *p, ...)
     va_start(ap, p);
     vfprintf(stderr, p, ap);
     va_end(ap);
-    fprintf(stderr, "\n       try typing \"psftp -h\" for help\n");
+    fprintf(stderr, "\n       尝试输入 \"psftp -h\" 获得帮助\n");
     exit(1);
 }
 
@@ -2825,7 +2825,7 @@ int psftp_main(CmdlineArgList *arglist)
         }
         int retd = cmdline_process_param(arg, nextarg, 1, conf);
         if (retd == -2) {
-            cmdline_error("option \"%s\" requires an argument", argstr);
+            cmdline_error("选项 \"%s\" 需要一个参数", argstr);
         } else if (retd == 2) {
             arglistpos++;              /* skip next argument */
         } else if (retd == 1) {
@@ -2859,7 +2859,7 @@ int psftp_main(CmdlineArgList *arglist)
             arglistpos++;
             break;
         } else {
-            cmdline_error("unknown option \"%s\"", argstr);
+            cmdline_error("未知选项 \"%s\"", argstr);
         }
     }
     backend = NULL;
@@ -2895,8 +2895,8 @@ int psftp_main(CmdlineArgList *arglist)
         if (do_sftp_init())
             return 1;
     } else {
-        printf("psftp: no hostname specified; use \"open host.name\""
-               " to connect\n");
+        printf("psftp: 未指定主机名; 请使用\"open 主机名\""
+               " 进行连接\n");
     }
 
     cmdline_arg_list_free(arglist);

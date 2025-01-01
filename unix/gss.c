@@ -13,7 +13,7 @@ const char *const gsslibnames[4] = {
     "libgssapi (Heimdal)",
     "libgssapi_krb5 (MIT Kerberos)",
     "libgss (Sun)",
-    "User-specified GSSAPI library",
+    "用户指定 GSSAPI library",
 };
 const struct keyvalwhere gsslibkeywords[] = {
     { "libgssapi", 0, -1, -1 },

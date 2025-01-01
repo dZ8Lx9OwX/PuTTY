@@ -46,7 +46,7 @@
 void modalfatalbox(const char *p, ...)
 {
     va_list ap;
-    fprintf(stderr, "FATAL ERROR: ");
+    fprintf(stderr, "致命错误：");
     va_start(ap, p);
     vfprintf(stderr, p, ap);
     va_end(ap);
@@ -56,7 +56,7 @@ void modalfatalbox(const char *p, ...)
 void nonfatal(const char *p, ...)
 {
     va_list ap;
-    fprintf(stderr, "ERROR: ");
+    fprintf(stderr, "错误：");
     va_start(ap, p);
     vfprintf(stderr, p, ap);
     va_end(ap);
@@ -336,8 +336,8 @@ bool auth_successful(AuthPolicy *ap, ptrlen username, unsigned method)
 static void safety_warning(FILE *fp)
 {
     fputs("  =================================================\n"
-          "     THIS SSH SERVER IS NOT WRITTEN TO BE SECURE!\n"
-          "  DO NOT DEPLOY IT IN A HOSTILE-FACING ENVIRONMENT!\n"
+          "        本SSH服务器不是为了安全应用而编写的！      \n"
+          "        请不要将其部署在有敌对攻击的环境当中！     \n"
           "  =================================================\n", fp);
 }
 
@@ -345,50 +345,50 @@ static void show_help(FILE *fp)
 {
     safety_warning(fp);
     fputs("\n"
-          "usage:   uppity [options] [--and <options>...]\n"
-          "options: --listen [PORT|PATH] listen to a port on localhost, or Unix socket\n"
-          "         --listen-once        (with --listen) stop after one "
-          "connection\n"
-          "         --hostkey KEY        SSH host key (need at least one)\n"
-          "         --rsakexkey KEY      key for SSH-2 RSA key exchange "
-          "(in SSH-1 format)\n"
-          "         --userkey KEY        public key"
-          " acceptable for user authentication\n"
-          "         --sessiondir DIR     cwd for session subprocess (default $HOME)\n"
-          "         --bannertext TEXT    send TEXT as SSH-2 auth banner\n"
-          "         --bannerfile FILE    send contents of FILE as SSH-2 auth "
-          "banner\n"
-          "         --kexinit-kex STR    override list of SSH-2 KEX methods\n"
-          "         --kexinit-hostkey STR  override list of SSH-2 host key "
-          "types\n"
-          "         --kexinit-cscipher STR override list of SSH-2 "
-          "client->server ciphers\n"
-          "         --kexinit-sccipher STR override list of SSH-2 "
-          "server->client ciphers\n"
-          "         --kexinit-csmac STR    override list of SSH-2 "
+          "用法：   uppity [选项] [--and <选项>...]\n"
+          "选项：   --listen [PORT|PATH] 侦听本地主机上的端口或Unix socket\n"
+          "         --listen-once        (跟随 --listen) 一次连接后"
+          "停止\n"
+          "         --hostkey KEY        SSH主机密钥(至少需要一个)\n"
+          "         --rsakexkey KEY      用于SSH-2 RSA密钥交换的密钥"
+          "(SSH-1 格式)\n"
+          "         --userkey KEY        可用户身份验证"
+          "的公钥\n"
+          "         --sessiondir DIR     会话子进程的目录(默认 $HOME)\n"
+          "         --bannertext TEXT    将文本作为SSH-2身份验证的提示进行发送\n"
+          "         --bannerfile FILE    将文件的内容作为SSH-2身份验的提示"
+          "进行发送\n"
+          "         --kexinit-kex STR    覆盖SSH-2密钥交换方法列表\n"
+          "         --kexinit-hostkey STR  覆盖SSH-2主机密钥类型的"
+          "列表\n"
+          "         --kexinit-cscipher STR 覆盖SSH-2 "
+          "client->server 加密列表\n"
+          "         --kexinit-sccipher STR 覆盖SSH-2 "
+          "server->client 加密列表\n"
+          "         --kexinit-csmac STR    覆盖SSH-2 "
           "client->server MACs\n"
-          "         --kexinit-scmac STR    override list of SSH-2 "
+          "         --kexinit-scmac STR    覆盖SSH-2 "
           "server->client MACs\n"
-          "         --kexinit-cscomp STR   override list of SSH-2 "
-          "c->s compression types\n"
-          "         --kexinit-sccomp STR   override list of SSH-2 "
-          "s->c compression types\n"
-          "         --ssh1-ciphers STR     override list of SSH-1 ciphers\n"
-          "         --ssh1-no-compression  forbid compression in SSH-1\n"
-          "         --deny-auth METHOD   forbid a userauth method\n"
-          "         --allow-auth METHOD  allow a userauth method\n"
+          "         --kexinit-cscomp STR   覆盖SSH-2 "
+          "c->s 压缩类型\n"
+          "         --kexinit-sccomp STR   覆盖SSH-2 "
+          "s->c 压缩类型\n"
+          "         --ssh1-ciphers STR     覆盖SSH-1加密列表\n"
+          "         --ssh1-no-compression  禁止在SSH-1中压缩\n"
+          "         --deny-auth METHOD   禁止用户身份验证方法\n"
+          "         --allow-auth METHOD  允许用户身份验证方法\n"
           "                 (METHOD = none/password/publickey/kbdint/tis/"
           "cryptocard)\n"
-          "         --exitsignum         send buggy numeric \"exit-signal\" "
-          "message\n"
-          "         --verbose            print event log messages to standard "
-          "error\n"
-          "         --sshlog FILE        write SSH packet log to FILE\n"
-          "         --sshrawlog FILE     write SSH packets + raw data log"
-          " to FILE\n"
-          "         --and                run a separate server on another port\n"
-          "also:    uppity --help        show this text\n"
-          "         uppity --version     show version information\n"
+          "         --exitsignum         发送错误数字 \"exit-signal\" "
+          "消息\n"
+          "         --verbose            将事件日志消息打印为"
+          "标准错误\n"
+          "         --sshlog FILE        将SSH数据包日志写入文件\n"
+          "         --sshrawlog FILE     将SSH数据包 + 原始数据记录"
+          "写入文件\n"
+          "         --and                在另一个端口上运行单独的服务器\n"
+          "其它：   uppity --help        显示帮助信息\n"
+          "         uppity --version     显示版本信息\n"
           "\n", fp);
     safety_warning(fp);
 }
@@ -433,7 +433,7 @@ static bool longoptarg(const char *arg, const char *expected,
             *val = *++*argvp;
             return true;
         } else {
-            fprintf(stderr, "%s: option %s expects an argument\n",
+            fprintf(stderr, "%s: 选项 %s 需要一个参数\n",
                     appname, expected);
             exit(1);
         }
@@ -447,7 +447,7 @@ static bool longoptnoarg(const char *arg, const char *expected)
     if (memcmp(arg, expected, len))
         return false;
     if (arg[len] == '=') {
-        fprintf(stderr, "%s: option %s expects no argument\n",
+        fprintf(stderr, "%s: 选项 %s 预期没有参数\n",
                 appname, expected);
         exit(1);
     } else if (arg[len] == '\0') {
@@ -517,8 +517,8 @@ static int server_accepting(Plug *p, accept_fn_t constructor, accept_ctx_t ctx)
     SocketEndpointInfo *pi = sk_peer_info(s);
 
     if (pi->addressfamily != ADDRTYPE_LOCAL && !sk_peer_trusted(s)) {
-        fprintf(stderr, "rejected connection to serv#%u "
-                "from %s (untrustworthy peer)\n",
+        fprintf(stderr, "拒绝连接到 serv#%u "
+                "从 %s (不可信的双方)\n",
                 cfg->config_id, pi->log_text);
         sk_free_endpoint_info(pi);
         sk_close(s);
@@ -700,13 +700,13 @@ int main(int argc, char **argv)
                 uk = ppk_load_f(keyfile, NULL, &error);
                 filename_free(keyfile);
                 if (!uk || !uk->key) {
-                    fprintf(stderr, "%s: unable to load host key '%s': "
+                    fprintf(stderr, "%s: 无法加载主机密钥 '%s'："
                             "%s\n", appname, val, error);
                     exit(1);
                 }
                 char *invalid = ssh_key_invalid(uk->key, 0);
                 if (invalid) {
-                    fprintf(stderr, "%s: host key '%s' is unusable: "
+                    fprintf(stderr, "%s: 主机密钥 '%s' 不可用："
                             "%s\n", appname, val, invalid);
                     exit(1);
                 }
@@ -716,8 +716,8 @@ int main(int argc, char **argv)
 
                 for (int i = 0; i < ci->nhostkeys; i++)
                     if (ssh_key_alg(ci->hostkeys[i]) == ssh_key_alg(key)) {
-                        fprintf(stderr, "%s: host key '%s' duplicates key "
-                                "type %s\n", appname, val,
+                        fprintf(stderr, "%s: 主机密钥 '%s' 重复密钥"
+                                "类型 %s\n", appname, val,
                                 ssh_key_alg(key)->ssh_id);
                         exit(1);
                     }
@@ -726,19 +726,19 @@ int main(int argc, char **argv)
                 ci->hostkeys[ci->nhostkeys++] = key;
             } else if (keytype == SSH_KEYTYPE_SSH1) {
                 if (ci->hostkey1) {
-                    fprintf(stderr, "%s: host key '%s' is a redundant "
-                            "SSH-1 host key\n", appname, val);
+                    fprintf(stderr, "%s: 主机密钥 '%s' 是冗余的"
+                            "SSH-1主机密钥\n", appname, val);
                     exit(1);
                 }
                 ci->hostkey1 = snew(RSAKey);
                 if (!rsa1_load_f(keyfile, ci->hostkey1, NULL, &error)) {
-                    fprintf(stderr, "%s: unable to load host key '%s': "
+                    fprintf(stderr, "%s: 无法加载主机密钥 '%s': "
                             "%s\n", appname, val, error);
                     exit(1);
                 }
             } else {
-                fprintf(stderr, "%s: '%s' is not loadable as a "
-                        "private key (%s)", appname, val,
+                fprintf(stderr, "%s: '%s' 不能作为"
+                        "私钥加载(%s)", appname, val,
                         key_type_to_str(keytype));
                 exit(1);
             }
@@ -751,8 +751,8 @@ int main(int argc, char **argv)
             keytype = key_type(keyfile);
 
             if (keytype != SSH_KEYTYPE_SSH1) {
-                fprintf(stderr, "%s: '%s' is not loadable as an SSH-1 format "
-                        "private key (%s)", appname, val,
+                fprintf(stderr, "%s: '%s' 不能作为SSH-1格式的"
+                        "私钥加载 (%s)", appname, val,
                         key_type_to_str(keytype));
                 exit(1);
             }
@@ -764,7 +764,7 @@ int main(int argc, char **argv)
             }
 
             if (!rsa1_load_f(keyfile, ci->ssc.rsa_kex_key, NULL, &error)) {
-                fprintf(stderr, "%s: unable to load RSA kex key '%s': "
+                fprintf(stderr, "%s: 无法加载RSA密钥交换密钥 '%s': "
                         "%s\n", appname, val, error);
                 exit(1);
             }
@@ -786,7 +786,7 @@ int main(int argc, char **argv)
 
                 if (!ppk_loadpub_f(keyfile, NULL, BinarySink_UPCAST(sb),
                                    NULL, &error)) {
-                    fprintf(stderr, "%s: unable to load user key '%s': "
+                    fprintf(stderr, "%s: 无法加载用户密钥 '%s': "
                             "%s\n", appname, val, error);
                     exit(1);
                 }
@@ -807,7 +807,7 @@ int main(int argc, char **argv)
 
                 if (!rsa1_loadpub_f(keyfile, BinarySink_UPCAST(sb),
                                     NULL, &error)) {
-                    fprintf(stderr, "%s: unable to load user key '%s': "
+                    fprintf(stderr, "%s: 无法加载用户密钥 '%s': "
                             "%s\n", appname, val, error);
                     exit(1);
                 }
@@ -821,20 +821,20 @@ int main(int argc, char **argv)
 
                 strbuf_free(sb);
             } else {
-                fprintf(stderr, "%s: '%s' is not loadable as a public key "
+                fprintf(stderr, "%s: '%s' 不能作为公钥加载 "
                         "(%s)\n", appname, val, key_type_to_str(keytype));
                 exit(1);
             }
         } else if (longoptarg(arg, "--bannerfile", &val, &argc, &argv)) {
             FILE *fp = fopen(val, "r");
             if (!fp) {
-                fprintf(stderr, "%s: %s: open: %s\n", appname,
+                fprintf(stderr, "%s: %s: 打开: %s\n", appname,
                         val, strerror(errno));
                 exit(1);
             }
             strbuf *sb = strbuf_new();
             if (!read_file_into(BinarySink_UPCAST(sb), fp)) {
-                fprintf(stderr, "%s: %s: read: %s\n", appname,
+                fprintf(stderr, "%s: %s: 读取: %s\n", appname,
                         val, strerror(errno));
                 exit(1);
             }
@@ -863,7 +863,7 @@ int main(int argc, char **argv)
         } else if (longoptarg(arg, "--allow-auth", &val, &argc, &argv)) {
             unsigned method = auth_method_from_name(val);
             if (!method) {
-                fprintf(stderr, "%s: unrecognised auth method '%s'\n",
+                fprintf(stderr, "%s: 无法识别的身份验证方法 '%s'\n",
                         appname, val);
                 exit(1);
             }
@@ -871,7 +871,7 @@ int main(int argc, char **argv)
         } else if (longoptarg(arg, "--deny-auth", &val, &argc, &argv)) {
             unsigned method = auth_method_from_name(val);
             if (!method) {
-                fprintf(stderr, "%s: unrecognised auth method '%s'\n",
+                fprintf(stderr, "%s: 无法识别的身份验证方法 '%s'\n",
                         appname, val);
                 exit(1);
             }
@@ -890,7 +890,7 @@ int main(int argc, char **argv)
                 SSH1_SUPPORTED_CIPHER_LIST(SSH1_CIPHER_CASE);
 #undef SSH1_CIPHER_CASE
 
-                fprintf(stderr, "%s: unrecognised SSH-1 cipher '%.*s'\n",
+                fprintf(stderr, "%s: 无法识别的 SSH-1 加密 '%.*s'\n",
                         appname, PTRLEN_PRINTF(word));
                 exit(1);
             }
@@ -927,25 +927,25 @@ int main(int argc, char **argv)
         } else if (!strcmp(arg, "--close-after-banner")) {
             ci->ssc.stunt_close_after_banner = true;
         } else {
-            fprintf(stderr, "%s: unrecognised option '%s'\n", appname, arg);
+            fprintf(stderr, "%s: 无法识别的选项 '%s'\n", appname, arg);
             exit(1);
         }
     }
 
     if (ninstances > 1 && listen_once) {
-        fprintf(stderr, "%s: cannot listen once only with multiple server "
-                "instances\n", appname);
+        fprintf(stderr, "%s: 不能只侦听一次，有多个 "
+                "服务器实例\n", appname);
         exit(1);
     }
     for (size_t i = 0; i < ninstances; i++) {
         ci = &instances[i];
         if (ci->nhostkeys == 0 && !ci->hostkey1) {
-            fprintf(stderr, "%s: specify at least one host key\n", appname);
+            fprintf(stderr, "%s: 至少指定一个主机密钥\n", appname);
             exit(1);
         }
         if (ninstances > 1 && !(ci->listen_port >= 0 || ci->listen_socket)) {
-            fprintf(stderr, "%s: cannot talk to stdio with multiple server "
-                    "instances\n", appname);
+            fprintf(stderr, "%s: 无法与具有多个标准通信实例的"
+                    "服务器建立通讯\n", appname);
             exit(1);
         }
     }

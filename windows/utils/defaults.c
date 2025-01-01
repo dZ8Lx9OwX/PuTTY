@@ -9,7 +9,7 @@
 FontSpec *platform_default_fontspec(const char *name)
 {
     if (!strcmp(name, "Font"))
-        return fontspec_new("Courier New", false, 10, ANSI_CHARSET);
+        return fontspec_new("黑体", false, 12, GB2312_CHARSET);
     else
         return fontspec_new_default();
 }

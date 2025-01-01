@@ -105,7 +105,7 @@ bool ssh1_handle_direction_specific_packet(
       case SSH1_SMSG_FAILURE:
         if (!s->succfail_head) {
             ssh_remote_error(s->ppl.ssh,
-                             "Received %s with no outstanding request",
+                             "收到 %s 没有未完成的请求",
                              ssh1_pkt_type(pktin->type));
             return true;
         }
@@ -126,7 +126,7 @@ bool ssh1_handle_direction_specific_packet(
                 s->ppl.bpp, SSH1_MSG_CHANNEL_OPEN_FAILURE);
             put_uint32(pktout, remid);
             pq_push(s->ppl.out_pq, pktout);
-            ppl_logevent("Rejected X11 connect request");
+            ppl_logevent("拒绝 X11 连接请求");
         } else {
             c = snew(struct ssh1_channel);
             c->connlayer = s;
@@ -142,7 +142,7 @@ bool ssh1_handle_direction_specific_packet(
             put_uint32(pktout, c->remoteid);
             put_uint32(pktout, c->localid);
             pq_push(s->ppl.out_pq, pktout);
-            ppl_logevent("Opened X11 forward channel");
+            ppl_logevent("打开 X11 正向通道");
         }
 
         return true;
@@ -205,7 +205,7 @@ bool ssh1_handle_direction_specific_packet(
         pfp = find234(s->rportfwds, &pf, NULL);
 
         if (!pfp) {
-            ppl_logevent("Rejected remote port open request for %s:%d",
+            ppl_logevent("被拒绝远程端口打开请求 %s:%d",
                          pf.dhost, port);
             pktout = ssh_bpp_new_pktout(
                 s->ppl.bpp, SSH1_MSG_CHANNEL_OPEN_FAILURE);
@@ -216,14 +216,14 @@ bool ssh1_handle_direction_specific_packet(
 
             c = snew(struct ssh1_channel);
             c->connlayer = s;
-            ppl_logevent("Received remote port open request for %s:%d",
+            ppl_logevent("已收到远程端口打开请求 %s:%d",
                          pf.dhost, port);
             err = portfwdmgr_connect(
                 s->portfwdmgr, &c->chan, pf.dhost, port,
                 &c->sc, pfp->addressfamily);
 
             if (err) {
-                ppl_logevent("Port open failed: %s", err);
+                ppl_logevent("端口打开失败：%s", err);
                 sfree(err);
                 ssh1_channel_free(c);
                 pktout = ssh_bpp_new_pktout(
@@ -239,7 +239,7 @@ bool ssh1_handle_direction_specific_packet(
                 put_uint32(pktout, c->remoteid);
                 put_uint32(pktout, c->localid);
                 pq_push(s->ppl.out_pq, pktout);
-                ppl_logevent("Forwarded port opened successfully");
+                ppl_logevent("转发端口打开成功");
             }
         }
 
@@ -264,7 +264,7 @@ bool ssh1_handle_direction_specific_packet(
 
       case SSH1_SMSG_EXIT_STATUS: {
         int exitcode = get_uint32(pktin);
-        ppl_logevent("Server sent command exit status %d", exitcode);
+        ppl_logevent("服务器发送命令退出状态 %d", exitcode);
         ssh_got_exitcode(s->ppl.ssh, exitcode);
 
         s->session_terminated = true;
@@ -482,10 +482,10 @@ static void ssh1_rportfwd_response(struct ssh1_connection_state *s,
     struct ssh_rportfwd *rpf = (struct ssh_rportfwd *)ctx;
 
     if (success) {
-        ppl_logevent("Remote port forwarding from %s enabled",
+        ppl_logevent("已启用来自 %s 远程端口转发",
                      rpf->log_description);
     } else {
-        ppl_logevent("Remote port forwarding from %s refused",
+        ppl_logevent("来自 %s 的远程端口转发被拒绝",
                      rpf->log_description);
 
         struct ssh_rportfwd *realpf = del234(s->rportfwds, rpf);
@@ -533,12 +533,12 @@ struct ssh_rportfwd *ssh1_rportfwd_alloc(
 SshChannel *ssh1_serverside_x11_open(
     ConnectionLayer *cl, Channel *chan, const SocketEndpointInfo *pi)
 {
-    unreachable("Should never be called in the client");
+    unreachable("永远不应该在客户端调用");
 }
 
 SshChannel *ssh1_serverside_agent_open(ConnectionLayer *cl, Channel *chan)
 {
-    unreachable("Should never be called in the client");
+    unreachable("永远不应该在客户端调用");
 }
 
 bool ssh1_connection_need_antispoof_prompt(struct ssh1_connection_state *s)

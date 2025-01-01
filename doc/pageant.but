@@ -1,322 +1,322 @@
-\C{pageant} Using \i{Pageant} for authentication
+\C{pageant} 使用 \i{Pageant} 进行身份验证
 
-Pageant is an SSH \i{authentication agent}. It holds your \i{private key}s
-in memory, already decoded, so that you can use them often
-\I{passwordless login}without needing to type a \i{passphrase}.
+Pageant 是一个 SSH \i{身份验证代理}。 它将您的\i{私钥}保存在内存中，已经解码，
+因此您可以经常使用它们而
+\I{passwordless login}无需输入\i{密码}。
 
-\H{pageant-start} Getting started with Pageant
+\H{pageant-start} Pageant入门
 
-Before you run Pageant, you need to have a private key in \c{*.\i{PPK}}
-format. See \k{pubkey} to find out how to generate and use one.
+在运行 Pageant 之前，您需要有一个 \c{*.\i{PPK}}
+格式的私钥。 请参阅 \k{pubkey} 了解如何生成和使用一个。
 
-When you run Pageant, it will put an icon of a computer wearing a
-hat into the \ii{System tray}. It will then sit and do nothing, until you
-load a private key into it. (You may need to use Windows'
-\q{Show hidden icons} arrow to see the Pageant icon.)
+当您运行 Pageant 时，它会将一个戴着帽子的计算
+机图标放入\ii{系统托盘}中。然后它会坐着什么也
+不做，直到你将私钥加载到其中。（您可能需要
+使用 Windows 的\q{显示隐藏图标}”箭头来查看Pageant图标。）
 
-If you click the Pageant icon with the right mouse button, you will
-see a menu. Select \q{View Keys} from this menu. The Pageant main
-window will appear. (You can also bring this window up by
-double-clicking on the Pageant icon.)
+如果您用鼠标右键单击Pageant图标，您将看到一
+个菜单。从此菜单中选择\q{查看密钥}。将出
+现Pageant主窗口。（您也可以通过双击Pageant图
+标来打开此窗口。）
 
-The Pageant window contains a list box. This shows the private keys
-Pageant is holding. When you start Pageant, it has no keys, so the
-list box will be empty. After you add one or more keys, they will
-show up in the list box.
+Pageant 窗口包含一个列表框。
+这显示了 Pageant 持有的私钥。
+当您启动 Pageant 时，它没有密钥，因此列表
+框将为空。添加一个或多个密钥后，它们将显示在列表框中。
 
-To add a key to Pageant, press the \q{Add Key} button. Pageant will
-bring up a file dialog, labelled \q{Select Private Key File}. Find
-your private key file in this dialog, and press \q{Open}.
+要将密钥添加到Pageant，请按\q{添加密钥}按钮。
+Pageant会弹出一个文件对话框，标记为\q{选择私钥文件}。
+在此对话框中找到您的私钥文件，然后按\q{打开}。
 
-Pageant will now load the private key. If the key is protected by a
-passphrase, Pageant will ask you to type the passphrase. When the
-key has been loaded, it will appear in the list in the Pageant
-window.
+Pageant现在将加载私钥。
+如果密钥受密码保护，
+Pageant 会要求您输入密码。加载密钥后，
+它将出现在Pageant窗口的列表中。
 
-Now start PuTTY and open an SSH session to a site that accepts your
-key. PuTTY will notice that Pageant is running, retrieve the key
-automatically from Pageant, and use it to authenticate. You can now
-open as many PuTTY sessions as you like without having to type your
-passphrase again.
+现在启动 PuTTY 并打开一个到接受您的密钥的站点的 SSH 会话。
+PuTTY 会注意到 Pageant 正在运行，
+自动从 Pageant 检索密钥，并使用它进行身份验证。
+您现在可以根据需要打开任意数量的 PuTTY 会话，
+而无需再次输入密码。
 
-(PuTTY can be configured not to try to use Pageant, but it will try
-by default. See \k{config-ssh-tryagent} and
-\k{using-cmdline-agentauth} for more information.)
+（PuTTY 可以配置为不尝试使用 Pageant，但默认
+情况下会尝试。有关详细信息，请参阅\k{config-ssh-tryagent}
+和\k{using-cmdline-agentauth} 。）
 
-When you want to shut down Pageant, click the right button on the
-Pageant icon in the System tray, and select \q{Exit} from the menu.
-Closing the Pageant main window does \e{not} shut down Pageant.
+当您想关闭 Pageant 时，单击系统托盘中
+的 Pageant 图标上的右键，然后从菜单中
+选择\q{退出}。 关闭 Pageant 主窗口\e{不会}关闭 Pageant。
 
-If you want Pageant to stay running but forget all the keys it has
-acquired, select \q{Remove All Keys} from the System tray menu.
+如果您希望 Pageant 继续运行但忘记了它
+已获取的所有密钥，请从系统托盘菜单中选择\q{删除所有密钥}。
 
-\H{pageant-mainwin} The Pageant main window
+\H{pageant-mainwin} Pageant主窗口
 
-The Pageant main window appears when you left-click on the Pageant
-system tray icon, or alternatively right-click and select \q{View
-Keys} from the menu. You can use it to keep track of what keys are
-currently loaded into Pageant, and to add new ones or remove the
-existing keys.
+当您左键单击 Pageant 系统托盘图标或
+右键单击并从菜单中选择\q{查看密钥}时，
+会出现 Pageant 主窗口。 您可以使用它
+来跟踪当前加载到 Pageant 中的密钥，
+并添加新密钥或删除现有密钥。
 
-\S{pageant-mainwin-keylist} The key list box
+\S{pageant-mainwin-keylist} 密钥列表框
 
-The large list box in the Pageant main window lists the private keys
-that are currently loaded into Pageant. The list might look
-something like this:
+Pageant 主窗口中的大列表框列出
+了当前加载到 Pageant 中的私钥。
+该列表可能如下所示：
 
 \c Ed25519    SHA256:TddlQk20DVs4LRcAsIfDN9pInKpY06D+h4kSHwWAj4w
 \c RSA  2048  SHA256:8DFtyHm3kQihgy52nzX96qMcEVOq7/yJmmwQQhBWYFg
 
-For each key, the list box will tell you:
+对于每个密钥，列表框会告诉您：
 
-\b The type of the key. Currently, this can be
-\q{RSA} (an RSA key for use with the SSH-2 protocol),
-\q{DSA} (a DSA key for use with the SSH-2 protocol),
-\q{\i{NIST}} (an ECDSA key for use with the SSH-2 protocol),
-\q{Ed25519} (an Ed25519 key for use with the SSH-2 protocol),
-\q{Ed448} (an Ed448 key for use with the SSH-2 protocol),
-or \q{SSH-1} (an RSA key for use with the old SSH-1 protocol).
-(If the key has an associated certificate, this is shown here with a
-\q{cert} suffix.)
+\b 密钥的类型。目前这可能是：
+\q{RSA} (用于SSH-2协议的 RSA 密钥),
+\q{DSA} (用于SSH-2协议的 DSA 密钥),
+\q{\i{NIST}} (用于SSH-2协议的ECDSA密钥),
+\q{Ed25519} (用于SSH-2协议的 Ed25519 密钥),
+\q{Ed448}(用于SSH-2协议的 Ed448 密钥),
+或者 \q{SSH-1} (用于旧的SSH-1协议，使用的 RSA 密钥)。
+（如果密钥中包含有关联的证书
+则此处显示为 \q{cert} 后缀。）
 
-\b The size (in bits) of the key, for key types that come in different
-sizes. (For ECDSA \q{NIST} keys, this is indicated as \q{p256} or
-\q{p384} or \q{p521}.)
+\b 密钥的大小（以位为单位），用于描述大小不同的密钥类型。
+(但 ECDSA \q{NIST} 密钥大小只会表示为 \q{p256} 或
+\q{p384} 或 \q{p521}.)
 
-\b The \I{key fingerprint}fingerprint for the public key. This should be
-the same fingerprint given by PuTTYgen, and (hopefully) also the same
-fingerprint shown by remote utilities such as \i\c{ssh-keygen} when
-applied to your \c{authorized_keys} file.
+\b 公钥的\I{key fingerprint}指纹。
+这应该与 PuTTYgen 给出的指纹相同，
+并且（希望）也与远程实用程序（如 \i\c{ssh-keygen}）
+在应用于您的 \c{authorized_keys} 文件时显示的指纹相同。
 
 \lcont{
-For SSH-2 keys, by default this is shown in the \q{SHA256} format. You
-can change to the older \q{MD5} format (which looks like \c{aa:bb:cc:...})
-with the \q{Fingerprint type} drop-down, but bear in mind that this
-format is less secure and should be avoided for comparison purposes
-where possible.
+对于SSH-2密钥，默认情况下以 \q{SHA256} 格式显示。
+可以换成就旧的 \q{MD5} 格式（看起来像 \c{aa:bb:cc:...}），
+使用 \q{指纹类型} 下拉菜单选择更改，
+但要记住旧的格式不太安全，
+如果可能的话应该避免使用。
 
-If some of the keys loaded into Pageant have certificates attached,
-then Pageant will default to showing the fingerprint of the underlying
-key. This way, a certified and uncertified version of the same key
-will have the same fingerprint, so you can see that they match. You
-can instead use the \q{Fingerprint type} drop-down to ask for a
-different fingerprint to be shown for certified keys, which includes
-the certificate as part of the fingerprinted data. That way you can
-tell two certificates apart.
+如果加载到Pageant中的某些密钥附加了证书，
+则Pageant将默认显示基础密钥的指纹。
+这样，同一密钥的认证和未认证版本将具
+有相同的指纹，因此您可以看到它们匹配。
+您可以更改\q{指纹类型}
+下拉菜单来请求为认证密钥显示不同的指纹，
+其中包括作为指纹数据一部分的证书。
+这样，您就可以区分两个证书。
 }
 
-\b The comment attached to the key.
+\b 附加到密钥的注释。
 
-\b The state of deferred decryption, if enabled for this key.
-See \k{pageant-deferred-decryption}.
+\b 当前密钥解密的状态（如果为此密钥启用密码）。
+请参阅 \k{pageant-deferred-decryption}。
 
-\S{pageant-mainwin-addkey} The \q{Add Key} button
+\S{pageant-mainwin-addkey} \q{添加密钥}按钮
 
-To add a key to Pageant by reading it out of a local disk file,
-press the \q{Add Key} button in the Pageant main window, or
-alternatively right-click on the Pageant icon in the system tray and
-select \q{Add Key} from there.
+要通过从本地磁盘文件中读取来将密钥添加到
+Pageant，请按 Pageant 主窗口中的\q{添加密钥}按钮，
+或者右键单击系统托盘中的 Pageant
+图标并从那里选择\q{添加密钥} .
 
-Pageant will bring up a file dialog, labelled \q{Select Private Key
-File}. Find your private key file in this dialog, and press
-\q{Open}. If you want to add more than one key at once, you can
-select multiple files using Shift-click (to select several adjacent
-files) or Ctrl-click (to select non-adjacent files).
+Pageant会弹出一个文件对话框，标记为\q{选择私
+钥文件}。 在此对话框中找到您的私钥文件，然后
+按\q{打开}。 如果要一次添加多个密钥，可以使
+用 Shift 键单击（选择多个相邻文件）或 Ctrl 键单
+击（选择不相邻文件）选择多个文件。
 
-Pageant will now load the private key(s). If a key is protected by a
-passphrase, Pageant will ask you to type the passphrase.
+Pageant现在将加载私钥。 如果密钥受密码
+保护，Pageant 会要求您输入密码。
 
-(This is not the only way to add a private key to Pageant. You can
-also add one from a remote system by using agent forwarding; see
-\k{pageant-forward} for details.)
+（这不是向 Pageant 添加私钥的唯一方法。您还可
+以使用代理转发从远程系统添加一个；有
+关详细信息，请参阅\k{pageant-forward}。）
 
-\S{pageant-mainwin-remkey} The \q{Remove Key} button
+\S{pageant-mainwin-remkey} \q{删除密钥}按钮
 
-If you need to remove a key from Pageant, select that key in the
-list box, and press the \q{Remove Key} button. Pageant will remove
-the key from its memory.
+如果您需要从 Pageant 中删除密钥，
+请在列表框中选择该密钥，
+然后按\q{删除密钥}按钮。 Pagean会从内存中删除密钥。
 
-You can apply this to keys you added using the \q{Add Key} button,
-or to keys you added remotely using agent forwarding (see
-\k{pageant-forward}); it makes no difference.
+您可以将其应用于使用\q{添加密钥}按钮添
+加的密钥，或使用代理转发远程添加的
+密钥（\k{pageant-forward}）； 这没什么区别。
 
-\H{pageant-cmdline} The Pageant command line
+\H{pageant-cmdline} Pageant命令行
 
-Pageant can be made to do things automatically when it starts up, by
-\I{command-line arguments}specifying instructions on its command line.
-If you're starting Pageant from the Windows GUI, you can arrange this
-by editing the properties of the \i{Windows shortcut} that it was
-started from.
+通过在命令行上\I{command-line arguments}指定指令，
+可以使 Pageant 在启动时自动执行操作。
+如果您从 Windows GUI 启动 Pageant，
+您可以通过编辑启动它的 \i{Windows 快
+捷方式}的属性来安排它。
 
-If Pageant is already running, invoking it again with the options
-below causes actions to be performed with the existing instance, not a
-new one.
+如果 Pageant 已经在运行，
+使用以下选项再次调用它会导致
+对现有实例执行操作，而不是新实例。
 
-\S{pageant-cmdline-loadkey} Making Pageant automatically load keys
-on startup
+\S{pageant-cmdline-loadkey} 使 Pageant
+在启动时自动加载密钥
 
-Pageant can automatically load one or more private keys when it
-starts up, if you provide them on the Pageant command line. Your
-command line might then look like:
+如果您在 Pageant 命令行中提供它们，
+那么 Pageant 可以在启动时自动
+加载一个或多个私钥。 您的命令行可能如下所示：
 
 \c C:\PuTTY\pageant.exe d:\main.ppk d:\secondary.ppk
 
-If the keys are stored encrypted, Pageant will request the
-passphrases on startup.
+如果密钥是加密存储的，
+Pageant 将在启动时请求密码。
 
-If Pageant is already running, this syntax loads keys into the
-existing Pageant.
+如果 Pageant 已经在运行，
+则此语法会将键加载到现有的 Pageant 中。
 
-You can specify the \cq{--encrypted} option to defer decryption of
-these keys; see \k{pageant-deferred-decryption}.
+您可以指定\cq{--encrypted}选项来推迟解密这些密钥，
+请参阅  \k{pageant-deferred-decryption}。
 
-\S{pageant-cmdline-command} Making Pageant run another program
+\S{pageant-cmdline-command} 让 Pageant 运行另一个程序
 
-You can arrange for Pageant to start another program once it has
-initialised itself and loaded any keys specified on its command
-line. This program (perhaps a PuTTY, or a WinCVS making use of
-Plink, or whatever) will then be able to use the keys Pageant has
-loaded.
+您可以安排 Pageant 在其自身初始化
+并加载其命令行上指定的任何键后启动
+另一个程序。 该程序（可能是 PuTTY，
+或使用 Plink 的 WinCVS 或其他程序）
+将能够使用 Pageant 已加载的密钥。
 
-You do this by specifying the \I{-c-pageant}\c{-c} option followed
-by the command, like this:
+您可以通过在命令后指定 \I{-c-pageant}\c{-c}选
+项来执行此操作，如下所示：
 
 \c C:\PuTTY\pageant.exe d:\main.ppk -c C:\PuTTY\putty.exe
 
-\S{pageant-cmdline-openssh} Integrating with \i{Windows OpenSSH}
+\S{pageant-cmdline-openssh} 与 \i{Windows OpenSSH} 集成
 
-Windows's own port of OpenSSH uses the same mechanism as Pageant to
-talk to its SSH agent (Windows named pipes). This means that Windows
-OpenSSH can talk directly to Pageant, if it knows where to find
-Pageant's named pipe.
+Windows 自己的 OpenSSH 端口使用与 Pageant 相同的机制
+来与其 SSH 代理（Windows 命名管道）通信。 这意味着如
+果 Windows OpenSSH 知道在哪里可以找到 Pageant
+的命名管道，则它可以直接与 Pageant 对话。
 
-When Pageant starts up, it can optionally write out a file containing
-an OpenSSH configuration directive that tells the Windows \c{ssh.exe}
-where to find Pageant. If you include this file from your Windows SSH
-configuration, then \c{ssh.exe} should automatically use Pageant as
-its agent, so that you can keep your keys in one place and have both
-SSH clients able to use them.
+当 Pageant 启动时，它可以选择性地写出一个包含 OpenSSH
+配置指令的文件，该指令告诉 Windows \c{ssh.exe} 在哪里
+可以找到 Pageant。 如果您在 Windows SSH 配置中包含此
+文件，则 \c{ssh.exe} 应自动使用 Pageant
+作为其代理，这样您就可以将密钥保存在一个位
+置并让两个 SSH 客户端都可以使用它们。
 
-The option is \i\c{--openssh-config}, and you follow it with a filename.
+选项是 \i\c{--openssh-config}，你可以在它后面加上一个文件名。
 
-To refer to this file from your main OpenSSH configuration, you can
-use the \cq{Include} directive. For example, you might run Pageant
-like this (with your own username substituted, of course):
+要从您的主要 OpenSSH 配置中引用此文件，
+您可以使用\cq{包含}指令。 例如，您可以
+像这样运行 Pageant（当然，用您自己的用户名代替）：
 
 \c pageant --openssh-config C:\Users\Simon\.ssh\pageant.conf
 
-and then add a directive like this to your main \cq{.ssh\\config} file
-(assuming that lives in the same directory that you just put
-\cw{pageant.conf}):
+然后将这样的指令添加到您的
+主\cq{.ssh\\config}文件中（假设它位
+于您刚刚放置\cw{pageant.conf} 的同一目录中）：
 
 \c Include pageant.conf
 
-\s{Note}: this technique only works with \e{Windows's} port of
-OpenSSH, which lives at \cw{C:\\Windows\\System32\\OpenSSH\\ssh.exe}
-if you have it installed. (If not, it can be installed as a Windows
-optional feature, e.g., via Settings > Apps & features > Optional
-features > Add a feature > OpenSSH Client.)
+\s{注意}：此技术仅适用于 \e{Windows's} 的
+ OpenSSH 端口，如果您安装了它，该端口位于
+ \cw{C:\\Windows\\System32\\OpenSSH\\ssh.exe}。
+ （如果没有，它可以作为 Windows 可选功能安装，
+ 例如，通过设置 > 应用和功能 > 可选功能 > 添加功能 > OpenSSH 客户端。）
 
-There are other versions of OpenSSH for Windows, notably the one that
-comes with Windows \cw{git}. Those will likely not work with the same
-configuration, because they tend to depend on Unix emulation layers
-like MinGW or MSys, so they won't speak Windows native pathname syntax
-or understand named pipes. The above instructions will only work with
-Windows's own version of OpenSSH.
+适用于 Windows 的 OpenSSH 还有其他版本，
+尤其是 Windows \cw{git} 附带的版本。 这些可能
+不适用于相同的配置，因为它们往往依赖于 Unix 仿
+真层，如 MinGW 或 MSys，因此它们不会说 Windows
+本地路径名语法或理解命名管道。
+以上说明仅适用于 Windows 自己的 OpenSSH 版本。
 
-So, if you want to use Windows \cw{git} with an SSH key held in
-Pageant, you'll have to set the environment variable \cw{GIT_SSH}, to
-point at a different program. You could point it at
-\cw{c:\\Windows\\System32\\OpenSSH\\ssh.exe} once you've done this
-setup \dash but it's just as easy to point it at Plink!
+因此，如果您想在 Pageant 中使用带有 SSH
+密钥的 Windows \cw{git}，您必须设置环
+境变量 \cw{GIT_SSH}，以指向不同的程序。
+ 完成此设置后，您可以将其指向 \cw{c:\\Windows\\System32\\OpenSSH
+ \\ssh.exe} - 但将其指向 Plink 也同样容易！
 
-\S{pageant-cmdline-unix} Unix-domain sockets: integrating with WSL 1
+\S{pageant-cmdline-unix} Unix-domain套接字与WSL 1 集成
 
-Pageant can listen on the WinSock implementation of \q{Unix-domain
-sockets}. These interoperate with the Unix-domain sockets found in the
-original Windows Subsystem for Linux (now known as WSL 1). So if you
-ask Pageant to listen on one of these, then your WSL 1 processes can
-talk directly to Pageant.
+Pageant可以监听\q{Unix-domain套接字}的WinSock实现。
+它们适用于与 Windows 中 Linux 子
+系统（现在称为 WSL 1）中的 Unix 域套接字进行互操作。
+因此，如果您要求Pageant监听其中之一，
+那么您的WSL 1操作流可以直接与Pageant通讯。
 
-To configure this, run Pageant with the option \c{--unix}, followed
-with a pathname. Then, in WSL 1, set the environment variable
-\cw{SSH_AUTH_SOCK} to point at the WSL translation of that pathname.
+要对此进行配置，请使用选项 \c{--unix} 运行Pageant，后跟路径名。
+然后，在 WSL 1 中，将环境变量\cw{SSH_AUTH_SOCK}设
+置为指向该路径名的 WSL 转换。
 
-For example, you might run
+例如，您可以运行
 
 \c pageant --unix C:\Users\Simon\.ssh\agent.sock
 
-and in WSL 1, set the environment variable
+并在 WSL 1 中，设置环境变量
 
 \c SSH_AUTH_SOCK=/mnt/c/Users/Simon/.ssh/agent.sock
 
-Alternatively, you can add a line to your \cw{.ssh/config} file inside
-WSL that says
+或者，您可以在 WSL 中的 \cw{.ssh/config}文件中添加一行，
+其中显示
 
 \c IdentityAgent /mnt/c/Users/Simon/.ssh/agent.sock
 
-although doing it like that may mean that \cw{ssh-add} commands won't
-find the agent, even though \cw{ssh} itself will.
+尽管这样做可能意味着 \cw{ssh-add} 命令找不到代理，
+即使 \cw{ssh} 本身也会找到代理。
 
-\s{Security note}: Unix-domain sockets are protected against access by
-other users by the file protections on their containing directory. So
-if your Windows machine is multiuser, make sure you create the socket
-inside a directory that other users can't access at all. (In fact,
-that's a good idea on general principles.)
+\s{安全说明：}Unix-domain套接字通过其包含目录上的
+文件保护来防止其他用户访问。
+因此，如果您的 Windows 计算机是多用户，
+请确保在其他用户根本无法访问的目录中创建套接字。
+（事实上，从一般原则上讲，这是一个好主意。
 
-\s{Compatibility note}: WSL 2 processes cannot talk to Pageant by this
-mechanism, because WSL 2's Unix-domain sockets are managed by a
-separate Linux kernel, and not by the same kernel that WinSock talks
-to.
+\s{兼容性说明：}WSL 2 进程无法通
+过此机制与Pageant通信，
+因为 WSL 2 的 Unix-domain套接字由单独的 Linux 内核管理，
+而不是由 WinSock 与之通信的同一内核管理。
 
-\S{pageant-cmdline-keylist} Starting with the key list visible
+\S{pageant-cmdline-keylist} 从可见的密钥列表开始
 
-Start Pageant with the \i\c{--keylist} option to show the main window
-as soon as it starts up.
+使用 \i\c{--keylist} 选项启动 Pageant，
+以便在启动时立即显示主窗口。
 
-\S{pageant-cmdline-restrict-acl} Restricting the \i{Windows process ACL}
+\S{pageant-cmdline-restrict-acl} 限制 \i{Windows ACL} 进程
 
-Pageant supports the same \i\c{-restrict-acl} option as the other
-PuTTY utilities to lock down the Pageant process's access control;
-see \k{using-cmdline-restrict-acl} for why you might want to do this.
+Pageant 支持与其他 PuTTY 实用程序相同
+的 \i\c{-restrict-acl} 选项来锁定 Pageant 进程的访问控制；
+请参阅 \k{using-cmdline-restrict-acl}了解您可能想要这样做的原因。
 
-By default, if Pageant is started with \c{-restrict-acl}, it won't
-pass this to any PuTTY sessions started from its System Tray submenu.
-Use \c{-restrict-putty-acl} to change this. (Again, see
-\k{using-cmdline-restrict-acl} for details.)
+默认情况下，如果 Pageant 使用 \c{-restrict-acl} 启动，
+它不会将此传递给从其系统托盘子菜单启动的任何 PuTTY 会话。
+ 使用 \c{-restrict-putty-acl} 来改变它。
+ （同样，详见\k{using-cmdline-restrict-acl} 。）
 
-\H{pageant-forward} Using \i{agent forwarding}
+\H{pageant-forward} 使用\i{代理转发}
 
-Agent forwarding is a mechanism that allows applications on your SSH
-server machine to talk to the agent on your client machine.
+代理转发是一种机制，它允许 SSH 服务器计算机上的
+应用程序与客户端计算机上的代理通信。
 
-Note that at present, whether agent forwarding in SSH-2 is available
-depends on your server. Pageant's protocol is compatible with the
-\i{OpenSSH} server, but the \i\cw{ssh.com} server uses a different
-agent protocol, which PuTTY does not yet support.
+请注意，目前是否支持 SSH-2 中的代理转发取决于
+您的服务器。 Pageant 的协议与 \i{OpenSSH} 服
+务器兼容，但 \i\cw{ssh.com} 服务器使用不同的
+代理协议，PuTTY 尚不支持该协议。
 
-To enable agent forwarding, first start Pageant. Then set up a PuTTY
-SSH session in which \q{Allow agent forwarding} is enabled (see
-\k{config-ssh-agentfwd}). Open the session as normal. (Alternatively,
-you can use the \c{-A} command line option; see
-\k{using-cmdline-agent} for details.)
+要启用代理转发，请首先启动 Pageant。
+然后设置启用\q{允许代理转发}的 PuTTY SSH
+会话（请参阅 \k{config-ssh-agentfwd}）。
+正常打开会话。 （或者，您可以使用 \c{-A} 命令行选项；有关详细信息，
+请参阅\k{using-cmdline-agent}。）
 
-If this has worked, your applications on the server should now have
-access to a Unix domain socket which the SSH server will forward
-back to PuTTY, and PuTTY will forward on to the agent. To check that
-this has actually happened, you can try this command on Unix server
-machines:
+如果这成功了，服务器上的应用程序现在应该可
+以访问 SSH 服务器将转发回 PuTTY 的 Unix 套接字，
+然后 PuTTY 将转发到代理。
+要检查这是否真的发生了，
+你可以在 Unix 服务器机器上尝试这个命令：
 
 \c unixbox:~$ echo $SSH_AUTH_SOCK
 \c /tmp/ssh-XXNP18Jz/agent.28794
 \c unixbox:~$
 
-If the result line comes up blank, agent forwarding has not been
-enabled at all.
+如果结果行显示为空白，
+则根本没有启用代理转发。
 
-Now if you run \c{ssh} on the server and use it to connect through
-to another server that accepts one of the keys in Pageant, you
-should be able to log in without a password:
+现在，如果您在服务器上运行 \c{ssh} 并
+使用它连接到另一台接受 Pageant 中的密钥
+之一的服务器，您应该能够在没有密码的情况下登录：
 
 \c unixbox:~$ ssh -v otherunixbox
 \c [...]
@@ -325,15 +325,15 @@ should be able to log in without a password:
 \c debug: ssh-userauth2 successful: method publickey
 \c [...]
 
-If you enable agent forwarding on \e{that} SSH connection as well
-(see the manual for your server-side SSH client to find out how to
-do this), your authentication keys will still be available on the
-next machine you connect to - two SSH connections away from where
-they're actually stored.
+如果您也在\e{那个} SSH 连接上启用代理转发
+（请参阅服务器端 SSH 客户端的手册以了解如何执行此操作），
+您的身份验证密钥仍将在您连接的下一台
+计算机上可用 - 两个 SSH 连接之外
+ 从它们实际存储的地方。
 
-In addition, if you have a private key on one of the SSH servers,
-you can send it all the way back to Pageant using the local
-\i\c{ssh-add} command:
+此外，如果您在其中一台 SSH 服务器上
+拥有私钥，则可以使用本地 \i\c{ssh-add}
+命令将其一直发送回 Pageant：
 
 \c unixbox:~$ ssh-add ~/.ssh/id_rsa
 \c Need passphrase for /home/fred/.ssh/id_rsa
@@ -341,104 +341,104 @@ you can send it all the way back to Pageant using the local
 \c Identity added: /home/fred/.ssh/id_rsa (/home/simon/.ssh/id_rsa)
 \c unixbox:~$
 
-and then it's available to every machine that has agent forwarding
-available (not just the ones downstream of the place you added it).
+然后它可用于每台具有代理转发功能的
+机器（不仅仅是您添加它的位置下游的机器）。
 
-\H{pageant-deferred-decryption} Loading keys without decrypting them
+\H{pageant-deferred-decryption} 加载密钥而不解密它们
 
-You can add keys to Pageant \e{without} decrypting them. The key
-file will be held in Pageant's memory still encrypted, and when a
-client program first tries to use the key, Pageant will display a
-dialog box prompting for the passphrase so that the key can be
-decrypted.
+您可以在\e{不解密}的情况下将密钥添加到 Pageant。
+密钥文件将保存在 Pageant 的内存中，仍然加密，
+当客户端程序第一次尝试使用密钥时，
+Pageant 将显示一个对话框，
+提示输入密码，以便可以解密密钥。
 
-This works the same way whether the key is used by an instance of
-PuTTY running locally, or a remote client connecting to Pageant
-through agent forwarding.
+无论密钥是由本地运行的 PuTTY 实例使用，
+还是由通过代理转发连接到 Pageant 的远程客户端使用，
+其工作方式都是相同的。
 
-To add a key to Pageant in this encrypted form, press the \q{Add Key
-(encrypted)} button in the Pageant main window, or alternatively
-right-click on the Pageant icon in the system tray and select \q{Add
-Key (encrypted)} from there. Pageant will bring up a file dialog, in
-just the same way as it would for the plain \q{Add Key} button. But it
-won't ask for a passphrase. Instead, the key will be listed in the
-main window with \q{(encrypted)} after it.
+要以这种加密形式向 Pageant 添加密钥，
+请按 Pageant 主窗口中的\q{添加加密密钥}按钮，
+或者右键单击系统托盘中的 Pageant 图标，
+然后选择\q{添加加密密钥}那里。Pageant会弹出一个文件对话框，
+就像普通的\q{添加密钥}按钮一样。但它不会要求输入密码。
+相反，密钥将在主窗口中列出，
+其后有\q{(加密的)}。
 
-To start Pageant up in the first place with encrypted keys loaded into
-it, you can use the \cq{--encrypted} option on the command line. For
-example:
+要首先启动 Pageant 并在其中
+加载加密密钥，您可以在命令行上
+使用\cq{--encrypted}选项。例如：
 
 \c C:\PuTTY\pageant.exe --encrypted d:\main.ppk
 
-After a key has been decrypted for the first use, it remains
-decrypted, so that it can be used again. The main window will list
-the key with \q{(\i{re-encryptable})} after it. You can revert it
-to the previous state, where a passphrase is required, using the
-\q{\i{Re-encrypt}} button in the Pageant main window.
+在第一次使用密钥被解密后，
+它保持解密状态，以便可以再次使用。
+ 主窗口将列出带有\q{(\i{已解密})}的密钥。
+ 您可以使用 Pageant 主窗口中的\q{\i{重新加密}}按钮将
+ 其恢复到需要密码的先前状态。
 
-You can also \q{re-encrypt} all keys that were added encrypted by
-choosing \q{Re-encrypt All Keys} from the System tray menu.
-(Note that this does \e{not} discard cleartext keys that were not
-previously added encrypted!)
+您还可以通过从系统托盘菜单中选
+择\q{重新加密所有密钥}来\q{重新
+加密}所有添加的加密密钥。 （请注意，
+这\e{不会}丢弃以前未加密的明文密钥！）
 
-\s{CAUTION}: When Pageant displays a prompt to decrypt an
-already-loaded key, it cannot give keyboard focus to the prompt dialog
-box. As far as I know this is a deliberate defensive measure by
-Windows, against malicious software. So make sure you click in the
-prompt window before typing your passphrase, or else the passphrase
-might be sent to somewhere you didn't want to trust with it!
+\s{注意}：当 Pageant 显示解密
+已加载密钥的提示时，它无法将键
+盘焦点赋予提示对话框。 据我所知，
+这是 Windows 故意针对恶意软件采
+取的防御措施。 因此，请确保在输入密码
+之前单击提示窗口，否则密码可能会发送到您不想信任的地方！
 
-\H{pageant-security} Security considerations
+\H{pageant-security} 安全考虑
 
-\I{security risk}Using Pageant for public-key authentication gives you the
-convenience of being able to open multiple SSH sessions without
-having to type a passphrase every time, but also gives you the
-security benefit of never storing a decrypted private key on disk.
-Many people feel this is a good compromise between security and
-convenience.
+\I{security risk}使用 Pageant 进行公钥身份
+验证可以方便地打开多个 SSH 会话，
+而无需每次都输入密码，
+而且还可以为您提供从不将
+解密的私钥存储在磁盘上的安全优势。
+许多人认为这是安全性和便利性之间的良好折衷。
 
-It \e{is} a compromise, however. Holding your decrypted private keys
-in Pageant is better than storing them in easy-to-find disk files,
-but still less secure than not storing them anywhere at all. This is
-for two reasons:
+然而，这\e{是}一种妥协。 将解密后的私钥保
+存在 Pageant 中比将它们存储在易于查
+找的磁盘文件中要好，但仍然不如根本不将
+它们存储在任何地方安全。 这有两个原因：
 
-\b Windows unfortunately provides no way to protect pieces of memory
-from being written to the system \i{swap file}. So if Pageant is holding
-your private keys for a long period of time, it's possible that
-decrypted private key data may be written to the system swap file,
-and an attacker who gained access to your hard disk later on might
-be able to recover that data. (However, if you stored an unencrypted
-key in a disk file they would \e{certainly} be able to recover it.)
+\b 不幸的是，Windows 无法保护内存块不
+被写入系统\i{交换文件}。 因此，如果 Pageant 长时
+间持有您的私钥，则解密后的私钥数据可能会
+写入系统交换文件，并且稍后获得您硬盘访问
+权限的攻击者可能能够恢复该数据（但是，如
+果您将未加密的密钥存储在磁盘文件中，
+他们\e{当然}可以恢复它。）
 
-\b Although, like most modern operating systems, Windows prevents
-programs from accidentally accessing one another's memory space, it
-does allow programs to access one another's memory space
-deliberately, for special purposes such as debugging. This means
-that if you allow a virus, trojan, or other malicious program on to
-your Windows system while Pageant is running, it could access the
-memory of the Pageant process, extract your decrypted authentication
-keys, and send them back to its master.
+\b 尽管与大多数现代操作系统一样，Windows 可以防
+止程序意外访问彼此的内存空间，但它确实允许程
+序出于调试等特殊目的而故意访问彼此的内存空间。
+这意味着，如果您在 Pageant 运行时允许病毒、
+木马或其他恶意程序进入您的 Windows 系统，
+它可以访问 Pageant 进程的内存，
+提取您解密的身份验证密钥，
+并将它们发送回它的主人。
 
-Similarly, use of agent \e{forwarding} is a security improvement on
-other methods of one-touch authentication, but not perfect. Holding
-your keys in Pageant on your Windows box has a security advantage
-over holding them on the remote server machine itself (either in an
-agent or just unencrypted on disk), because if the server machine
-ever sees your unencrypted private key then the sysadmin or anyone
-who cracks the machine can steal the keys and pretend to be you for
-as long as they want.
+同样，使用代理\e{转发}是对其他一键式身份验证方法
+的安全改进，但并不完美。在 Windows 机器上
+的 Pageant 中保存您的密钥比将它们保存在
+远程服务器机器本身（在代理中或只是在磁盘上
+未加密）具有安全优势，因为如果服务器机器看
+到您未加密的私钥，那么系统管理员或任何人破
+解机器的人可以偷走钥匙并假装成你，
+只要他们愿意。
 
-However, the sysadmin of the server machine can always pretend to be
-you \e{on that machine}. So if you forward your agent to a server
-machine, then the sysadmin of that machine can access the forwarded
-agent connection and request signatures from any of your private keys,
-and can therefore log in to other machines as you. They can only do
-this to a limited extent - when the agent forwarding disappears they
-lose the ability - but using Pageant doesn't actually \e{prevent} the
-sysadmin (or hackers) on the server from doing this.
+但是，服务器机器的系统管理员总是可以在
+\e{那台机器上}假装是您。因此，如果您将代理转发到服
+务器计算机，那么该计算机的系统管理员可以访
+问转发的代理连接并从您的任何私钥请求签名，因此
+可以像您一样登录到其他计算机。他们只能在有限的
+范围内做到这一点 - 当代理转发消失时，他们失
+去了能力 - 但使用 Pageant 实际上并不能\e{阻止}
+服务器上的系统管理员（或黑客）这样做。
 
-Therefore, if you don't trust the sysadmin of a server machine, you
-should \e{never} use agent forwarding to that machine. (Of course
-you also shouldn't store private keys on that machine, type
-passphrases into it, or log into other machines from it in any way
-at all; Pageant is hardly unique in this respect.)
+因此，如果您不信任服务器机器的系统管理员，
+则\e{永远不应}使用代理转发到该机器。
+（当然，您也不应该在该机器上存储私钥，在其中输
+入密码或以任何方式从它登录到其他机器；
+Pageant在这方面几乎不是独一无二的。）
