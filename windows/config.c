@@ -159,7 +159,7 @@ void win_setup_config_box(struct controlbox *b, HWND *hwndp, bool has_help,
         }
     }
     ctrl_filesel(s, "自定义提示音文件：", NO_SHORTCUT,
-                 FILTER_WAVE_FILES, false, "选择声音文件",
+                 FILTER_SOUND_FILES, false, "选择声音文件",
                  HELPCTX(bell_style),
                  conf_filesel_handler, I(CONF_bell_wavefile));
 
@@ -377,7 +377,7 @@ void win_setup_config_box(struct controlbox *b, HWND *hwndp, bool has_help,
     if (!midsession && backend_vt_from_proto(PROT_SSH)) {
         s = ctrl_getset(b, "连接/SSH/X11", "x11", "X11转发");
         ctrl_filesel(s, "用于本地显示的X授权文件：", 't',
-                     NULL, false, "选择授权文件",
+                     FILTER_ALL_FILES, false, "选择授权文件",
                      HELPCTX(ssh_tunnels_xauthority),
                      conf_filesel_handler, I(CONF_xauthfile));
     }

@@ -411,8 +411,8 @@ StripCtrlChars *gtk_seat_stripctrl_new(
 static void gtk_seat_notify_remote_exit(Seat *seat);
 static void gtk_seat_update_specials_menu(Seat *seat);
 static void gtk_seat_set_busy_status(Seat *seat, BusyStatus status);
-static const char *gtk_seat_get_x_display(Seat *seat);
 #ifndef NOT_X_WINDOWS
+static const char *gtk_seat_get_x_display(Seat *seat);
 static bool gtk_seat_get_windowid(Seat *seat, long *id);
 #endif
 static void gtk_seat_set_trust_status(Seat *seat, bool trusted);
@@ -439,10 +439,11 @@ static const SeatVtable gtk_seat_vt = {
     .prompt_descriptions = gtk_seat_prompt_descriptions,
     .is_utf8 = gtk_seat_is_utf8,
     .echoedit_update = nullseat_echoedit_update,
-    .get_x_display = gtk_seat_get_x_display,
 #ifdef NOT_X_WINDOWS
+    .get_x_display = nullseat_get_x_display,
     .get_windowid = nullseat_get_windowid,
 #else
+    .get_x_display = gtk_seat_get_x_display,
     .get_windowid = gtk_seat_get_windowid,
 #endif
     .get_window_pixel_size = gtk_seat_get_window_pixel_size,
@@ -1927,6 +1928,7 @@ gint key_event(GtkWidget *widget, GdkEventKey *event, gpointer data)
             if (event->state & GDK_CONTROL_MASK)
                 break;
 
+            consumed_meta_key = false;
             end = 1 + format_small_keypad_key(
                 output+1, inst->term, sk_key, event->state & GDK_SHIFT_MASK,
                 event->state & GDK_CONTROL_MASK,
@@ -2546,13 +2548,13 @@ static void gtkwin_set_raw_mouse_mode_pointer(TermWin *tw, bool activate)
 static void compute_whole_window_size(GtkFrontend *inst,
                                       int wchars, int hchars,
                                       int *wpix, int *hpix);
-#endif
 
 static void gtkwin_deny_term_resize(void *vctx)
 {
     GtkFrontend *inst = (GtkFrontend *)vctx;
     drawing_area_setup_simple(inst);
 }
+#endif
 
 static void gtkwin_timer(void *vctx, unsigned long now)
 {
@@ -4347,12 +4349,14 @@ void modalfatalbox(const char *p, ...)
     exit(1);
 }
 
+#ifndef NOT_X_WINDOWS
 static const char *gtk_seat_get_x_display(Seat *seat)
 {
-    return gdk_get_display();
+    if (GDK_IS_X11_DISPLAY(gdk_display_get_default()))
+        return gdk_get_display();
+    return NULL;
 }
 
-#ifndef NOT_X_WINDOWS
 static bool gtk_seat_get_windowid(Seat *seat, long *id)
 {
     GtkFrontend *inst = container_of(seat, GtkFrontend, seat);

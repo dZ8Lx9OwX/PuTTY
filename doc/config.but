@@ -2385,8 +2385,14 @@ Curve25519-based方法（\q{ECDH}中包含的方法之一）并列显示，
 它的安全性不应\e{低于}通常使用的方法，
 并且也有希望抵抗新的攻击类别。。
 
-\b \q{\i{ECDH}}: elliptic curve Diffie-Hellman key exchange，
-包含有各种标准曲线和哈希算法。
+\b \q{ML-KEM / Curve25519 hybrid} and \q{ML-KEM NIST ECDH hybrid}:
+类似的混合结构的 \i{ML-KEM},是另一种基于网格的
+密钥交换方法旨在 \i{quantum-resistant}. 前者,
+ML-KEM 是与 Curve25519 的混合算法; 后者, 与 NIST P384
+或者 P256 的混合算法.
+
+\b \q{\i{ECDH}}: elliptic curve Diffie-Hellman key exchange,
+with a variety of standard curves and hash algorithms.
 
 \b The original form of \i{Diffie-Hellman key exchange}，包含
 有各种知名的分组和哈希：

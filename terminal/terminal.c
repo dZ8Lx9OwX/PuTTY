@@ -2374,6 +2374,8 @@ void term_resize_request_completed(Terminal *term)
 void term_provide_backend(Terminal *term, Backend *backend)
 {
     term->backend = backend;
+    if (term->userpass_state)
+        term_userpass_state_free(term->userpass_state);
     if (term->backend && term->cols > 0 && term->rows > 0)
         backend_size(term->backend, term->cols, term->rows);
 }

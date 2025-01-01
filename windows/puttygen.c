@@ -452,34 +452,6 @@ static INT_PTR CALLBACK PPKParamsProc(HWND hwnd, UINT msg,
 }
 
 /*
- * Prompt for a key file. Assumes the filename buffer is of size
- * FILENAME_MAX.
- */
-static bool prompt_keyfile(HWND hwnd, char *dlgtitle,
-                           char *filename, bool save, bool ppk)
-{
-    OPENFILENAME of;
-    memset(&of, 0, sizeof(of));
-    of.hwndOwner = hwnd;
-    if (ppk) {
-        of.lpstrFilter = "PuTTY私钥文件(*.ppk)\0*.ppk\0"
-            "所有文件(*.*)\0*\0\0\0";
-        of.lpstrDefExt = ".ppk";
-    } else {
-        of.lpstrFilter = "所有文件(*.*)\0*\0\0\0";
-    }
-    of.lpstrCustomFilter = NULL;
-    of.nFilterIndex = 1;
-    of.lpstrFile = filename;
-    *filename = '\0';
-    of.nMaxFile = FILENAME_MAX;
-    of.lpstrFileTitle = NULL;
-    of.lpstrTitle = dlgtitle;
-    of.Flags = 0;
-    return request_file(NULL, &of, false, save);
-}
-
-/*
  * Dialog-box function for the Licence box.
  */
 static INT_PTR CALLBACK LicenceProc(HWND hwnd, UINT msg,
@@ -2014,7 +1986,6 @@ static INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT msg,
             state =
                 (struct MainDlgState *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
             if (state->key_exists) {
-                char filename[FILENAME_MAX];
                 char *passphrase, *passphrase2;
                 int type, realtype;
 
@@ -2066,26 +2037,28 @@ static INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT msg,
                         break;
                     }
                 }
-                if (prompt_keyfile(hwnd, "将私钥另存为:",
-                                   filename, true, (type == realtype))) {
+                Filename *fn = request_file(
+                    hwnd, "将私钥另存为:", NULL, true, NULL, false,
+                    (type==realtype ? FILTER_KEY_FILES : FILTER_ALL_FILES));
+                if (fn) {
                     int ret;
-                    FILE *fp = fopen(filename, "r");
+                    FILE *fp = f_open(fn, "r", false);
                     if (fp) {
                         char *buffer;
                         fclose(fp);
                         buffer = dupprintf("覆盖现有文件\n%s?",
-                                           filename);
+                                           filename_to_str(fn));
                         ret = MessageBox(hwnd, buffer, "cnPuTTYgen警告！！！",
                                          MB_YESNO | MB_ICONWARNING);
                         sfree(buffer);
                         if (ret != IDYES) {
                             burnstr(passphrase);
+                            filename_free(fn);
                             break;
                         }
                     }
 
                     if (state->ssh2) {
-                        Filename *fn = filename_from_str(filename);
                         if (type != realtype)
                             ret = export_ssh2(fn, type, &state->ssh2key,
                                               *passphrase ? passphrase : NULL);
@@ -2093,21 +2066,19 @@ static INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT msg,
                             ret = ppk_save_f(fn, &state->ssh2key,
                                              *passphrase ? passphrase : NULL,
                                              &save_params);
-                        filename_free(fn);
                     } else {
-                        Filename *fn = filename_from_str(filename);
                         if (type != realtype)
                             ret = export_ssh1(fn, type, &state->key,
                                               *passphrase ? passphrase : NULL);
                         else
                             ret = rsa1_save_f(fn, &state->key,
                                               *passphrase ? passphrase : NULL);
-                        filename_free(fn);
                     }
                     if (ret <= 0) {
                         MessageBox(hwnd, "无法保存密钥文件！！！",
                                    "cnPuTTYgen错误！！！", MB_OK | MB_ICONERROR);
                     }
+                    filename_free(fn);
                 }
                 burnstr(passphrase);
             }
@@ -2118,23 +2089,26 @@ static INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT msg,
             state =
                 (struct MainDlgState *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
             if (state->key_exists) {
-                char filename[FILENAME_MAX];
-                if (prompt_keyfile(hwnd, "将公钥另存为:",
-                                   filename, true, false)) {
+                Filename *fn = request_file(
+                    hwnd, "将公钥另存为:", NULL, true, NULL, false,
+                    FILTER_ALL_FILES);
+                if (fn) {
                     int ret;
-                    FILE *fp = fopen(filename, "r");
+                    FILE *fp = f_open(fn, "r", false);
                     if (fp) {
                         char *buffer;
                         fclose(fp);
                         buffer = dupprintf("覆盖现有文件\n%s？？",
-                                           filename);
+                                           filename_to_str(fn));
                         ret = MessageBox(hwnd, buffer, "cnPuTTYgen警告！！！",
                                          MB_YESNO | MB_ICONWARNING);
                         sfree(buffer);
-                        if (ret != IDYES)
+                        if (ret != IDYES) {
+                            filename_free(fn);
                             break;
+                        }
                     }
-                    fp = fopen(filename, "w");
+                    fp = f_open(fn, "w", false);
                     if (!fp) {
                         MessageBox(hwnd, "无法打开密钥文件！！！",
                                    "cnPuTTYgen错误！！！", MB_OK | MB_ICONERROR);
@@ -2155,6 +2129,7 @@ static INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT msg,
                                        "cnPuTTYgen错误！！！", MB_OK | MB_ICONERROR);
                         }
                     }
+                    filename_free(fn);
                 }
             }
             break;
@@ -2165,10 +2140,11 @@ static INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT msg,
             state =
                 (struct MainDlgState *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
             if (!state->generation_thread_exists) {
-                char filename[FILENAME_MAX];
-                if (prompt_keyfile(hwnd, "加载私钥:", filename, false,
-                                   LOWORD(wParam) == IDC_LOAD)) {
-                    Filename *fn = filename_from_str(filename);
+                Filename *fn = request_file(
+                    hwnd, "加载私钥:", NULL, false, NULL, false,
+                    (LOWORD(wParam) == IDC_LOAD ?
+                     FILTER_KEY_FILES : FILTER_ALL_FILES));
+                if (fn) {
                     load_key_file(hwnd, state, fn, LOWORD(wParam) != IDC_LOAD);
                     filename_free(fn);
                 }
@@ -2180,10 +2156,10 @@ static INT_PTR CALLBACK MainDlgProc(HWND hwnd, UINT msg,
             state =
                 (struct MainDlgState *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
             if (state->key_exists && !state->generation_thread_exists) {
-                char filename[FILENAME_MAX];
-                if (prompt_keyfile(hwnd, "加载证书：", filename, false,
-                                   false)) {
-                    Filename *fn = filename_from_str(filename);
+                Filename *fn = request_file(
+                    hwnd, "加载证书:", NULL, false, NULL, false,
+                    FILTER_ALL_FILES);
+                if (fn) {
                     add_certificate(hwnd, state, fn);
                     filename_free(fn);
                 }

@@ -453,9 +453,10 @@ void setup_ca_config_box(struct controlbox *b)
                      P(st), P(NULL));
     c->column = 0;
     st->ca_pubkey_edit = c;
-    c = ctrl_filesel(s, "读取文件", NO_SHORTCUT, NULL, false,
-                     "选择证书颁发机构的公钥文件",
-                     HELPCTX(ssh_kex_cert), ca_pubkey_file_handler, P(st));
+    c = ctrl_filesel(
+        s, "读取文件", NO_SHORTCUT, FILTER_ALL_FILES, false,
+        "选择证书颁发机构的公钥文件",
+        HELPCTX(ssh_kex_cert), ca_pubkey_file_handler, P(st));
     c->fileselect.just_button = true;
     c->align_next_to = st->ca_pubkey_edit;
     c->column = 1;
