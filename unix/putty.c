@@ -87,6 +87,7 @@ const unsigned cmdline_tooltype =
 void setup(bool single)
 {
     sk_init();
+    enable_dit();
     settings_set_default_protocol(be_default_protocol);
     /* Find the appropriate default port. */
     {

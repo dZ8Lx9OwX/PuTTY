@@ -448,6 +448,7 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
     int guess_width, guess_height;
 
     dll_hijacking_protection();
+    enable_dit();
 
     hinst = inst;
     hprev = prev;

@@ -1518,6 +1518,7 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
     size_t nclkeys = 0, clkeysize = 0;
 
     dll_hijacking_protection();
+    enable_dit();
 
     hinst = inst;
 

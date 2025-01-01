@@ -1312,6 +1312,7 @@ bool platform_pmull_neon_available(void);
 bool platform_sha256_neon_available(void);
 bool platform_sha1_neon_available(void);
 bool platform_sha512_neon_available(void);
+bool platform_dit_available(void);
 
 /*
  * PuTTY version number formatted as an SSH version string.
@@ -2048,3 +2049,13 @@ enum {
     PLUGIN_NOTYPE = 256, /* packet too short to have a type */
     PLUGIN_EOF = 257 /* EOF from auth plugin */
 };
+
+/*
+ * CPU features for security
+ */
+
+#if HAVE_ARM_DIT
+void enable_dit(void);
+#else
+#define enable_dit() ((void)0)
+#endif

@@ -3185,22 +3185,18 @@ static void toggle_mode(Terminal *term, int mode, int query, bool state)
 }
 
 /*
- * Process an OSC sequence: set window title or icon name.
+ * Process an OSC or similar sequence, with a whole embedded string,
+ * like setting the window title or icon name.
  */
 static void do_osc(Terminal *term)
 {
-    if (term->osc_is_apc) {
-        /* This OSC was really an APC, and we don't support that
-         * sequence at all. We only recognise it in order to ignore it
-         * and filter it out of input. */
-        return;
-    }
-
-    if (term->osc_w) {
+    switch (term->osc_type) {
+      case OSCLIKE_OSC_W:
         while (term->osc_strlen--)
             term->wordness[(unsigned char)term->osc_string[term->osc_strlen]] =
                 term->esc_args[0];
-    } else {
+        break;
+      case OSCLIKE_OSC:
         term->osc_string[term->osc_strlen] = '\0';
         switch (term->esc_args[0]) {
           case 0:
@@ -3242,6 +3238,11 @@ static void do_osc(Terminal *term)
             }
             break;
         }
+        break;
+      default:
+        /* APC, SOS and PM are recognised as control sequences but
+         * ignored. PuTTY implements no support for any of them. */
+        break;
     }
 }
 
@@ -4122,21 +4123,24 @@ static void term_out(Terminal *term, bool called_from_term_data)
                     /* Compatibility is nasty here, xterm, linux, decterm yuk! */
                     compatibility(OTHER);
                     term->termstate = SEEN_OSC;
-                    term->osc_is_apc = false;
+                    term->osc_type = OSCLIKE_OSC;
                     term->osc_strlen = 0;
                     term->esc_args[0] = 0;
                     term->esc_nargs = 1;
                     break;
+                  case 'X':             /* SOS: Start of String */
+                  case '^':             /* PM: privacy message */
                   case '_':             /* APC: application program command */
-                    /* APC sequences are just a string, terminated by
-                     * ST or (I've observed in practice) ^G. That is,
-                     * they have the same termination convention as
-                     * OSC. So we handle them by going straight into
-                     * OSC_STRING state and setting a flag indicating
-                     * that it's not really an OSC. */
+                    /* SOS, PM, and APC sequences are just a string, terminated
+                     * by ST or (I've observed in practice for APC) ^G. That
+                     * is, they have the same termination convention as OSC. So
+                     * we handle them by going straight into OSC_STRING state
+                     * and setting a flag indicating that it's not really an
+                     * OSC. */
                     compatibility(OTHER);
                     term->termstate = SEEN_OSC;
-                    term->osc_is_apc = true;
+                    term->osc_type = (c == 'X' ? OSCLIKE_SOS :
+                                      c == '^' ? OSCLIKE_PM : OSCLIKE_APC);
                     term->osc_strlen = 0;
                     term->esc_args[0] = 0;
                     term->esc_nargs = 1;
@@ -5245,7 +5249,7 @@ static void term_out(Terminal *term, bool called_from_term_data)
                     }
                 break;
               case SEEN_OSC:
-                term->osc_w = false;
+                term->osc_type = OSCLIKE_OSC;
                 switch (c) {
                   case 'P':            /* Linux palette sequence */
                     term->termstate = SEEN_OSC_P;
@@ -5258,7 +5262,7 @@ static void term_out(Terminal *term, bool called_from_term_data)
                     break;
                   case 'W':            /* word-set */
                     term->termstate = SEEN_OSC_W;
-                    term->osc_w = true;
+                    term->osc_type = OSCLIKE_OSC_W;
                     break;
                   case '0':
                   case '1':

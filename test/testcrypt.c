@@ -1684,6 +1684,8 @@ int main(int argc, char **argv)
     const char *infile = NULL, *outfile = NULL;
     bool doing_opts = true;
 
+    enable_dit(); /* in case this is used as a crypto helper (Hyrum's Law) */
+
     while (--argc > 0) {
         char *p = *++argv;
 

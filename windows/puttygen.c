@@ -2368,6 +2368,7 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
     struct InitialParams params[1];
 
     dll_hijacking_protection();
+    enable_dit();
 
     init_common_controls();
     hinst = inst;

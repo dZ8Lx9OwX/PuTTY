@@ -1879,6 +1879,11 @@ int main(int argc, char **argv)
     bool keep_outfiles = false;
     bool test_names_given = false;
 
+    /* One day, perhaps, if I ever get this test to work on Arm, we
+     * might actually _check_ DIT is enabled, and check we're sticking
+     * to the precise list of DIT-affected instructions */
+    enable_dit();
+
     memset(tests_to_run, 1, sizeof(tests_to_run));
     random_hash = ssh_hash_new(&ssh_sha256);
 

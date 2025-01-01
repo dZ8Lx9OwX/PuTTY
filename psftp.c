@@ -2803,6 +2803,7 @@ int psftp_main(CmdlineArgList *arglist)
     Filename *batchfile = NULL;
 
     sk_init();
+    enable_dit();
 
     userhost = user = NULL;
 
