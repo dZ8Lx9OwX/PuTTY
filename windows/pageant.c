@@ -2,6 +2,15 @@
  * Pageant: the PuTTY Authentication Agent.
  */
 
+ /*
+  * JK: disk config 0.24 from 8. 12. 2024
+  *
+  * rewritten for storing information primary to disk
+  * reasonable error handling and reporting except for
+  * memory allocation errors (not enough memory)
+  *
+  * http://jakub.kotrla.net/putty/
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -74,6 +83,54 @@ static filereq *keypath = NULL;
 #define PUTTY_DEFAULT     "Default%20Settings"
 static int initial_menuitems_count;
 
+
+/* JK: buffers for path strings */
+static char oldpath[2 * MAX_PATH] = "\0";
+static char puttypath[2 * MAX_PATH] = "\0";
+
+/* JK: my generic function for simplyfing error reporting */
+DWORD errorShow(const char* pcErrText, const char* pcErrParam) {
+    HWND hwRParent;
+    DWORD errorCode;
+    char pcBuf[16];
+    char* pcMessage;
+
+    if (pcErrParam != NULL) {
+        pcMessage = snewn(strlen(pcErrParam) + strlen(pcErrText) + 31, char);
+    }
+    else {
+        pcMessage = snewn(strlen(pcErrText) + 31, char);
+    }
+
+    errorCode = GetLastError();
+    ltoa(errorCode, pcBuf, 10);
+
+    strcpy(pcMessage, "Error: ");
+    strcat(pcMessage, pcErrText);
+    strcat(pcMessage, "\n");
+
+    if (pcErrParam) {
+        strcat(pcMessage, pcErrParam);
+        strcat(pcMessage, "\n");
+    }
+    strcat(pcMessage, "Error code: ");
+    strcat(pcMessage, pcBuf);
+
+    /* JK: get parent-window and show */
+    hwRParent = GetActiveWindow();
+    if (hwRParent != NULL) { hwRParent = GetLastActivePopup(hwRParent); }
+
+    if (MessageBox(hwRParent, pcMessage, "Error", MB_OK | MB_APPLMODAL | MB_ICONEXCLAMATION) == 0) {
+        /* JK: this is really bad -> just ignore */
+        return 0;
+    }
+
+    sfree(pcMessage);
+    return errorCode;
+};
+
+
+
 /*
  * Print a modal (Really Bad) message box and perform a fatal exit.
  */
@@ -85,7 +142,7 @@ void modalfatalbox(const char *fmt, ...)
     va_start(ap, fmt);
     buf = dupvprintf(fmt, ap);
     va_end(ap);
-    MessageBox(traywindow, buf, "cnPageant致命错误",
+    MessageBox(traywindow, buf, "Pageant Fatal Error",
                MB_SYSTEMMODAL | MB_ICONERROR | MB_OK);
     sfree(buf);
     exit(1);
@@ -134,9 +191,9 @@ static INT_PTR CALLBACK AboutProc(HWND hwnd, UINT msg,
       case WM_INITDIALOG: {
         char *buildinfo_text = buildinfo("\r\n");
         char *text = dupprintf(
-            "cnPageant\r\n\r\n%s\r\n\r\n%s\r\n\r\n%s",
+            "Pageant\r\n\r\n%s\r\n\r\n%s\r\n\r\n%s",
             ver, buildinfo_text,
-            "(C)" SHORT_COPYRIGHT_DETAILS " 保留所有权利。");
+            "\251 " SHORT_COPYRIGHT_DETAILS ". All rights reserved.");
         sfree(buildinfo_text);
         SetDlgItemText(hwnd, IDC_ABOUT_TEXTBOX, text);
         MakeDlgItemBorderless(hwnd, IDC_ABOUT_TEXTBOX);
@@ -297,15 +354,17 @@ static INT_PTR CALLBACK PassphraseProc(HWND hwnd, UINT msg,
  */
 void old_keyfile_warning(void)
 {
-    static const char mbtitle[] = "PuTTY密钥文件警告";
+    static const char mbtitle[] = "PuTTY Key File Warning";
     static const char message[] =
-        "您正在加载一个旧版本的SSH-2私钥文件。\n"
-        "这意味着当前密钥文件不是完全防篡改的。\n"
-        "未来版本的程序可能会停止支持这种私钥，\n"
-        "所有我们建议您将密钥转换为新的格式。\n"
+        "You are loading an SSH-2 private key which has an\n"
+        "old version of the file format. This means your key\n"
+        "file is not fully tamperproof. Future versions of\n"
+        "PuTTY may stop supporting this private key format,\n"
+        "so we recommend you convert your key to the new\n"
+        "format.\n"
         "\n"
-        "将密钥加载到PuTTYgen中，只需要再次保\n"
-        "存即可完成转换。";
+        "You can perform this conversion by loading the key\n"
+        "into PuTTYgen and then saving it again.";
 
     MessageBox(NULL, message, mbtitle, MB_OK);
 }
@@ -396,9 +455,9 @@ static void keylist_update_callback(
     if (ctx->hashwidth < sz.cx) ctx->hashwidth = sz.cx;
 
     if (ext_flags & LIST_EXTENDED_FLAG_HAS_NO_CLEARTEXT_KEY) {
-        put_fmt(disp->info, "(加密的)");
+        put_fmt(disp->info, "(encrypted)");
     } else if (ext_flags & LIST_EXTENDED_FLAG_HAS_ENCRYPTED_KEY_FILE) {
-        put_fmt(disp->info, "(已解密)");
+        put_fmt(disp->info, "(re-encryptable)");
 
         /* At least one key can be re-encrypted */
         ctx->enable_reencrypt_controls = true;
@@ -554,7 +613,7 @@ static void prompt_add_keyfile(bool encrypted)
     *filelist = '\0';
     of.nMaxFile = 8192;
     of.lpstrFileTitle = NULL;
-    of.lpstrTitle = "选择私钥文件";
+    of.lpstrTitle = "Select Private Key File";
     of.Flags = OFN_ALLOWMULTISELECT | OFN_EXPLORER;
     if (request_file(keypath, &of, true, false)) {
         if (strlen(filelist) > of.nFileOffset) {
@@ -598,8 +657,8 @@ static INT_PTR CALLBACK KeyListProc(HWND hwnd, UINT msg,
     } fptypes[] = {
         {"SHA256", SSH_FPTYPE_SHA256},
         {"MD5", SSH_FPTYPE_MD5},
-        {"SHA256 (含证书)", SSH_FPTYPE_SHA256_CERT},
-        {"MD5    (含证书)", SSH_FPTYPE_MD5_CERT},
+        {"SHA256 including certificate", SSH_FPTYPE_SHA256_CERT},
+        {"MD5 including certificate", SSH_FPTYPE_MD5_CERT},
     };
 
     switch (msg) {
@@ -884,7 +943,7 @@ static BOOL AddTrayIcon(HWND hwnd)
     tnid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
     tnid.uCallbackMessage = WM_SYSTRAY;
     tnid.hIcon = hicon = LoadIcon(hinst, MAKEINTRESOURCE(201));
-    strcpy(tnid.szTip, "Pageant(PuTTY身份验证代理)");
+    strcpy(tnid.szTip, "Pageant (PuTTY authentication agent)");
 
     res = Shell_NotifyIcon(NIM_ADD, &tnid);
 
@@ -893,43 +952,260 @@ static BOOL AddTrayIcon(HWND hwnd)
     return res;
 }
 
-/* Update the saved-sessions menu. */
+/*
+ * JK: rewritten to be able to load configuration from disk
+ * as rewritten putty saves it there - http://jakub.kotrla.net/putty/
+ */
 static void update_sessions(void)
 {
     int num_entries;
     HKEY hkey;
-    TCHAR buf[MAX_PATH + 1];
+    TCHAR buf[MAX_PATH + 128];
     MENUITEMINFO mii;
-    strbuf *sb;
 
+    HANDLE hFile;
+    char* fileCont = NULL;
+    DWORD fileSize;
+    DWORD bytesRead;
+    char* p = NULL;
+    char* p2 = NULL;
+    char* pcBuf = NULL;
+    strbuf* sb;
+
+    char sesspath[2 * MAX_PATH] = "\0";
+    char curdir[2 * MAX_PATH] = "\0";
+    char sessionsuffix[16] = "\0";
+    WIN32_FIND_DATA FindFileData;
     int index_key, index_menu;
 
-    if (!putty_path)
-        return;
+    if (!putty_path) return;
 
-    if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER, PUTTY_REGKEY, &hkey))
-        return;
-
+    /* clear old menu */
     for (num_entries = GetMenuItemCount(session_menu);
         num_entries > initial_menuitems_count;
         num_entries--)
         RemoveMenu(session_menu, 0, MF_BYPOSITION);
 
+    /* init for new menu */
     index_key = 0;
     index_menu = 0;
 
+
+    /* JK:  save path/curdir */
+    GetCurrentDirectory((MAX_PATH * 2), oldpath);
+
+
+    /* JK: try curdir for putty.conf first */
+    hFile = CreateFile("putty.conf", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    if (hFile != INVALID_HANDLE_VALUE)
+    {
+        /* JK: there is a putty.conf in curdir - use it and use curdir as puttypath */
+        GetCurrentDirectory((MAX_PATH * 2), puttypath);
+        GetCurrentDirectory((MAX_PATH * 2), curdir);
+        CloseHandle(hFile);
+    }
+    else {
+        /* JK: get where putty.exe is */
+        if (GetModuleFileName(NULL, puttypath, (MAX_PATH * 2)) != 0)
+        {
+            p = strrchr(puttypath, '\\');
+            if (p)
+            {
+                *p = '\0';
+            }
+            SetCurrentDirectory(puttypath);
+        }
+        else GetCurrentDirectory((MAX_PATH * 2), puttypath);
+    }
+
+    /* JK: set default values - if there is a config file, it will be overwitten */
+    strcpy(sesspath, puttypath);
+    strcat(sesspath, "\\sessions");
+
+    hFile = CreateFile("putty.conf", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    /* JK: now we can pre-clean-up */
+    SetCurrentDirectory(oldpath);
+
+    /* JK: read from putty.conf if is there */
+    if (hFile != INVALID_HANDLE_VALUE) {
+        fileSize = GetFileSize(hFile, NULL);
+        fileCont = snewn(fileSize + 16, char);
+
+        if (!ReadFile(hFile, fileCont, fileSize, &bytesRead, NULL)) {
+            errorShow("Unable to read configuration file, falling back to defaults", NULL);
+
+            /* JK: default values are already there - just clean-up */
+        }
+        else
+        {
+            /* JK: parse conf file to path variables */
+            *(fileCont + fileSize + 1) = '\0';
+            *(fileCont + fileSize) = '\n';
+            p = fileCont;
+            while (p) {
+                if (*p == ';') {        /* JK: comment -> skip line */
+                    p = strchr(p, '\n');
+                    ++p;
+                    continue;
+                }
+                p2 = strchr(p, '=');
+                if (!p2) break;
+                *p2 = '\0';
+                ++p2;
+
+                if (!strcmp(p, "sessions")) {
+                    p = strchr(p2, '\n');
+                    *p = '\0';
+
+                    /* This is actually call to joinPath, done inline and optimized just for pageant */
+                    pcBuf = snewn(MAX_PATH + 1, char);
+
+                    /* at first ExpandEnvironmentStrings */
+                    if (0 == ExpandEnvironmentStrings(p2, pcBuf, MAX_PATH)) {
+                        /* JK: failure -> revert back - but it ussualy won't work, so report error to user! */
+                        errorShow("Unable to ExpandEnvironmentStrings for session path", p2);
+                        strncpy(pcBuf, p2, strlen(p2));
+                    }
+
+                    if ((*pcBuf == '/') || (*pcBuf == '\\')) {
+                        /* JK: everything ok */
+                        strcpy(sesspath, curdir);
+                        strcat(sesspath, pcBuf);
+                    }
+                    else {
+                        if (*(pcBuf + 1) == ':') {
+                            /* JK: absolute path */
+                            strcpy(sesspath, pcBuf);
+                        }
+                        else {
+                            /* JK: some weird relative path - add '\' */
+                            strcpy(sesspath, curdir);
+                            strcat(sesspath, "\\");
+                            strcat(sesspath, pcBuf);
+                        }
+                    }
+                    sfree(pcBuf);
+
+                    p2 = sesspath + strlen(sesspath) - 1;
+                    while ((*p2 == ' ') || (*p2 == '\n') || (*p2 == '\r') || (*p2 == '\t')) --p2;
+                    *(p2 + 1) = '\0';
+                }
+                else if (!strcmp(p, "sessionsuffix")) {
+                    p = strchr(p2, '\n');
+                    *p = '\0';
+                    strcpy(sessionsuffix, p2);
+                    p2 = sessionsuffix + strlen(sessionsuffix) - 1;
+                    while ((*p2 == ' ') || (*p2 == '\n') || (*p2 == '\r') || (*p2 == '\t')) --p2;
+                    *(p2 + 1) = '\0';
+                }
+                else {
+                    p = strchr(p2, '\n');
+                }
+                /* JK: else if - pageant don't care about other stuff */
+                ++p;
+            }
+        }
+
+        CloseHandle(hFile);
+        sfree(fileCont);
+    }
+    /* else - INVALID_HANDLE {
+             * JK: unable to read conf file - probably doesn't exists
+             * we won't create one, user wants putty light, just fall back to defaults
+             * and defaults are already there
+    }*/
+
+    /* JK: we have path to sessions */
+
+    if (SetCurrentDirectory(sesspath)) {
+
+        /* JK: we're able to load from files */
+        hFile = FindFirstFile("*", &FindFileData);
+
+        /* JK: skip directories ("." and ".." too) */
+        while ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) {
+            if (!FindNextFile(hFile, &FindFileData)) {
+                break;
+            }
+        }
+
+        sb = strbuf_new();
+
+        /* JK: add first file */
+        if (hFile != INVALID_HANDLE_VALUE) {
+            unescape_registry_key(FindFileData.cFileName, sb);
+
+            /* JK: cut off session.suffix */
+            p = sb->s + strlen(sb->s) - strlen(sessionsuffix);
+            if (strncmp(p, sessionsuffix, strlen(sessionsuffix)) == 0) {
+                *p = '\0';
+
+                if (strcmp(sb->s, PUTTY_DEFAULT) != 0) {
+                    memset(&mii, 0, sizeof(mii));
+                    mii.cbSize = sizeof(mii);
+                    mii.fMask = MIIM_TYPE | MIIM_STATE | MIIM_ID;
+                    mii.fType = MFT_STRING;
+                    mii.fState = MFS_ENABLED;
+                    mii.wID = (index_menu * 16) + IDM_SESSIONS_BASE;
+                    mii.dwTypeData = sb->s;
+                    InsertMenuItem(session_menu, index_menu, TRUE, &mii);
+                    index_menu++;
+                }
+            }
+        }
+
+        /* JK: enum files */
+        while (FindNextFile(hFile, &FindFileData)) {
+            /* JK: add files as menu item one-by-one */
+
+            sb->len = 0;
+            unescape_registry_key(FindFileData.cFileName, sb);
+
+            /* JK: cut off sessionsuffix */
+            p = sb->s + strlen(sb->s) - strlen(sessionsuffix);
+            if (strncmp(p, sessionsuffix, strlen(sessionsuffix)) == 0) {
+                *p = '\0';
+
+                if (strcmp(sb->s, PUTTY_DEFAULT) != 0) {
+                    memset(&mii, 0, sizeof(mii));
+                    mii.cbSize = sizeof(mii);
+                    mii.fMask = MIIM_TYPE | MIIM_STATE | MIIM_ID;
+                    mii.fType = MFT_STRING;
+                    mii.fState = MFS_ENABLED;
+                    mii.wID = (index_menu * 16) + IDM_SESSIONS_BASE;
+                    mii.dwTypeData = sb->s;
+                    InsertMenuItem(session_menu, index_menu, TRUE, &mii);
+                    index_menu++;
+                }
+            }
+        }
+
+        FindClose(hFile);
+        strbuf_free(sb);
+        SetCurrentDirectory(curdir);
+    }
+
+    /* JK: load keys from registry */
+    if (ERROR_SUCCESS != RegOpenKey(HKEY_CURRENT_USER, PUTTY_REGKEY, &hkey)) {
+        return;
+    }
+
     sb = strbuf_new();
     while (ERROR_SUCCESS == RegEnumKey(hkey, index_key, buf, MAX_PATH)) {
-        if (strcmp(buf, PUTTY_DEFAULT) != 0) {
-            strbuf_clear(sb);
-            unescape_registry_key(buf, sb);
+        strbuf_clear(sb);
+        unescape_registry_key(buf, sb);
 
+        if (strcmp(buf, PUTTY_DEFAULT) != 0) {
             memset(&mii, 0, sizeof(mii));
             mii.cbSize = sizeof(mii);
             mii.fMask = MIIM_TYPE | MIIM_STATE | MIIM_ID;
             mii.fType = MFT_STRING;
             mii.fState = MFS_ENABLED;
             mii.wID = (index_menu * 16) + IDM_SESSIONS_BASE;
+            /* JK: add [registry] mark */
+            put_fmt(sb, " [registry]");
             mii.dwTypeData = sb->s;
             InsertMenuItem(session_menu, index_menu, true, &mii);
             index_menu++;
@@ -945,7 +1221,7 @@ static void update_sessions(void)
         mii.fMask = MIIM_TYPE | MIIM_STATE;
         mii.fType = MFT_STRING;
         mii.fState = MFS_GRAYED;
-        mii.dwTypeData = _T("(暂无会话)");
+        mii.dwTypeData = _T("(No sessions)");
         InsertMenuItem(session_menu, index_menu, true, &mii);
     }
 }
@@ -1116,7 +1392,7 @@ static char *answer_filemapping_message(const char *mapname)
 
     maphandle = OpenFileMapping(FILE_MAP_ALL_ACCESS, false, mapname);
     if (maphandle == NULL || maphandle == INVALID_HANDLE_VALUE) {
-        err = dupprintf("打开文件映射(\"%s\"): %s",
+        err = dupprintf("OpenFileMapping(\"%s\"): %s",
                         mapname, win_strerror(GetLastError()));
         goto cleanup;
     }
@@ -1129,20 +1405,20 @@ static char *answer_filemapping_message(const char *mapname)
         DWORD retd;
 
         if ((expectedsid = get_user_sid()) == NULL) {
-            err = dupstr("无法获取用户SID");
+            err = dupstr("unable to get user SID");
             goto cleanup;
         }
 
         if ((expectedsid_bc = get_default_sid()) == NULL) {
-            err = dupstr("无法获取默认SID");
+            err = dupstr("unable to get default SID");
             goto cleanup;
         }
 
         if ((retd = p_GetSecurityInfo(
                  maphandle, SE_KERNEL_OBJECT, OWNER_SECURITY_INFORMATION,
                  &mapsid, NULL, NULL, NULL, &psd) != ERROR_SUCCESS)) {
-            err = dupprintf("无法获取文件映射的所有者: "
-                            "GetSecurityInfo返回: %s",
+            err = dupprintf("unable to get owner of file mapping: "
+                            "GetSecurityInfo returned: %s",
                             win_strerror(retd));
             goto cleanup;
         }
@@ -1163,7 +1439,7 @@ static char *answer_filemapping_message(const char *mapname)
 
         if (!EqualSid(mapsid, expectedsid) &&
             !EqualSid(mapsid, expectedsid_bc)) {
-            err = dupstr("文件映射的SID出现错误");
+            err = dupstr("wrong owning SID of file mapping");
             goto cleanup;
         }
     } else {
@@ -1174,7 +1450,7 @@ static char *answer_filemapping_message(const char *mapname)
 
     mapaddr = MapViewOfFile(maphandle, FILE_MAP_WRITE, 0, 0, 0);
     if (!mapaddr) {
-        err = dupprintf("无法获得文件映射视图: %s",
+        err = dupprintf("unable to obtain view of file mapping: %s",
                         win_strerror(GetLastError()));
         goto cleanup;
     }
@@ -1187,14 +1463,14 @@ static char *answer_filemapping_message(const char *mapname)
         MEMORY_BASIC_INFORMATION mbi;
         size_t mbiSize = VirtualQuery(mapaddr, &mbi, sizeof(mbi));
         if (mbiSize == 0) {
-            err = dupprintf("无法查询文件映射视图: %s",
+            err = dupprintf("unable to query view of file mapping: %s",
                             win_strerror(GetLastError()));
             goto cleanup;
         }
         if (mbiSize < (offsetof(MEMORY_BASIC_INFORMATION, RegionSize) +
                        sizeof(mbi.RegionSize))) {
-            err = dupstr("返回的数据太少，无法获取"
-                         "区域大小");
+            err = dupstr("VirtualQuery returned too little data to get "
+                         "region size");
             goto cleanup;
         }
 
@@ -1204,7 +1480,7 @@ static char *answer_filemapping_message(const char *mapname)
     debug("region size = %"SIZEu"\n", mapsize);
 #endif
     if (mapsize < 5) {
-        err = dupstr("映射小于可能的最小请求");
+        err = dupstr("mapping smaller than smallest possible request");
         goto cleanup;
     }
 
@@ -1263,7 +1539,7 @@ static LRESULT CALLBACK TrayWndProc(HWND hwnd, UINT message,
 
     switch (message) {
       case WM_CREATE:
-        msgTaskbarCreated = RegisterWindowMessage(_T("任务栏已创建"));
+        msgTaskbarCreated = RegisterWindowMessage(_T("TaskbarCreated"));
         break;
       default:
         if (message==msgTaskbarCreated) {
@@ -1309,10 +1585,11 @@ static LRESULT CALLBACK TrayWndProc(HWND hwnd, UINT message,
             if (restrict_putty_acl)
                 strcat(cmdline, "&R");
 
+            /* JK: execute putty.exe with working directory same as is for pageant.exe */
             if ((INT_PTR)ShellExecute(hwnd, NULL, putty_path, cmdline,
-                                      _T(""), SW_SHOW) <= 32) {
-                MessageBox(NULL, "无法执行PuTTY！！",
-                           "错误", MB_OK | MB_ICONERROR);
+                                    putty_path, SW_SHOW) <= 32) {
+                MessageBox(NULL, "Unable to execute PuTTY!",
+                           "Error", MB_OK | MB_ICONERROR);
             }
             break;
           }
@@ -1384,9 +1661,10 @@ static LRESULT CALLBACK TrayWndProc(HWND hwnd, UINT message,
                     strcat(param, "&R");
                 strcat(param, "@");
                 strcat(param, mii.dwTypeData);
+                 /* JK: execute putty.exe with working directory same as is for pageant.exe */
                 if ((INT_PTR)ShellExecute(hwnd, NULL, putty_path, param,
-                                          _T(""), SW_SHOW) <= 32) {
-                    MessageBox(NULL, "无法执行PuTTY！！", "错误",
+                                         puttypath, SW_SHOW) <= 32) {
+                    MessageBox(NULL, "Unable to execute PuTTY!", "Error",
                                MB_OK | MB_ICONERROR);
                 }
             }
@@ -1463,7 +1741,7 @@ void spawn_cmd(const char *cmdline, const char *args, int show)
     if (ShellExecute(NULL, _T("open"), cmdline,
                      args, NULL, show) <= (HINSTANCE) 32) {
         char *msg;
-        msg = dupprintf("运行失败\"%s\": %s", cmdline,
+        msg = dupprintf("Failed to run \"%s\": %s", cmdline,
                         win_strerror(GetLastError()));
         MessageBox(NULL, msg, APPNAME, MB_OK | MB_ICONEXCLAMATION);
         sfree(msg);
@@ -1507,7 +1785,7 @@ static NORETURN void opt_error(const char *fmt, ...)
     char *msg = dupvprintf(fmt, ap);
     va_end(ap);
 
-    MessageBox(NULL, msg, "cnPageant命令行错误", MB_ICONERROR | MB_OK);
+    MessageBox(NULL, msg, "Pageant command line error", MB_ICONERROR | MB_OK);
 
     exit(1);
 }
@@ -1555,9 +1833,9 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
          */
         if (!got_advapi()) {
             MessageBox(NULL,
-                       "无法安全访问API，cnPageant会\n"
-                       "禁止运行，以防导致安全漏洞",
-                       "cnPageant致命错误", MB_ICONERROR | MB_OK);
+                       "Unable to access security APIs. Pageant will\n"
+                       "not run, in case it causes a security breach.",
+                       "Pageant Fatal Error", MB_ICONERROR | MB_OK);
             return 1;
         }
     }
@@ -1647,7 +1925,7 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
             }
             break;
         } else {
-            opt_error("无法识别的选项：'%s'\n",
+            opt_error("unrecognised option '%s'\n",
                       cmdline_arg_to_str(amo.arglist->args[amo.index]));
         }
     }
@@ -1666,7 +1944,7 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
         mutex = lock_interprocess_mutex(mutexname, &err);
         sfree(mutexname);
         if (!mutex) {
-            MessageBox(NULL, err, "cnPageant错误", MB_ICONERROR | MB_OK);
+            MessageBox(NULL, err, "Pageant Error", MB_ICONERROR | MB_OK);
             return 1;
         }
     }
@@ -1723,10 +2001,10 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
             char *pipename = agent_named_pipe_name();
             Socket *sock = new_named_pipe_listener(pipename, pl_plug);
             if (sk_socket_error(sock)) {
-                char *err = dupprintf("无法在 %s 打开命名管道"
-                                      "用于SSH代理：\n%s", pipename,
+                char *err = dupprintf("Unable to open named pipe at %s "
+                                      "for SSH agent:\n%s", pipename,
                                       sk_socket_error(sock));
-                MessageBox(NULL, err, "cnPageant错误", MB_ICONERROR | MB_OK);
+                MessageBox(NULL, err, "Pageant Error", MB_ICONERROR | MB_OK);
                 return 1;
             }
             pageant_listener_got_socket(pl, sock);
@@ -1739,9 +2017,9 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
                 FILE *fp = f_open(openssh_config_file, "w", true);
                 if (!fp) {
                     char *err = dupprintf(
-                        "无法写入OpenSSH配置文件到 %s",
+                        "Unable to write OpenSSH config file to %s",
                         filename_to_str(openssh_config_file));
-                    MessageBox(NULL, err, "cnPageant错误",
+                    MessageBox(NULL, err, "Pageant Error",
                                MB_ICONERROR | MB_OK);
                     return 1;
                 }
@@ -1777,10 +2055,10 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
                 pageant_listener_new(&pl_plug, &wpc->plc);
             Socket *sock = sk_newlistener_unix(unixsocket, pl_plug);
             if (sk_socket_error(sock)) {
-                char *err = dupprintf("在 %s 上无法打开UAF_UNIX socket，"
-                                      "对于SSH代理：\n%s", unixsocket,
+                char *err = dupprintf("Unable to open AF_UNIX socket at %s "
+                                      "for SSH agent:\n%s", unixsocket,
                                       sk_socket_error(sock));
-                MessageBox(NULL, err, "cnPageant错误！！！", MB_ICONERROR | MB_OK);
+                MessageBox(NULL, err, "Pageant Error", MB_ICONERROR | MB_OK);
                 return 1;
             }
             pageant_listener_got_socket(pl, sock);
@@ -1861,7 +2139,7 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
      */
     if (already_running) {
         if (!command && !nclkeys) {
-            MessageBox(NULL, "Pageant已经在运行中", "cnPageant错误",
+            MessageBox(NULL, "Pageant is already running", "Pageant Error",
                        MB_ICONERROR | MB_OK);
         }
         return 0;
@@ -1874,27 +2152,27 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show)
     systray_menu = CreatePopupMenu();
     if (putty_path) {
         session_menu = CreateMenu();
-        AppendMenu(systray_menu, MF_ENABLED, IDM_PUTTY, "新建会话(&N)");
+        AppendMenu(systray_menu, MF_ENABLED, IDM_PUTTY, "&New Session");
         AppendMenu(systray_menu, MF_POPUP | MF_ENABLED,
-                   (UINT_PTR) session_menu, "保存会话(&S)");
+                   (UINT_PTR) session_menu, "&Saved Sessions");
         AppendMenu(systray_menu, MF_SEPARATOR, 0, 0);
     }
     AppendMenu(systray_menu, MF_ENABLED, IDM_VIEWKEYS,
-               "查看密钥(&V)");
-    AppendMenu(systray_menu, MF_ENABLED, IDM_ADDKEY, "添加密钥(&K)");
+               "&View Keys");
+    AppendMenu(systray_menu, MF_ENABLED, IDM_ADDKEY, "Add &Key");
     AppendMenu(systray_menu, MF_ENABLED, IDM_ADDKEY_ENCRYPTED,
-               "添加加密密钥");
+               "Add key (encrypted)");
     AppendMenu(systray_menu, MF_SEPARATOR, 0, 0);
     AppendMenu(systray_menu, MF_ENABLED, IDM_REMOVE_ALL,
-               "删除所有密钥");
+               "Remove All Keys");
     AppendMenu(systray_menu, MF_ENABLED, IDM_REENCRYPT_ALL,
-               "重新加密所有密钥");
+               "Re-encrypt All Keys");
     AppendMenu(systray_menu, MF_SEPARATOR, 0, 0);
     if (has_help())
-        AppendMenu(systray_menu, MF_ENABLED, IDM_HELP, "帮助(&H)");
-    AppendMenu(systray_menu, MF_ENABLED, IDM_ABOUT, "关于(&A)");
+        AppendMenu(systray_menu, MF_ENABLED, IDM_HELP, "&Help");
+    AppendMenu(systray_menu, MF_ENABLED, IDM_ABOUT, "&About");
     AppendMenu(systray_menu, MF_SEPARATOR, 0, 0);
-    AppendMenu(systray_menu, MF_ENABLED, IDM_CLOSE, "退出(&X)");
+    AppendMenu(systray_menu, MF_ENABLED, IDM_CLOSE, "E&xit");
     initial_menuitems_count = GetMenuItemCount(session_menu);
 
     /* Set the default menu item. */
