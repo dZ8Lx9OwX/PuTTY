@@ -2014,6 +2014,7 @@ bool winctrl_handle_command(struct dlgparam *dp, UINT msg,
                     ctrl->handler(ctrl, dp, dp->data, EVENT_ACTION);
                     c->data = NULL;
                 }
+                filename_free(fn);
             }
         }
         break;
