@@ -4368,22 +4368,22 @@ static bool gtk_seat_get_windowid(Seat *seat, long *id)
 }
 #endif
 
-char *setup_fonts_ucs(GtkFrontend *inst)
+char *setup_fonts_ucs(GtkFrontend *inst, Conf *conf)
 {
-    bool shadowbold = conf_get_bool(inst->conf, CONF_shadowbold);
-    int shadowboldoffset = conf_get_int(inst->conf, CONF_shadowboldoffset);
+    bool shadowbold = conf_get_bool(conf, CONF_shadowbold);
+    int shadowboldoffset = conf_get_int(conf, CONF_shadowboldoffset);
     FontSpec *fs;
     unifont *fonts[4];
     int i;
 
-    fs = conf_get_fontspec(inst->conf, CONF_font);
+    fs = conf_get_fontspec(conf, CONF_font);
     fonts[0] = multifont_create(inst->area, fs->name, false, false,
                                 shadowboldoffset, shadowbold);
     if (!fonts[0]) {
         return dupprintf("无法加载字体 \"%s\"", fs->name);
     }
 
-    fs = conf_get_fontspec(inst->conf, CONF_boldfont);
+    fs = conf_get_fontspec(conf, CONF_boldfont);
     if (shadowbold || !fs->name[0]) {
         fonts[1] = NULL;
     } else {
@@ -4396,7 +4396,7 @@ char *setup_fonts_ucs(GtkFrontend *inst)
         }
     }
 
-    fs = conf_get_fontspec(inst->conf, CONF_widefont);
+    fs = conf_get_fontspec(conf, CONF_widefont);
     if (fs->name[0]) {
         fonts[2] = multifont_create(inst->area, fs->name, true, false,
                                     shadowboldoffset, shadowbold);
@@ -4410,7 +4410,7 @@ char *setup_fonts_ucs(GtkFrontend *inst)
         fonts[2] = NULL;
     }
 
-    fs = conf_get_fontspec(inst->conf, CONF_wideboldfont);
+    fs = conf_get_fontspec(conf, CONF_wideboldfont);
     if (shadowbold || !fs->name[0]) {
         fonts[3] = NULL;
     } else {
@@ -4861,7 +4861,7 @@ static void after_change_settings_dialog(void *vctx, int retval)
             conf_get_bool(newconf, CONF_shadowbold) ||
             conf_get_int(oldconf, CONF_shadowboldoffset) !=
             conf_get_int(newconf, CONF_shadowboldoffset)) {
-            char *errmsg = setup_fonts_ucs(inst);
+            char *errmsg = setup_fonts_ucs(inst, inst->conf);
             if (errmsg) {
                 char *msgboxtext =
                     dupprintf("无法在终端窗口中更改字体： %s\n",
@@ -4950,7 +4950,7 @@ static void change_font_size(GtkFrontend *inst, int increment)
         }
     }
 
-    errmsg = setup_fonts_ucs(inst);
+    errmsg = setup_fonts_ucs(inst, inst->conf);
     if (errmsg)
         goto cleanup;
 
@@ -5350,15 +5350,48 @@ void new_session_window(Conf *conf, const char *geometry_string)
     inst->area = gtk_drawing_area_new();
     gtk_widget_set_name(GTK_WIDGET(inst->area), "drawing-area");
 
+    /*
+     * Try to create the fonts for use in the window. If this fails,
+     * we'll try again with some fallback settings, and only abort
+     * completely if we can't find any fonts at all.
+     */
     {
-        char *errmsg = setup_fonts_ucs(inst);
-        if (errmsg) {
-            window_setup_error(errmsg);
-            sfree(errmsg);
-            gtk_widget_destroy(inst->area);
-            sfree(inst);
-            return;
+        char *errmsg_main = setup_fonts_ucs(inst, inst->conf);
+        if (!errmsg_main)
+            goto fonts_ok;
+
+        static const char *const fallbacks[] = {
+            DEFAULT_GTK_CLIENT_FONT,
+            DEFAULT_GTK_SERVER_FONT,
+        };
+        for (size_t i = 0; i < lenof(fallbacks); i++) {
+            Conf *fallback_conf = conf_new();
+            do_defaults(NULL, fallback_conf);
+
+            FontSpec *fs = fontspec_new(fallbacks[i]);
+            conf_set_fontspec(fallback_conf, CONF_font, fs);
+            fontspec_free(fs);
+
+            char *errmsg_fallback = setup_fonts_ucs(inst, fallback_conf);
+            conf_free(fallback_conf);
+
+            if (!errmsg_fallback) {
+                fprintf(stderr, "%s; falling back to default font '%s'\n",
+                        errmsg_main, fallbacks[i]);
+                sfree(errmsg_main);
+                goto fonts_ok;
+            }
+
+            sfree(errmsg_fallback);
         }
+
+        window_setup_error(errmsg_main);
+        sfree(errmsg_main);
+        gtk_widget_destroy(inst->area);
+        sfree(inst);
+        return;
+
+      fonts_ok:;
     }
 
 #if GTK_CHECK_VERSION(2,0,0)
