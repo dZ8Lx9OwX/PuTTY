@@ -4131,12 +4131,12 @@ static void term_out(Terminal *term, bool called_from_term_data)
                   case 'X':             /* SOS: Start of String */
                   case '^':             /* PM: privacy message */
                   case '_':             /* APC: application program command */
-                    /* SOS, PM, and APC sequences are just a string, terminated
-                     * by ST or (I've observed in practice for APC) ^G. That
-                     * is, they have the same termination convention as OSC. So
-                     * we handle them by going straight into OSC_STRING state
-                     * and setting a flag indicating that it's not really an
-                     * OSC. */
+                    /* SOS, PM, and APC sequences are just a string, terminated by
+                     * ST or (I've observed in practice for APC) ^G. That is,
+                     * they have the same termination convention as
+                     * OSC. So we handle them by going straight into
+                     * OSC_STRING state and setting a flag indicating
+                     * that it's not really an OSC. */
                     compatibility(OTHER);
                     term->termstate = SEEN_OSC;
                     term->osc_type = (c == 'X' ? OSCLIKE_SOS :

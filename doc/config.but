@@ -2392,7 +2392,7 @@ ML-KEM 是与 Curve25519 的混合算法; 后者, 与 NIST P384
 或者 P256 的混合算法.
 
 \b \q{\i{ECDH}}: elliptic curve Diffie-Hellman key exchange,
-with a variety of standard curves and hash algorithms.
+包含有各种标准曲线和哈希算法。
 
 \b The original form of \i{Diffie-Hellman key exchange}，包含
 有各种知名的分组和哈希：
