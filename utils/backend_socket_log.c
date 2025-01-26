@@ -33,7 +33,7 @@ void backend_socket_log(Seat *seat, LogContext *logctx, Socket *sock,
         if (sock) {
             SocketEndpointInfo *local_end = sk_endpoint_info(sock, false);
             if (local_end) {
-                char *newmsg = dupprintf("%s (from %s)", msg,
+                char *newmsg = dupprintf("%s (从 %s)", msg,
                                          local_end->log_text);
                 sfree(msg);
                 msg = newmsg;
