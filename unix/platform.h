@@ -35,7 +35,7 @@
 
 #elif defined NOT_X_WINDOWS
 
-#define BUILDINFO_PLATFORM_GTK "Unix (纯GTK)"
+#define BUILDINFO_PLATFORM_GTK "OS X (GTK)"
 #define BUILDINFO_GTK
 
 #else

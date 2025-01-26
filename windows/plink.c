@@ -394,8 +394,8 @@ int main(int argc, char **argv)
         return 1;
 
     if (!cmdline_host_ok(conf)) {
-        fprintf(stderr, "plink: no valid host name provided\n"
-                "try \"plink --help\" for help\n");
+        fprintf(stderr, "plink: 未提供有效的主机名\n"
+                "请尝试输入 \"plink --help\" 来寻求帮助\n");
         cmdline_arg_list_free(arglist);
         return 1;
     }

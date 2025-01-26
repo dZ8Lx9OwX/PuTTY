@@ -1230,9 +1230,8 @@ static int win_gui_askappend(LogPolicy *lp, Filename *filename,
     message = dupprintf(msgtemplate, FILENAME_MAX, filename->utf8path);
     mbtitle = dupprintf("cn%s 写入日志文件", appname);
 
-    mbret = message_box(NULL, message, mbtitle,
-                        MB_ICONQUESTION | MB_YESNOCANCEL | MB_DEFBUTTON3,
-                        true, 0);
+    mbret = MessageBox(NULL, message, mbtitle,
+                       MB_ICONQUESTION | MB_YESNOCANCEL | MB_DEFBUTTON3);
 
     socket_reselect_all();
 
