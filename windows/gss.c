@@ -182,7 +182,7 @@ struct ssh_gss_liblist *ssh_gss_setup(Conf *conf)
             &list->libraries[list->nlibraries++];
 
         lib->id = 0;
-        lib->gsslogmsg = "Using GSSAPI from GSSAPI"MIT_KERB_SUFFIX".DLL";
+        lib->gsslogmsg = "使用 GSSAPI 来自 GSSAPI"MIT_KERB_SUFFIX".DLL";
         lib->handle = (void *)module;
 
 #define BIND_GSS_FN(name) \
@@ -212,7 +212,7 @@ struct ssh_gss_liblist *ssh_gss_setup(Conf *conf)
             &list->libraries[list->nlibraries++];
 
         lib->id = 1;
-        lib->gsslogmsg = "Using SSPI from SECUR32.DLL";
+        lib->gsslogmsg = "使用 微软SSPI 来自 SECUR32.DLL";
         lib->handle = (void *)module;
 
         /* No typecheck because Winelib thinks one PVOID is a PLUID */
@@ -268,8 +268,8 @@ struct ssh_gss_liblist *ssh_gss_setup(Conf *conf)
             &list->libraries[list->nlibraries++];
 
         lib->id = 2;
-        lib->gsslogmsg = dupprintf("Using GSSAPI from user-specified"
-                                   " library '%s'", customlib->cpath);
+        lib->gsslogmsg = dupprintf("使用 GSSAPI 来自用户指定的"
+                                   "库文件 '%s'", customlib->cpath);
         lib->handle = (void *)module;
 
 #define BIND_GSS_FN(name) \
