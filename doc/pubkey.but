@@ -539,27 +539,27 @@ Powershell 脚本，您可以将其分发给包含本地标准的整个组织。
 
 命令行支持的选项有：
 
-\dt \cw{\-t} \e{keytype}
+\dt \I{-t-puttygen}\cw{\-t} \e{keytype}
 
 \dd 要生成的密钥类型。 您可以选择 \c{rsa}, \c{dsa},\c{ecdsa}, \c{eddsa},
 \c{ed25519}, \c{ed448}, 或者 \c{rsa1}。
 请参阅 \k{puttygen-keytype}。
 
-\dt \cw{\-b} \e{bits}
+\dt \I{-b-puttygen}\cw{\-b} \e{bits}
 
 \dd 要生成的密钥的大小，以位为单位。请参阅 \k{puttygen-strength}.
 
-\dt \cw{\-\-primes} \e{method}
+\dt \I{--primes-puttygen}\cw{\-\-primes} \e{method}
 
 \dd 生成素数的方法。 您可以选择 \c{probable},
 \c{proven}, 和 \c{proven-even}。请参阅 \k{puttygen-primes}.
 
-\dt \cw{\-\-strong-rsa}
+\dt \I{--strong-rsa-puttygen}\cw{\-\-strong-rsa}
 
 \dd 生成 RSA 密钥时，确保密钥模数的
 素数是\q{强素数}。请参阅 \k{puttygen-primes}.
 
-\dt \cw{\-\-ppk-param} \e{key}\cw{=}\e{value}\cw{,}...
+\dt \I{--ppk-param-puttygen}\cw{\-\-ppk-param} \e{key}\cw{=}\e{value}\cw{,}...
 
 \dd 允许设置所描述的 PPK 保存文件格
 式的所有相同细节，请参阅 \k{puttygen-save-params}.
@@ -599,7 +599,7 @@ Powershell 脚本，您可以将其分发给包含本地标准的整个组织。
 
 }
 
-\dt \cw{\-E} \e{fptype}
+\dt \I{-E-upper-puttygen}\cw{\-E} \e{fptype}
 
 \dd 显示关键指纹时使用的算法。你可以
 选择\c{sha256} 或者 \c{md5}。请参见 \k{puttygen-fingerprint}。
@@ -656,7 +656,7 @@ Powershell 脚本，您可以将其分发给包含本地标准的整个组织。
 有关详细信息，请参阅 \k{config-ssh-privkey} 。
 
 \b 使用 \c{-i} 选项在命令行上指定密钥文件。
-请参阅 \k{using-cmdline-identity} 。
+请参阅 \k{using-cmdline-identity} 了解详情。
 
 \b 将私钥加载到 Pageant 中（参见\k{pageant}）。
  在这种情况下，如果可以，PuTTY 将自动尝试使用它进行身份验证。

@@ -271,7 +271,7 @@ Pageant可以监听\q{Unix-domain套接字}的WinSock实现。
 
 \S{pageant-cmdline-keylist} 从可见的密钥列表开始
 
-使用 \i\c{--keylist} 选项启动 Pageant，
+使用 \i\c{--keylist} 选项启动Pageant，
 以便在启动时立即显示主窗口。
 
 \S{pageant-cmdline-restrict-acl} 限制 \i{Windows ACL} 进程

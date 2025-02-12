@@ -2637,7 +2637,7 @@ has a higher security level than Ed25519).
 同时仍拒绝不在该列表中的任何密钥。
 
 另一个原因是如果 PuTTY 的自动主机密钥管理完全不可用，
-例如 因为 PuTTY（或 Plink 或 PSFTP 等）
+例如因为 PuTTY（或 Plink 或 PSFTP 等）
 在 Windows 环境中运行，
 无法访问注册表。
 在这种情况下，您可能需要使用 \cw{-hostkey} 命令行选项来配置预期的主机密钥；
